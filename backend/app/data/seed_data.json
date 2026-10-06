@@ -1,0 +1,189 @@
+{
+  "demo_user": {
+    "user_id": "00000000-0000-0000-0000-000000000001",
+    "full_name": "Aarav Sharma",
+    "target_role": "ML Engineer",
+    "target_timeline_months": 4,
+    "education_level": "Final-Year B.Tech CSE, Tier-2 Engineering Institute",
+    "experience_level": "fresher",
+    "hours_per_weekday": 2.0,
+    "hours_per_weekend": 5.0,
+    "learning_resources": ["free_only", "nptel", "swayam", "youtube", "geeksforgeeks"],
+    "interested_companies": ["Swiggy", "PhonePe", "Razorpay", "Flipkart", "Fractal Analytics", "Ola Electric"],
+    "interested_industries": ["Fintech", "E-commerce", "AI Platforms", "Logistics"],
+    "desired_salary_min": 800000,
+    "desired_salary_max": 1800000,
+    "location": "Bengaluru, Karnataka (Open to Hyderabad / Gurgaon)",
+    "work_mode": "hybrid",
+    "onboarding_complete": true
+  },
+  "user_skills": [
+    { "skill": "python", "self_level": "intermediate", "assessed_level": "advanced", "assessed_score": 78 },
+    { "skill": "sql", "self_level": "beginner", "assessed_level": "beginner", "assessed_score": 38 },
+    { "skill": "machine learning", "self_level": "intermediate", "assessed_level": null, "assessed_score": null },
+    { "skill": "pandas", "self_level": "intermediate", "assessed_level": null, "assessed_score": null },
+    { "skill": "numpy", "self_level": "intermediate", "assessed_level": null, "assessed_score": null },
+    { "skill": "scikit-learn", "self_level": "intermediate", "assessed_level": null, "assessed_score": null },
+    { "skill": "pytorch", "self_level": "beginner", "assessed_level": null, "assessed_score": null },
+    { "skill": "git", "self_level": "intermediate", "assessed_level": null, "assessed_score": null },
+    { "skill": "fastapi", "self_level": "beginner", "assessed_level": null, "assessed_score": null },
+    { "skill": "docker", "self_level": "beginner", "assessed_level": null, "assessed_score": null },
+    { "skill": "data structures", "self_level": "intermediate", "assessed_level": null, "assessed_score": null }
+  ],
+  "user_projects": [
+    {
+      "id": "proj-1",
+      "title": "Customer Churn Prediction Engine",
+      "description": "Engineered an end-to-end churn prediction pipeline on 70,000 telco records using Scikit-Learn Random Forest and XGBoost. Achieved 84% ROC-AUC with SMOTE balancing and deployed a FastAPI prediction endpoint.",
+      "tech": ["python", "scikit-learn", "pandas", "numpy", "fastapi"],
+      "link": "https://github.com/aarav-sharma/telecom-churn-ml"
+    },
+    {
+      "id": "proj-2",
+      "title": "Campus Placement Analytics & Offer Forecasting",
+      "description": "Analyzed 4 years of college placement trends using Pandas & Seaborn. Built multi-label classification to forecast student eligibility and salary bracket tier with 81% precision.",
+      "tech": ["python", "pandas", "matplotlib", "scikit-learn"],
+      "link": "https://github.com/aarav-sharma/campus-placement-analytics"
+    }
+  ],
+  "master_resume": {
+    "name": "Aarav Sharma",
+    "email": "aarav.sharma@example.ac.in",
+    "phone": "+91 98765 43210",
+    "location": "Bengaluru, Karnataka, India",
+    "linkedin": "linkedin.com/in/aarav-sharma-tech",
+    "github": "github.com/aarav-sharma",
+    "summary": "Final-year Computer Science undergraduate with hands-on foundations in Python, Machine Learning workflows, and API microservices. Passionate about production ML pipelines and scalable data systems.",
+    "education": [
+      {
+        "degree": "B.Tech in Computer Science and Engineering",
+        "institution": "Visvesvaraya Technological University",
+        "period": "2021 - 2025",
+        "grade": "8.4 CGPA"
+      }
+    ],
+    "skills": ["Python", "SQL", "Scikit-Learn", "Pandas", "NumPy", "FastAPI", "Git", "Machine Learning", "Data Structures"],
+    "experience": [
+      {
+        "role": "Machine Learning Intern",
+        "company": "Kubernetix Tech Labs",
+        "location": "Bengaluru (Hybrid)",
+        "period": "Jun 2024 - Aug 2024",
+        "bullets": [
+          "Developed automated data validation scripts in Python and Pandas reducing dataset ingestion errors by 32%.",
+          "Assisted in training baseline regression and classification models using Scikit-Learn for client churn analysis.",
+          "Packaged REST API inference endpoints using FastAPI and containerized services for test deployment."
+        ]
+      }
+    ],
+    "projects": [
+      {
+        "title": "Customer Churn Prediction Engine",
+        "bullets": [
+          "Trained Random Forest and Gradient Boosting models reaching 84% ROC-AUC on 70K historical records.",
+          "Built feature engineering pipeline handling categorical encoding and missing values via Scikit-Learn pipelines.",
+          "Exposed REST inference API with FastAPI achieving sub-50ms latency per request."
+        ]
+      },
+      {
+        "title": "Campus Placement Analytics System",
+        "bullets": [
+          "Aggregated placement history across 8 semesters to analyze recruiter hiring factors and GPA correlations.",
+          "Visualized departmental placement trends using Seaborn and Matplotlib for university placement cell."
+        ]
+      }
+    ]
+  },
+  "jobs": [
+    {
+      "id": "job-001",
+      "external_id": "swiggy-mle-01",
+      "source": "Adzuna India",
+      "title": "Junior Machine Learning Engineer",
+      "company": "Swiggy",
+      "location": "Bengaluru, Karnataka",
+      "work_mode": "hybrid",
+      "salary_min": 1200000,
+      "salary_max": 1800000,
+      "experience_required": "0-2 years / Fresher with strong projects",
+      "required_skills": ["python", "machine learning", "scikit-learn", "fastapi", "sql", "data structures", "docker"],
+      "description": "Join Swiggy's Logistics & Delivery ML team. You will build and optimize machine learning models for dispatch optimization, ETA predictions, and batch order routing. Requirements: Strong Python programming, solid understanding of supervised algorithms (decision trees, ensemble models), familiarity with REST APIs (FastAPI) and SQL. Experience with Docker and cloud deployment is a plus.",
+      "apply_url": "https://careers.swiggy.com/jobs/ml-engineer-01"
+    },
+    {
+      "id": "job-002",
+      "external_id": "phonepe-ds-02",
+      "source": "Greenhouse",
+      "title": "Associate Data Scientist",
+      "company": "PhonePe",
+      "location": "Bengaluru, Karnataka",
+      "work_mode": "onsite",
+      "salary_min": 1400000,
+      "salary_max": 2000000,
+      "experience_required": "0-2 years",
+      "required_skills": ["python", "sql", "pandas", "machine learning", "scikit-learn", "data structures"],
+      "description": "PhonePe Merchant Intelligence team is looking for an Associate Data Scientist. You will analyze merchant transaction graphs, develop predictive risk models, and run A/B test experiments. Must have exceptional SQL skills for multi-table analytics, strong Python and Pandas fluency, and solid grasp of statistical modeling.",
+      "apply_url": "https://boards.greenhouse.io/phonepe/jobs/assoc-ds-92"
+    },
+    {
+      "id": "job-003",
+      "external_id": "razorpay-be-03",
+      "source": "Lever",
+      "title": "Software Development Engineer - ML Platform",
+      "company": "Razorpay",
+      "location": "Bengaluru, Karnataka",
+      "work_mode": "hybrid",
+      "salary_min": 1500000,
+      "salary_max": 2200000,
+      "experience_required": "Fresher / 1 year",
+      "required_skills": ["python", "fastapi", "docker", "sql", "data structures", "git", "system design"],
+      "description": "Razorpay's Core ML Platform team builds internal infrastructure to serve 100M+ real-time payment risk scores daily. Looking for an enthusiastic SDE who understands high-throughput Python APIs, Docker containerization, asynchronous task queues, and clean object-oriented architecture.",
+      "apply_url": "https://jobs.lever.co/razorpay/ml-platform-sde"
+    },
+    {
+      "id": "job-004",
+      "external_id": "fractal-ai-04",
+      "source": "Remotive",
+      "title": "Junior AI / ML Consultant",
+      "company": "Fractal Analytics",
+      "location": "Gurugram / Hybrid",
+      "work_mode": "hybrid",
+      "salary_min": 900000,
+      "salary_max": 1400000,
+      "experience_required": "Fresher / B.Tech graduate",
+      "required_skills": ["python", "scikit-learn", "pandas", "sql", "matplotlib", "machine learning"],
+      "description": "Fractal is hiring campus graduates passionate about Artificial Intelligence and client impact. Work directly with Fortune 500 CPG and healthcare data pipelines. Strong foundations in exploratory data analysis, Scikit-Learn regression and clustering, and SQL are mandatory.",
+      "apply_url": "https://fractal.ai/careers/junior-ai-consultant"
+    },
+    {
+      "id": "job-005",
+      "external_id": "ola-cv-05",
+      "source": "Adzuna India",
+      "title": "Autonomous Systems ML Engineer (Entry Level)",
+      "company": "Ola Electric",
+      "location": "Bengaluru, Karnataka",
+      "work_mode": "onsite",
+      "salary_min": 1100000,
+      "salary_max": 1600000,
+      "experience_required": "0-1 year",
+      "required_skills": ["python", "pytorch", "opencv", "computer vision", "numpy", "c++"],
+      "description": "Be part of Ola's FutureFactory EV telematics and sensor intelligence. You will process vehicle telemetry and camera sensor feeds, evaluate neural network models using PyTorch, and optimize edge deployments on embedded Linux.",
+      "apply_url": "https://careers.olaelectric.com/jobs/autonomous-ml"
+    },
+    {
+      "id": "job-006",
+      "external_id": "zepto-analyst-06",
+      "source": "Adzuna India",
+      "title": "Growth Data Analyst",
+      "company": "Zepto",
+      "location": "Mumbai / Remote",
+      "work_mode": "remote",
+      "salary_min": 800000,
+      "salary_max": 1300000,
+      "experience_required": "0-2 years",
+      "required_skills": ["sql", "python", "pandas", "matplotlib"],
+      "description": "Fast-paced quick-commerce growth team analyzing dark store micro-fulfillment velocity and customer cart retention. Requires expert SQL query writing, dashboard automation, and basic Python data wrangling.",
+      "apply_url": "https://careers.zepto.com/jobs/growth-analyst"
+    }
+  ]
+}
