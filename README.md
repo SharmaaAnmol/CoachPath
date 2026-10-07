@@ -100,7 +100,15 @@ For early iterations, CoachPath prioritizes university students and early-career
 │   ├── security-and-privacy.md       # Auth, PII handling, and anti-abuse safeguards (Phase 0)
 │   ├── testing-strategy.md           # Unit, integration, E2E, and AI evaluation (Phase 0)
 │   ├── development-roadmap.md        # Engineering phase breakdown & milestones (Phase 0)
-│   └── architecture-decisions.md     # Architecture Decision Records (ADRs) (Phase 0)
+│   ├── architecture-decisions.md     # Architecture Decision Records (ADRs) (Phase 0)
+│   ├── phase-0-final-audit.md        # Comprehensive Phase 0 audit report
+│   └── frontend-architecture.md      # Frontend architecture & design system (Phase 1)
+├── frontend/                         # Next.js 14 App Router Frontend Workspace
+│   ├── src/app/(public)/             # Marketing routes (/, /about, /features, /privacy, /login, /signup)
+│   ├── src/app/(app)/                # Authenticated shells (dashboard, profile, skills, roadmap, jobs, etc.)
+│   ├── src/components/               # Design system atomic components and layout shell
+│   ├── src/lib/mock/                 # Typed candidate mock data store (Aarav Mehta)
+│   └── src/types/                    # Strict TypeScript domain interfaces
 ├── .env.example                      # Configuration template for local & production
 ├── .gitignore                        # Global ignore rules for Node, Python, and env
 └── README.md                         # Project overview and guidance
@@ -108,24 +116,73 @@ For early iterations, CoachPath prioritizes university students and early-career
 
 ---
 
+## 💻 Frontend Quickstart Guide (Phase 1)
+
+The CoachPath frontend is built with Next.js 14 (App Router), TypeScript, and Tailwind CSS.
+
+### 1. Prerequisites
+- Node.js `v20+` or `v26+`
+- npm `v10+`
+
+### 2. Local Setup
+```bash
+# Navigate to the frontend directory
+cd frontend
+
+# Install dependencies
+npm install
+
+# Start the development server
+npm run dev
+```
+
+Visit [`http://localhost:3000`](http://localhost:3000) in your browser.
+
+### 3. Key Routes
+- **Marketing Landing Page**: [`/`](http://localhost:3000/) (featuring live interactive platform sandbox)
+- **Executive Dashboard**: [`/dashboard`](http://localhost:3000/dashboard)
+- **Career Profile**: [`/career-profile`](http://localhost:3000/career-profile) (aliased to `/profile`)
+- **Skill Taxonomy**: [`/skills`](http://localhost:3000/skills)
+- **Diagnostic Assessments**: [`/assessments`](http://localhost:3000/assessments)
+- **Milestone Roadmap**: [`/roadmap`](http://localhost:3000/roadmap)
+- **Semantic Job Matching**: [`/jobs`](http://localhost:3000/jobs)
+- **Resume Optimizer**: [`/resume`](http://localhost:3000/resume)
+- **Application Tracker**: [`/applications`](http://localhost:3000/applications)
+- **Recruiter Discovery**: [`/recruiters`](http://localhost:3000/recruiters)
+- **STAR Interview Prep**: [`/interviews`](http://localhost:3000/interviews)
+- **Career Readiness Index**: [`/career-readiness`](http://localhost:3000/career-readiness) (aliased to `/readiness`)
+- **Settings & Privacy**: [`/settings`](http://localhost:3000/settings)
+
+---
+
 ## 🚀 Development Phasing
 
 CoachPath is engineered under a phased methodology:
 
-- [x] **Phase 0.0: Project Inception & Scaffolding** *(Completed)*
-- [x] **Phase 0.1: Product Requirements Document (PRD)** *(Completed in [`/docs/product-requirements.md`](docs/product-requirements.md))*
-- [ ] **Phase 0.2: Technical Design & Architecture Specifications** *(Next in `/docs`)*
-- [ ] **Phase 1: Foundation & Infrastructure Setup**
-- [ ] **Phase 2: Career Profile & Skill Ingestion Engine**
-- [ ] **Phase 3: Evidence-Based Assessment & Skill Gap Engine**
-- [ ] **Phase 4: Dynamic Career Roadmap Engine**
-- [ ] **Phase 5: Job Ingestion & Semantic Matching**
-- [ ] **Phase 6: Truthful Resume Tailoring & Export**
-- [ ] **Phase 7: Application Tracking, Readiness Dashboard & Approval Gateway**
-- [ ] **Phase 8: Security Hardening, E2E Testing & Release**
+- [x] **Phase 0: Product Definition & System Architecture** *(Completed — All 10 architecture records finalized)*
+- [x] **Phase 1: Frontend Foundation, Design System & Product Shell** *(Completed — Next.js 14, Tailwind, 12 Domain Shells)*
+- [ ] **Phase 2: Backend Foundation & Database Setup** *(Next: FastAPI, PostgreSQL + pgvector, Redis, Alembic)*
+- [ ] **Phase 3: Authentication & User Profile Graph**
+- [ ] **Phase 4: AI Career Onboarding Conversation**
+- [ ] **Phase 5: Resume Ingestion & Parsing Engine**
+- [ ] **Phase 6: Diagnostic Skill Assessment Engine**
+- [ ] **Phase 7: Skill-Gap Analysis Engine**
+- [ ] **Phase 8: Dynamic Milestone Roadmap Engine**
+- [ ] **Phase 9: Job Feed Ingestion Pipeline**
+- [ ] **Phase 10: Intelligent Job Matching Engine**
+- [ ] **Phase 11: Truthful Resume Optimization Engine**
+- [ ] **Phase 12: Application Pipeline Tracker**
+- [ ] **Phase 13: Recruiter Discovery & High-Context Networking**
+- [ ] **Phase 14: Role-Specific Interview Preparation Engine**
+- [ ] **Phase 15: Composite Career Readiness Engine**
+- [ ] **Phase 16: Settings, Privacy Controls & Data Deletion**
+- [ ] **Phase 17: Production Observability, Security Hardening & Rate Limiting**
+- [ ] **Phase 18: End-to-End System Integration Testing**
+- [ ] **Phase 19: Production Cloud Deployment & Launch Readiness**
 
 ---
 
 ## 📄 License
 
 Proprietary — All rights reserved.
+
