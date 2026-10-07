@@ -183,6 +183,22 @@ All mutating, state-altering, or expensive operations (e.g., creating tailored r
 - **`POST /api/v1/auth/forgot-password`**: Request password reset email (`{"email": "..."}`). Always returns 200 OK to prevent account enumeration.
 - **`POST /api/v1/auth/reset-password`**: Submit reset token and new password (`{"token": "...", "new_password": "..."}`). Returns 200 OK.
 
+#### 1.6 Retrieve Current User Identity
+- **Method / URL**: `GET /api/v1/auth/me`
+- **Auth**: Authenticated (Bearer JWT or `access_token` HttpOnly cookie)
+- **Response (200 OK)**:
+  ```json
+  {
+    "id": "8f1a23e9-c402-45e2-8d76-b94f11223344",
+    "email": "user@example.com",
+    "role": "candidate",
+    "status": "pending_verification",
+    "full_name": "Aarav Mehta",
+    "created_at": "2026-10-08T00:00:00Z"
+  }
+  ```
+- **Errors**: 401 Unauthorized (`authentication credentials not provided or token expired`).
+
 ---
 
 ### Group 2: Personalized Onboarding (`/api/v1/onboarding`)

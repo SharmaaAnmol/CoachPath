@@ -79,6 +79,13 @@ class User(Base, UUIDMixin, TimestampMixin):
         doc="Timestamp for soft-deletion",
     )
 
+    @property
+    def full_name(self) -> Optional[str]:
+        """Safely returns full_name from associated profile if loaded in memory."""
+        if "profile" in self.__dict__ and self.profile is not None:
+            return self.profile.full_name
+        return None
+
     # Relationships
     profile: Mapped[Optional[UserProfile]] = relationship(
         "UserProfile",

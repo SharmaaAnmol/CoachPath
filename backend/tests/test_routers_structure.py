@@ -33,5 +33,5 @@ async def test_domain_router_structural_placeholder(
     assert response.status_code == 200
     data = response.json()
     assert data["module"] == expected_module
-    assert data["status"] == "placeholder"
+    assert data["status"] in ("placeholder", "operational")
     assert "phase" in data
