@@ -1,116 +1,118 @@
-# CoachPath 🚀
-### AI-Powered Career Intelligence & Job Application Assistant
-*Build for Bharat Hackathon 2.0*
+# CoachPath 🧭
 
-> **"Automate the busywork. Never the decision."**
+> **Production-Grade AI-Powered Career Intelligence Platform**
 
-CoachPath is an end-to-end career intelligence copilot designed specifically for Indian engineering students and job seekers (especially from Tier-2 and Tier-3 colleges). It unifies the entire career journey from onboarding to placement readiness into a reactive, truthful, and human-gated workflow.
+CoachPath is an AI-powered personal career assistant that guides university students and early-career technology professionals from their current skill baseline to job readiness and employment.
 
----
-
-## 🌟 Key Features Across All 13 Roadmap Screens
-
-1. **Personalized Onboarding (P0)**: 11-step conversational profile builder with live sidebar extraction and quick-reply chips.
-2. **Multi-Dimension Skill Assessment (P0)**: Live Python & SQL tests scored across 4 dimensions: *Knowledge, Problem Solving, Practical Skills, and Industry Readiness*.
-3. **Skill Gap Analysis & Live Roadmap (P0)**: Constrained by weekly study hours (e.g. 20 hrs/week) and sequenced by dependencies, mapping high-quality free Indian resources (*NPTEL, SWAYAM, freeCodeCamp, CS50, Striver Sheet*).
-4. **Market Intelligence (P1)**: Real-time skill demand frequency charts, emerging technology chips (*RAG, FastAPI, PyTorch 2.x*), and gap pipeline funnel.
-5. **Transparent Job Matching (P0)**: 7-factor explainable scoring (40% Skills, 15% Semantic, 15% Experience, 10% Projects, 10% Location, 5% Salary, 5% Education) with reasons and checkmark breakdowns.
-6. **Truthful Resume Studio (P0)**: Role-tailored variants (*ML Engineer, Data Scientist, AI Engineer*) with ATS scoring, side-by-side diff view (*reworded vs reordered*), and a strict **100% Truthfulness Guarantee** that prevents AI hallucinations.
-7. **Application Assistance & Human Approval Gate (P1)**: Prepares tailored cover note and interview screening answers; enforces human approval before opening the official verified apply link.
-8. **Recruiter Cold Outreach (P1)**: Drafts high-converting, personalized cold messages under 90 words with a 3-draft anti-spam rate limiter.
-9. **Application Tracker (P0)**: Comprehensive pipeline (*Saved → Applied → Recruiter Contacted → Interview → Offer*), stat cards, 5-day follow-up alerts, and CSV export.
-10. **Interview Prep & Calendar Sync (P1)**: "Interview in 3 days" countdown, personalized prep checklist, mock questions, and RFC 5545 `.ics` calendar generation with 3-day, 1-day, and 1-hour alarms.
-11. **Career Readiness Dashboard (P0)**: 7-component readiness index with a mathematical **"Biggest Lever"** card calculating exact sensitivity gains (e.g. *70% → 75%*).
-12. **Responsible AI & Privacy (P0)**: Real-time audit log, "Export My Data" (JSON), and user-controlled "Delete My Data" button.
-13. **Bharat-Specific Edge**: INR ₹ LPA salaries, Indian tech hubs, curated Indian free educational platforms, and an **English / हिन्दी (Hindi)** UI toggle.
+Rather than acting as a simple conversational bot, static resume builder, or generic job board, CoachPath revolves around a **continuously updated, evidence-based career profile**. Every new signal—from skill assessments to course completions and application feedback—refines the user's profile and continuously updates downstream roadmaps, job matches, and resume recommendations.
 
 ---
 
-## 🏗️ System Architecture & Reactive Engine
+## 🔁 Core Product Loop
 
-```
-Onboarding → Assessment → Skill Gap → Dynamic Roadmap
-     ↓            ↓            ↓             ↓
-[───────────── Central Candidate Profile ─────────────]
-     ↓            ↓            ↓             ↓
-Job Matching → Resume Studio → Approval Gate → Application Tracker
-     ↓                                               ↓
-Interview Prep (.ics) ←── Career Readiness & Biggest Lever
-```
-
-Whenever a skill assessment is taken or profile constraints change, CoachPath invokes `recompute_everything(user_id)`, reactively re-sequencing the roadmap, re-ranking all jobs, and updating career readiness in real time!
-
----
-
-## ⚡ Quick Start (Instant Live Demo)
-
-### 1. Run the Unified Server & Interactive Web UI
-CoachPath comes with a zero-dependency local runner that initializes the database, seeds demo data, and serves the web interface immediately:
-
-```bash
-# 1. Seed demo data (Aarav Sharma persona + realistic jobs)
-python3 backend/scripts/seed.py
-
-# 2. Start unified server
-python3 server.py
-```
-Open **[http://localhost:8000/index.html](http://localhost:8000/index.html)** in your browser!
-
-### 2. Run the Automated Test Suite
-Verify that the 7-factor matching math, readiness sensitivity, truthfulness checker, and roadmap scheduling pass all tests:
-
-```bash
-python3 -m unittest discover -s backend/tests
-```
-
-### 3. Production FastAPI & Next.js Stack
-```bash
-# Backend (FastAPI + Uvicorn)
-pip install -r backend/requirements.txt
-uvicorn backend.app.main:app --reload --port 8000
-
-# Frontend (Next.js 14 App Router)
-cd frontend
-npm install
-npm run dev
+```mermaid
+flowchart TD
+    User([User]) --> Profile[Career Profile]
+    Profile --> Assessment[Skill Assessment]
+    Assessment --> Gap[Skill Gap Analysis]
+    Gap --> Roadmap[Personalized Roadmap]
+    Roadmap --> Market[Market & Job Intelligence]
+    Market --> Matching[Intelligent Job Matching]
+    Matching --> Resume[Truthful Resume Optimization]
+    Resume --> Approval{User Review & Approval}
+    Approval --> Tracker[Application Tracking]
+    Tracker --> Readiness[Career Readiness Score]
+    Readiness --> Profile
 ```
 
 ---
 
-## 📂 Repository Layout
+## 🏛️ Technology Stack
+
+| Layer | Technology | Key Capabilities |
+| :--- | :--- | :--- |
+| **Frontend** | **Next.js, React, TypeScript, Tailwind CSS** | Server-side rendering, responsive interface, modern UX, type safety |
+| **Backend** | **Python, FastAPI** | Asynchronous execution, high throughput, native AI ecosystem integration |
+| **Relational Data** | **PostgreSQL** | ACID transactions, strict relational schemas, user career graph |
+| **Vector Storage** | **pgvector** | Relational vector similarity search, unified backup/transactions |
+| **Cache & Queue** | **Redis** | Fast token validation, rate-limiting, asynchronous task brokering |
+| **AI & LLM Services** | **LLMs, Embeddings, RAG, Pydantic/Instructor** | Structured outputs, semantic search, explainable recommendation scoring |
+| **Deployment** | **Docker, Docker Compose** | Reproducible multi-service development and containerized production deployment |
+
+---
+
+## 🎯 Target Initial Roles
+
+For early iterations, CoachPath prioritizes university students and early-career tech professionals across 7 primary paths:
+
+- Software Engineer
+- Backend Developer
+- Frontend Developer
+- Data Analyst
+- Data Scientist
+- Machine Learning Engineer
+- AI Engineer
+
+---
+
+## 🛡️ Responsible AI & Guiding Principles
+
+1. **One Central Career Profile**: All intelligence derives from and feeds back into a single persistent profile.
+2. **Evidence-Based Skills**: Skills are calibrated via assessments, projects, and verifiable experience—never self-reported hype.
+3. **Transparent Skill-Gap Analysis**: Explains exactly *why* a gap exists and how to close it.
+4. **Personalized Roadmaps**: Actionable step-by-step milestones tailored to the user's actual background, not generic lists.
+5. **Explainable Job Matching**: Provides clear rationale and missing skill callouts for every matched role.
+6. **Truthful Resume Optimization**:
+   - 🚫 **Never** fabricate qualifications, education, work experience, projects, or achievements.
+   - 🚫 **Never** invent unproven skills.
+   - ✅ Restructures, polishes, and highlights existing authentic experience to align with job descriptions.
+7. **Human-in-the-Loop Approval Model**:
+   - For any consequential action (application submission, outreach, major profile edits):
+     $$\text{CoachPath Prepares} \longrightarrow \text{User Reviews} \longrightarrow \text{User Approves} \longrightarrow \text{Action Executes} \longrightarrow \text{Audit Logged}$$
+   - Zero spam or blind automated bulk applications.
+8. **Privacy & Security First**: End-to-end data protection, PII anonymization, and user data sovereignty.
+
+---
+
+## 📦 Project Structure & Documentation
 
 ```
-Coach_Path/
-├── README.md                  # Project overview & documentation
-├── server.py                  # Single-command unified server launcher
-├── docker-compose.yml         # Container configuration (Postgres/pgvector + FastAPI + Next.js)
-├── .env.example               # Environment variables template
-├── backend/
-│   ├── app/
-│   │   ├── main.py            # FastAPI main app & router mounts
-│   │   ├── local_server.py    # Zero-dependency local runner & static server
-│   │   ├── core/              # Config, SQLite/Postgres DB layer, Auth, Audit logging
-│   │   ├── ai/                # LLM client (Gemini/Claude), schemas, truthfulness checker, prompts
-│   │   ├── routers/           # 13 REST API feature modules
-│   │   ├── services/          # Matching, gap, roadmap, readiness, ics, skills extraction
-│   │   └── data/              # Taxonomy JSON, role requirements, free resources, seed dataset
-│   ├── scripts/               # seed.py, prefetch_jobs.py
-│   └── tests/                 # Unit tests (matching, readiness, truthfulness, roadmap)
-├── frontend/                  # Next.js 14 App Router project (Tailwind, TypeScript, Recharts)
-├── web/                       # Standalone zero-dependency interactive Single Page App
-└── docs/
-    ├── schema.sql             # Supabase PostgreSQL schema with pgvector & RLS
-    ├── architecture.md        # Mermaid diagrams & system architecture
-    ├── scoring.md             # Transparent mathematical formulas
-    ├── demo-script.md         # 3-5 minute live hackathon pitch script
-    └── pitch-deck-notes.md    # Talking points & Bharat Hackathon positioning
+.
+├── docs/                             # Architecture & Product Documentation
+│   ├── product-requirements.md       # Product vision, scope, and personas
+│   ├── user-flows.md                 # Detailed step-by-step user journeys
+│   ├── system-architecture.md        # Technical component topology & design
+│   ├── database-schema.md            # PostgreSQL, pgvector & Redis data models
+│   ├── api-specification.md          # REST API contracts & schemas
+│   ├── ai-architecture.md            # LLM pipelines, RAG, guardrails, and scoring
+│   ├── security-and-privacy.md       # Auth, PII handling, and anti-abuse safeguards
+│   ├── testing-strategy.md           # Unit, integration, E2E, and AI evaluation
+│   ├── development-roadmap.md        # Engineering phase breakdown & milestones
+│   └── architecture-decisions.md     # Architecture Decision Records (ADRs)
+├── .env.example                      # Configuration template for local & production
+├── .gitignore                        # Global ignore rules for Node, Python, and env
+└── README.md                         # Project overview and guidance
 ```
 
 ---
 
-## 🛡️ Responsible AI & Compliance
+## 🚀 Development Phasing
 
-- **No Scraping**: Uses official APIs and permitted job feeds only.
-- **Human In The Loop**: Both job applications and recruiter outreach hold at strict human approval gates.
-- **Truthfulness Guardrail**: Dual-pass validation ensures zero hallucination on tailored resumes.
-- **Data Sovereignty**: Complete data export and instant permanent deletion.
+CoachPath is engineered under a phased methodology:
+
+- [x] **Phase 0: Project Inception & Scaffolding** *(Completed)*
+- [ ] **Phase 0.1: Architecture & Technical Specifications** *(Next: Authoring `/docs`)*
+- [ ] **Phase 1: Foundation & Infrastructure Setup**
+- [ ] **Phase 2: Career Profile & Skill Ingestion Engine**
+- [ ] **Phase 3: Evidence-Based Assessment & Skill Gap Engine**
+- [ ] **Phase 4: Dynamic Career Roadmap Engine**
+- [ ] **Phase 5: Job Ingestion & Semantic Matching**
+- [ ] **Phase 6: Truthful Resume Tailoring & Export**
+- [ ] **Phase 7: Application Tracking, Readiness Dashboard & Approval Gateway**
+- [ ] **Phase 8: Security Hardening, E2E Testing & Release**
+
+---
+
+## 📄 License
+
+Proprietary — All rights reserved.
