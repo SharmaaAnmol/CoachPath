@@ -1,6 +1,7 @@
 import type { Metadata } from 'next';
 import './globals.css';
 import { QueryProvider } from '@/providers/query-provider';
+import { AuthProvider } from '@/providers/auth-provider';
 
 export const metadata: Metadata = {
   title: 'CoachPath – AI-Powered Career Intelligence & Readiness Platform',
@@ -23,7 +24,9 @@ export default function RootLayout({
   return (
     <html lang="en" className="h-full">
       <body className="h-full flex flex-col font-sans text-slate-900 bg-slate-50 antialiased selection:bg-purple-100 selection:text-purple-900">
-        <QueryProvider>{children}</QueryProvider>
+        <QueryProvider>
+          <AuthProvider>{children}</AuthProvider>
+        </QueryProvider>
       </body>
     </html>
   );

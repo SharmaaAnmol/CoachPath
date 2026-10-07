@@ -23,6 +23,7 @@ import {
   X,
 } from 'lucide-react';
 import { mockProfile, mockReadinessData } from '@/lib/mock/data';
+import { useAuth } from '@/hooks/use-auth';
 
 interface NavItem {
   title: string;
@@ -76,7 +77,18 @@ export interface SidebarProps {
 
 export function Sidebar({ isMobileOpen = false, onMobileClose }: SidebarProps) {
   const pathname = usePathname();
+  const { user } = useAuth();
   const [isCollapsed, setIsCollapsed] = React.useState(false);
+
+  const displayName = user?.full_name || mockProfile.name;
+  const initials = React.useMemo(() => {
+    if (!displayName) return 'CP';
+    const parts = displayName.trim().split(/\s+/);
+    if (parts.length >= 2) {
+      return `${parts[0][0]}${parts[1][0]}`.toUpperCase();
+    }
+    return displayName.slice(0, 2).toUpperCase();
+  }, [displayName]);
 
   const isActive = (href: string) => {
     if (href === '/career-profile' && pathname === '/profile') return true;
@@ -175,11 +187,11 @@ export function Sidebar({ isMobileOpen = false, onMobileClose }: SidebarProps) {
           className="flex items-center gap-3 p-2 rounded-xl hover:bg-slate-800/60 transition-colors"
         >
           <div className="h-9 w-9 rounded-full bg-brand-500/20 border border-brand-500/40 flex items-center justify-center text-white font-bold text-xs shrink-0">
-            AM
+            {initials}
           </div>
           {!isCollapsed && (
             <div className="flex-1 min-w-0">
-              <div className="text-xs font-semibold text-white truncate">{mockProfile.name}</div>
+              <div className="text-xs font-semibold text-white truncate">{displayName}</div>
               <div className="text-[10px] text-slate-400 truncate">{mockProfile.targetRole}</div>
             </div>
           )}

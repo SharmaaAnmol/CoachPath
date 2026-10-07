@@ -3,10 +3,12 @@
 import * as React from 'react';
 import Link from 'next/link';
 import { Button } from '@/components/ui/button';
-import { Sparkles, Menu, X } from 'lucide-react';
+import { Sparkles, Menu, X, ArrowRight } from 'lucide-react';
+import { useAuth } from '@/hooks/use-auth';
 
 export function PublicHeader() {
   const [mobileMenuOpen, setMobileMenuOpen] = React.useState(false);
+  const { isAuthenticated } = useAuth();
 
   return (
     <header className="sticky top-0 z-50 bg-white/90 dark:bg-slate-900/90 backdrop-blur-md border-b border-slate-200/80 dark:border-slate-800">
@@ -44,21 +46,26 @@ export function PublicHeader() {
 
         {/* Desktop Auth Buttons */}
         <div className="hidden md:flex items-center gap-3">
-          <Link href="/login">
-            <Button variant="ghost" size="sm">
-              Sign In
-            </Button>
-          </Link>
-          <Link href="/signup">
-            <Button variant="primary" size="sm">
-              Get Started Free
-            </Button>
-          </Link>
-          <Link href="/dashboard">
-            <Button variant="intelligence" size="sm">
-              Live Demo
-            </Button>
-          </Link>
+          {isAuthenticated ? (
+            <Link href="/dashboard">
+              <Button variant="primary" size="sm">
+                Open Workspace <ArrowRight className="w-3.5 h-3.5 ml-1" />
+              </Button>
+            </Link>
+          ) : (
+            <>
+              <Link href="/login">
+                <Button variant="ghost" size="sm">
+                  Sign In
+                </Button>
+              </Link>
+              <Link href="/signup">
+                <Button variant="primary" size="sm">
+                  Get Started Free
+                </Button>
+              </Link>
+            </>
+          )}
         </div>
 
         {/* Mobile Hamburger */}
@@ -103,21 +110,26 @@ export function PublicHeader() {
             Privacy & Trust
           </Link>
           <div className="pt-3 border-t border-slate-100 dark:border-slate-800 flex flex-col gap-2">
-            <Link href="/login" onClick={() => setMobileMenuOpen(false)}>
-              <Button variant="outline" size="sm" className="w-full">
-                Sign In
-              </Button>
-            </Link>
-            <Link href="/signup" onClick={() => setMobileMenuOpen(false)}>
-              <Button variant="primary" size="sm" className="w-full">
-                Get Started Free
-              </Button>
-            </Link>
-            <Link href="/dashboard" onClick={() => setMobileMenuOpen(false)}>
-              <Button variant="intelligence" size="sm" className="w-full">
-                Live Interactive Demo
-              </Button>
-            </Link>
+            {isAuthenticated ? (
+              <Link href="/dashboard" onClick={() => setMobileMenuOpen(false)}>
+                <Button variant="primary" size="sm" className="w-full">
+                  Open Workspace
+                </Button>
+              </Link>
+            ) : (
+              <>
+                <Link href="/login" onClick={() => setMobileMenuOpen(false)}>
+                  <Button variant="outline" size="sm" className="w-full">
+                    Sign In
+                  </Button>
+                </Link>
+                <Link href="/signup" onClick={() => setMobileMenuOpen(false)}>
+                  <Button variant="primary" size="sm" className="w-full">
+                    Get Started Free
+                  </Button>
+                </Link>
+              </>
+            )}
           </div>
         </div>
       )}

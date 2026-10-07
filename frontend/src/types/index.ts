@@ -249,3 +249,51 @@ export interface CareerReadinessData {
   keyMilestonesCompleted: number;
   totalKeyMilestones: number;
 }
+
+// Authentication & Identity Types (Phase 3)
+export interface AuthUser {
+  id: string;
+  email: string;
+  role: 'candidate' | 'admin' | string;
+  status: 'pending_verification' | 'active' | 'suspended' | 'deleted' | string;
+  full_name?: string | null;
+  created_at: string;
+}
+
+export interface RegisterPayload {
+  email: string;
+  password: string;
+  full_name: string;
+}
+
+export interface RegisterResponse {
+  user_id: string;
+  email: string;
+  status: string;
+  message: string;
+}
+
+export interface LoginPayload {
+  email: string;
+  password: string;
+}
+
+export interface LoginResponse {
+  access_token: string;
+  token_type: string;
+  expires_in: number;
+  refresh_token?: string;
+  user: AuthUser;
+}
+
+export interface RefreshTokenResponse {
+  access_token: string;
+  token_type: string;
+  expires_in: number;
+  refresh_token?: string;
+}
+
+export interface LogoutResponse {
+  message: string;
+}
+

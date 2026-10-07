@@ -5,6 +5,7 @@ import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { Menu, Search, Bell, Sparkles, Shield, User, LogOut } from 'lucide-react';
 import { mockReadinessData } from '@/lib/mock/data';
+import { useAuth } from '@/hooks/use-auth';
 
 export interface TopbarProps {
   onMobileMenuToggle: () => void;
@@ -12,8 +13,21 @@ export interface TopbarProps {
 
 export function Topbar({ onMobileMenuToggle }: TopbarProps) {
   const pathname = usePathname();
+  const { user, logout } = useAuth();
   const [showNotifications, setShowNotifications] = React.useState(false);
   const [showUserMenu, setShowUserMenu] = React.useState(false);
+  const [isLoggingOut, setIsLoggingOut] = React.useState(false);
+
+  const displayName = user?.full_name || 'Aarav Mehta';
+  const displayEmail = user?.email || 'aarav.mehta@example.com';
+  const initials = React.useMemo(() => {
+    if (!displayName) return 'CP';
+    const parts = displayName.trim().split(/\s+/);
+    if (parts.length >= 2) {
+      return `${parts[0][0]}${parts[1][0]}`.toUpperCase();
+    }
+    return displayName.slice(0, 2).toUpperCase();
+  }, [displayName]);
 
   // Generate page title from route
   const getPageTitle = (path: string) => {
@@ -66,7 +80,7 @@ export function Topbar({ onMobileMenuToggle }: TopbarProps) {
             {getPageTitle(pathname || '')}
           </h1>
           <p className="hidden sm:block text-[11px] text-slate-500 dark:text-slate-400">
-            Aarav Mehta &bull; Target: {mockReadinessData.targetRole}
+            {displayName} &bull; Target: {mockReadinessData.targetRole}
           </p>
         </div>
       </div>
@@ -148,15 +162,15 @@ export function Topbar({ onMobileMenuToggle }: TopbarProps) {
             className="flex items-center gap-2 p-1 rounded-full hover:ring-2 hover:ring-brand-500/20"
           >
             <div className="h-8 w-8 rounded-full bg-brand-600 text-white flex items-center justify-center font-bold text-xs shadow-sm">
-              AM
+              {initials}
             </div>
           </button>
 
           {showUserMenu && (
-            <div className="absolute right-0 mt-2 w-52 rounded-xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 shadow-elevated p-2 z-50 text-xs">
+            <div className="absolute right-0 mt-2 w-56 rounded-xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 shadow-elevated p-2 z-50 text-xs">
               <div className="px-3 py-2 border-b border-slate-100 dark:border-slate-800">
-                <p className="font-semibold text-slate-900 dark:text-white">Aarav Mehta</p>
-                <p className="text-slate-400 text-[11px] truncate">aarav.mehta@example.com</p>
+                <p className="font-semibold text-slate-900 dark:text-white truncate">{displayName}</p>
+                <p className="text-slate-400 text-[11px] truncate">{displayEmail}</p>
               </div>
               <div className="py-1">
                 <Link
@@ -175,14 +189,20 @@ export function Topbar({ onMobileMenuToggle }: TopbarProps) {
                   <Shield className="w-4 h-4 text-slate-400" />
                   <span>Privacy & Security</span>
                 </Link>
-                <Link
-                  href="/login"
-                  onClick={() => setShowUserMenu(false)}
-                  className="flex items-center gap-2 px-3 py-2 text-rose-600 hover:bg-rose-50 dark:hover:bg-rose-950/30 rounded-lg"
+                <button
+                  type="button"
+                  disabled={isLoggingOut}
+                  onClick={async () => {
+                    setIsLoggingOut(true);
+                    setShowUserMenu(false);
+                    await logout();
+                    setIsLoggingOut(false);
+                  }}
+                  className="w-full flex items-center gap-2 px-3 py-2 text-rose-600 hover:bg-rose-50 dark:hover:bg-rose-950/30 rounded-lg text-left disabled:opacity-50"
                 >
                   <LogOut className="w-4 h-4 text-rose-500" />
-                  <span>Sign Out</span>
-                </Link>
+                  <span>{isLoggingOut ? 'Signing out...' : 'Sign Out'}</span>
+                </button>
               </div>
             </div>
           )}

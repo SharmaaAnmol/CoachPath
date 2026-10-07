@@ -75,10 +75,20 @@ export class ApiClient {
       ...((headers as Record<string, string>) || {}),
     };
 
-    const response = await fetch(url, {
-      ...rest,
-      headers: requestHeaders,
-    });
+    let response: Response;
+    try {
+      response = await fetch(url, {
+        credentials: 'include',
+        ...rest,
+        headers: requestHeaders,
+      });
+    } catch (networkError: unknown) {
+      throw new ApiClientError({
+        code: 'NETWORK_ERROR',
+        message: 'Unable to connect to CoachPath backend server. Please verify your connection.',
+        status: 0,
+      });
+    }
 
     if (!response.ok) {
       let errorPayload: ApiErrorPayload;
