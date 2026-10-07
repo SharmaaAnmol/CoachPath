@@ -51,3 +51,20 @@ async def test_ready_endpoint_unhealthy(client: AsyncClient):
         data = response.json()
         assert data["status"] == "unhealthy"
         assert data["database"] == "disconnected"
+
+
+@pytest.mark.asyncio
+async def test_production_environment_security():
+    """Verifies that production environment forces DEBUG=False and disallows default secret key."""
+    from app.core.config import Settings
+
+    # Default insecure key in production must raise ValueError
+    with pytest.raises(ValueError, match="Insecure default SECRET_KEY"):
+        Settings(ENVIRONMENT="production")
+
+    # Valid production settings forces DEBUG=False
+    prod_settings = Settings(
+        ENVIRONMENT="production",
+        SECRET_KEY="super-secret-secure-production-key-32-chars-long",
+    )
+    assert prod_settings.DEBUG is False

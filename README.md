@@ -167,37 +167,56 @@ source .venv/bin/activate
 pip install -r requirements.txt
 ```
 
-### 3. Environment Setup
+### 3. Environment Variables Setup
+Duplicate the root environment template into your workspace or backend directory:
 ```bash
-# Duplicate template from project root
-cp ../.env.example .env
+cp .env.example .env
 ```
+Key environment variables:
+- `ENVIRONMENT`: `development` | `production` | `testing`
+- `DEBUG`: `true` | `false` (automatically forced to `false` in production)
+- `CORS_ORIGINS`: Comma-separated list of allowed origins (e.g. `http://localhost:3000`)
+- `DATABASE_URL`: Asynchronous PostgreSQL connection string (e.g. `postgresql+asyncpg://coachpath_user:coachpath_password@localhost:5432/coachpath_db`)
+- `SECRET_KEY`: Minimum 32-character encryption key (production rejects default placeholder)
 
-### 4. Running Migrations & Seeding
+### 4. PostgreSQL & Database Setup (pgvector)
+You can launch PostgreSQL 16 with `pgvector` instantly using Docker:
 ```bash
-# Apply migrations to database
+# Start PostgreSQL service with pgvector extension container
+docker compose up -d db
+```
+Alternatively, connect to any existing PostgreSQL 16+ instance by updating `DATABASE_URL` in `.env`.
+
+### 5. Running Database Migrations & Seeding
+```bash
+cd backend
+
+# Apply Alembic schema migrations (creates all 37 relational tables, indexes, extensions)
 alembic upgrade head
 
-# Seed initial canonical benchmark roles and skills taxonomy (development/demo data)
+# Seed initial canonical benchmark roles and skills ontology (development/demo taxonomy)
 python scripts/seed.py
 ```
 
-### 5. Running the FastAPI Server
+### 6. Running the FastAPI Server
 ```bash
+cd backend
 uvicorn app.main:app --host 0.0.0.0 --port 8000 --reload
 ```
-- Interactive API Docs: [`http://localhost:8000/api/v1/docs`](http://localhost:8000/api/v1/docs)
+- Interactive API Docs: [`http://localhost:8000/api/v1/docs`](http://localhost:8000/api/v1/docs) (disabled when `DEBUG=false`)
 - Service Liveness: [`http://localhost:8000/api/v1/health`](http://localhost:8000/api/v1/health)
 - Infrastructure Readiness: [`http://localhost:8000/api/v1/ready`](http://localhost:8000/api/v1/ready)
 
-### 6. Running Backend Tests
+### 7. Running Backend Tests
 ```bash
+cd backend
 pytest -v
-# 33 passed in ~1.5s
+# 34 passed in ~1.5s (uses isolated in-memory SQLite engine with foreign key cascades)
 ```
 
-### 7. Running with Docker Compose
+### 8. Running with Docker Compose (Full Stack)
 ```bash
+# Boots both PostgreSQL (pgvector) and FastAPI backend containers
 docker compose up -d
 ```
 

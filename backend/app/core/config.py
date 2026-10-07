@@ -5,7 +5,7 @@ Reads environment variables with validation and default fallback values.
 
 from functools import lru_cache
 from typing import List, Union
-from pydantic import AnyHttpUrl, field_validator
+from pydantic import AnyHttpUrl, field_validator, model_validator
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
 
@@ -60,6 +60,15 @@ class Settings(BaseSettings):
 
     # Redis Cache Configuration (Placeholder / Future Phases)
     REDIS_URL: str = "redis://localhost:6379/0"
+
+    @model_validator(mode="after")
+    def validate_production_environment(self) -> "Settings":
+        if self.ENVIRONMENT == "production":
+            if self.DEBUG:
+                object.__setattr__(self, "DEBUG", False)
+            if self.SECRET_KEY.startswith("insecure-default"):
+                raise ValueError("Insecure default SECRET_KEY cannot be used in production environment.")
+        return self
 
     model_config = SettingsConfigDict(
         env_file=".env",
