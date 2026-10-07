@@ -19,10 +19,11 @@ os.environ["ENVIRONMENT"] = "testing"
 os.environ["DATABASE_URL"] = "sqlite+aiosqlite:///:memory:"
 os.environ["DB_ECHO"] = "false"
 
+import sqlalchemy as sa
 from app.core.config import settings
+from app.db.base import Base
 from app.db.session import get_db
 from app.main import create_application
-from app.models.base import Base
 
 
 @pytest_asyncio.fixture(scope="function")
@@ -33,7 +34,9 @@ async def test_engine():
         echo=False,
         future=True,
     )
+
     async with engine.begin() as conn:
+        await conn.execute(sa.text("PRAGMA foreign_keys=ON;"))
         await conn.run_sync(Base.metadata.create_all)
 
     yield engine

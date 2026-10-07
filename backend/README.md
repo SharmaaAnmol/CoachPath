@@ -39,10 +39,13 @@ Copy `.env.example` from project root to `.env` in the backend directory or proj
 cp ../.env.example .env
 ```
 
-### 4. Running Database Migrations
+### 4. Running Database Migrations & Seeding
 ```bash
 # Apply migrations to database
 alembic upgrade head
+
+# Seed initial canonical benchmark roles and skills taxonomy (development/demo data)
+python scripts/seed.py
 
 # Generate a new migration revision
 alembic revision -m "add_table_name"

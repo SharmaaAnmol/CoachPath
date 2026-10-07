@@ -173,10 +173,13 @@ pip install -r requirements.txt
 cp ../.env.example .env
 ```
 
-### 4. Running Migrations
+### 4. Running Migrations & Seeding
 ```bash
 # Apply migrations to database
 alembic upgrade head
+
+# Seed initial canonical benchmark roles and skills taxonomy (development/demo data)
+python scripts/seed.py
 ```
 
 ### 5. Running the FastAPI Server
@@ -190,6 +193,7 @@ uvicorn app.main:app --host 0.0.0.0 --port 8000 --reload
 ### 6. Running Backend Tests
 ```bash
 pytest -v
+# 33 passed in ~1.5s
 ```
 
 ### 7. Running with Docker Compose
@@ -206,7 +210,7 @@ CoachPath is engineered under a phased methodology:
 - [x] **Phase 0: Product Definition & System Architecture** *(Completed — All 10 architecture records finalized)*
 - [x] **Phase 1: Frontend Foundation, Design System & Product Shell** *(Completed — Next.js 14, Tailwind, 12 Domain Shells)*
 - [x] **Phase 2A: Backend Foundation & Infrastructure Setup** *(Completed — FastAPI, SQLAlchemy 2.0, Alembic, 22 Passing Tests)*
-- [ ] **Phase 2B: Master Taxonomy Seed & Database Migrations** *(Next: Initial 7 roles, skills taxonomy, role requirements)*
+- [x] **Phase 2B: Master PostgreSQL Data Layer Implementation** *(Completed — 37 SQLAlchemy 2.x models, Alembic migration 973e9bef3510, seed script, 33 Passing Tests)*
 - [ ] **Phase 3: Authentication & User Profile Graph**
 - [ ] **Phase 4: AI Career Onboarding Conversation**
 - [ ] **Phase 5: Resume Ingestion & Parsing Engine**

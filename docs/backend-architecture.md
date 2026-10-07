@@ -1,7 +1,7 @@
 # CoachPath — Backend Architecture Specification
 
-**Document Version**: 1.0.0  
-**Phase**: Phase 2A (Backend Foundation & Infrastructure)  
+**Document Version**: 1.1.0  
+**Phase**: Phase 2B (PostgreSQL Data Layer Implementation)  
 **Status**: Authoritative Reference  
 **Last Updated**: October 2026  
 
@@ -165,9 +165,30 @@ SECRET_KEY=insecure-default-change-in-production-secret-key-32-chars-min
 - Application lifespan handler (`lifespan`) in `app/main.py` explicitly calls `engine.dispose()` on process SIGTERM/SIGINT.
 
 ### Declarative Model Standards
-All domain entities inherit from `Base` (`app/models/base.py`):
-1. `UUIDMixin`: Generates client-safe UUIDv4 primary keys.
-2. `TimestampMixin`: Automatically maintains `created_at` and `updated_at` in timezone-aware UTC.
+All domain entities inherit from `Base` (`app/models/base.py`) and are organized into 10 modular domain packages under `app/models/`:
+1. `auth.py`: `User`, `UserProfile`, `UserSession`
+2. `career.py`: `Role`, `CareerProfile`, `Education`, `Experience`, `Project`, `Certification`
+3. `skills.py`: `Skill`, `RoleRequirement`, `UserSkill`, `SkillGap`
+4. `assessments.py`: `Assessment`, `AssessmentQuestion`, `AssessmentAttempt`, `AssessmentAnswer`, `AssessmentResult`
+5. `roadmap.py`: `Roadmap`, `RoadmapPhase`, `RoadmapTask`
+6. `jobs.py`: `Job`, `JobSkill`, `JobMatch`
+7. `resume.py`: `Resume`, `ResumeVersion`
+8. `applications.py`: `Application`, `ApplicationStatusHistory`, `Recruiter`, `RecruiterContact`, `RecruiterMessage`, `Interview`, `InterviewQuestion`, `InterviewPreparation`
+9. `readiness.py`: `CareerReadinessScore`
+10. `audit.py`: `ActivityLog`, `AuditLog`
+
+### Database Engine & Types
+- **UUIDs**: Standard `sa.Uuid(as_uuid=True)` client-safe UUIDv4 primary keys.
+- **Auditing**: `TimestampMixin` maintaining timezone-aware `created_at` and `updated_at` in UTC.
+- **Arrays**: `StringArray(length)` and `TextArray()` compiling to native `VARCHAR[]` / `TEXT[]` on PostgreSQL with SQLite JSON fallbacks for testing.
+- **JSON**: `JsonB()` compiling to PostgreSQL `JSONB` with SQLite JSON fallbacks.
+- **Vectors**: `VectorType(1536)` mapping to `pgvector` HNSW representations on PostgreSQL.
+- **Network**: `Inet()` compiling to PostgreSQL `INET` with `VARCHAR(45)` fallback on SQLite.
+
+### Alembic Migration & Seeding
+- **Baseline Revision**: `00b73b0a6635_initial_schema_baseline.py`
+- **Phase 2B Revision**: `973e9bef3510_phase_2b_data_model.py` (executes PostgreSQL extensions `uuid-ossp` and `vector`, generates all 37 tables, composite indexes, and foreign keys with `ON DELETE CASCADE / RESTRICT / SET NULL`).
+- **Seed Script**: `backend/scripts/seed.py` idempotently seeds canonical benchmark roles (7 roles), core skills ontology (15+ skills), and benchmark requirements.
 
 ---
 
@@ -239,15 +260,16 @@ The Next.js frontend integrates via [`frontend/src/lib/api-client.ts`](file:///U
 
 ## 10. Test Execution & Verification
 
-The backend test suite runs with 100% pass rates in under 0.2 seconds:
+The backend test suite executes with 100% pass rates across 33 automated tests:
 
 ```bash
 cd backend
 .venv/bin/pytest -v
-# ============================== 22 passed in 0.13s ==============================
+# ============================== 33 passed in 1.57s ==============================
 ```
 - **Liveness & Readiness**: Root metadata, healthy DB readiness, and 503 fallback when DB fails.
 - **RFC 7807 Errors**: Validation error formatting, 404 formatting, custom domain exceptions.
 - **Middleware**: Tracing headers, execution timing, and correlation ID preservation.
 - **Structural Routers**: Validates all 14 placeholder domain routes mount correctly.
 - **Repository / Service Layer**: Validates CRUD abstraction and `NotFoundException` handling.
+- **Model Tests (`test_models.py`)**: Validates model creation, relationships, foreign keys, unique constraints, cascade deletion, and seed script idempotency across all 37 database entities.
