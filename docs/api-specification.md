@@ -324,7 +324,11 @@ All mutating, state-altering, or expensive operations (e.g., creating tailored r
 #### 3.6 Certifications CRUD
 - `GET /api/v1/profile/certifications`: List certifications.
 - `POST /api/v1/profile/certifications`: Add certification (`201 Created`).
+- `PUT /api/v1/profile/certifications/{id}`: Update certification (`200 OK`).
 - `DELETE /api/v1/profile/certifications/{id}`: Delete certification (`204 No Content`).
+
+#### 3.7 Profile Activity Log
+- `GET /api/v1/profile/activity`: List chronological candidate activity events (`activity_logs`) with pagination (`page`, `page_size`).
 
 ---
 
@@ -790,7 +794,7 @@ All mutating, state-altering, or expensive operations (e.g., creating tailored r
 
 ---
 
-### Group 12: Career Readiness & Intelligence Dashboard (`/api/v1/readiness`, `/api/v1/dashboard`)
+### Group 12: Career Readiness Intelligence (`/api/v1/readiness`)
 
 #### 12.1 Get Current Readiness Score
 - **Method / URL**: `GET /api/v1/readiness`
@@ -818,27 +822,31 @@ All mutating, state-altering, or expensive operations (e.g., creating tailored r
 - **Auth**: Authenticated
 - **Response (200 OK)**: Array of `{recorded_date, overall_score, factors}` representing 30-day velocity trajectory.
 
-#### 12.3 Get Unified Dashboard Summary
+---
+
+### Group 13: Command Center Dashboard (`/api/v1/dashboard`)
+
+#### 13.1 Get Unified Dashboard Summary
 - **Method / URL**: `GET /api/v1/dashboard/summary`
 - **Auth**: Authenticated
 - **Response (200 OK)**: Aggregates readiness score, top 3 matched jobs, active milestone task, upcoming interviews, and recent activity feed in a single sub-100ms query.
 
 ---
 
-### Group 13: Settings & Data Privacy (`/api/v1/settings`)
+### Group 14: Settings & Data Privacy (`/api/v1/settings`)
 
-#### 13.1 Update User Settings
+#### 14.1 Update User Settings
 - **Method / URL**: `PATCH /api/v1/settings`
 - **Auth**: Authenticated
 - **Request Body**: `{"notification_email_digest": true, "theme": "system"}`
 - **Response (200 OK)**: Returns updated user settings.
 
-#### 13.2 Export User Data (GDPR Portability)
+#### 14.2 Export User Data (GDPR Portability)
 - **Method / URL**: `POST /api/v1/settings/privacy/export`
 - **Auth**: Authenticated
 - **Response (200 OK)**: Compiles complete JSON archive of all candidate records across all 37 database tables.
 
-#### 13.3 Permanent Account Deletion (Right to be Forgotten)
+#### 14.3 Permanent Account Deletion (Right to be Forgotten)
 - **Method / URL**: `POST /api/v1/settings/privacy/delete-account`
 - **Auth**: Authenticated
 - **Request Body**: `{"confirmation": "DELETE", "password": "Password123!"}`
