@@ -1,0 +1,48 @@
+version: '3.8'
+
+services:
+  db:
+    image: pgvector/pgvector:pg16
+    container_name: coachpath-postgres
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER:-coachpath_user}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-coachpath_password}
+      POSTGRES_DB: ${POSTGRES_DB:-coachpath_db}
+    ports:
+      - "${POSTGRES_PORT:-5432}:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-coachpath_user} -d ${POSTGRES_DB:-coachpath_db}"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    container_name: coachpath-backend
+    restart: unless-stopped
+    depends_on:
+      db:
+        condition: service_healthy
+    environment:
+      ENVIRONMENT: development
+      DEBUG: "true"
+      LOG_LEVEL: info
+      API_HOST: 0.0.0.0
+      API_PORT: 8000
+      CORS_ORIGINS: http://localhost:3000,http://127.0.0.1:3000
+      DATABASE_URL: postgresql+asyncpg://${POSTGRES_USER:-coachpath_user}:${POSTGRES_PASSWORD:-coachpath_password}@db:5432/${POSTGRES_DB:-coachpath_db}
+      SECRET_KEY: ${SECRET_KEY:-insecure-default-change-in-production-secret-key-32-chars-min}
+    ports:
+      - "8000:8000"
+    volumes:
+      - ./backend/app:/app/app
+      - ./backend/alembic:/app/alembic
+
+volumes:
+  postgres_data:
+    driver: local

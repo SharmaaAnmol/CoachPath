@@ -102,13 +102,19 @@ For early iterations, CoachPath prioritizes university students and early-career
 │   ├── development-roadmap.md        # Engineering phase breakdown & milestones (Phase 0)
 │   ├── architecture-decisions.md     # Architecture Decision Records (ADRs) (Phase 0)
 │   ├── phase-0-final-audit.md        # Comprehensive Phase 0 audit report
-│   └── frontend-architecture.md      # Frontend architecture & design system (Phase 1)
+│   ├── frontend-architecture.md      # Frontend architecture & design system (Phase 1)
+│   └── backend-architecture.md       # Backend architecture & data access (Phase 2A)
+├── backend/                          # FastAPI / Python 3.13 Backend Workspace
+│   ├── app/                          # Core, API routes, DB, models, schemas, services
+│   ├── alembic/                      # Async database migrations and versions
+│   └── tests/                        # Pytest suite with isolated in-memory testing
 ├── frontend/                         # Next.js 14 App Router Frontend Workspace
 │   ├── src/app/(public)/             # Marketing routes (/, /about, /features, /privacy, /login, /signup)
 │   ├── src/app/(app)/                # Authenticated shells (dashboard, profile, skills, roadmap, jobs, etc.)
 │   ├── src/components/               # Design system atomic components and layout shell
 │   ├── src/lib/mock/                 # Typed candidate mock data store (Aarav Mehta)
 │   └── src/types/                    # Strict TypeScript domain interfaces
+├── docker-compose.yml                # Docker Compose setup for FastAPI & PostgreSQL with pgvector
 ├── .env.example                      # Configuration template for local & production
 ├── .gitignore                        # Global ignore rules for Node, Python, and env
 └── README.md                         # Project overview and guidance
@@ -138,20 +144,58 @@ npm run dev
 
 Visit [`http://localhost:3000`](http://localhost:3000) in your browser.
 
-### 3. Key Routes
-- **Marketing Landing Page**: [`/`](http://localhost:3000/) (featuring live interactive platform sandbox)
-- **Executive Dashboard**: [`/dashboard`](http://localhost:3000/dashboard)
-- **Career Profile**: [`/career-profile`](http://localhost:3000/career-profile) (aliased to `/profile`)
-- **Skill Taxonomy**: [`/skills`](http://localhost:3000/skills)
-- **Diagnostic Assessments**: [`/assessments`](http://localhost:3000/assessments)
-- **Milestone Roadmap**: [`/roadmap`](http://localhost:3000/roadmap)
-- **Semantic Job Matching**: [`/jobs`](http://localhost:3000/jobs)
-- **Resume Optimizer**: [`/resume`](http://localhost:3000/resume)
-- **Application Tracker**: [`/applications`](http://localhost:3000/applications)
-- **Recruiter Discovery**: [`/recruiters`](http://localhost:3000/recruiters)
-- **STAR Interview Prep**: [`/interviews`](http://localhost:3000/interviews)
-- **Career Readiness Index**: [`/career-readiness`](http://localhost:3000/career-readiness) (aliased to `/readiness`)
-- **Settings & Privacy**: [`/settings`](http://localhost:3000/settings)
+---
+
+## ⚙️ Backend Quickstart Guide (Phase 2A)
+
+The CoachPath backend is built with Python 3.13, FastAPI, SQLAlchemy 2.0 (Async), and Alembic.
+
+### 1. Prerequisites
+- Python `3.13+`
+- PostgreSQL `16+` with `pgvector` extension (or Docker)
+
+### 2. Local Setup & Virtual Environment
+```bash
+# Navigate to the backend directory
+cd backend
+
+# Create and activate virtual environment
+python3 -m venv .venv
+source .venv/bin/activate
+
+# Install dependencies
+pip install -r requirements.txt
+```
+
+### 3. Environment Setup
+```bash
+# Duplicate template from project root
+cp ../.env.example .env
+```
+
+### 4. Running Migrations
+```bash
+# Apply migrations to database
+alembic upgrade head
+```
+
+### 5. Running the FastAPI Server
+```bash
+uvicorn app.main:app --host 0.0.0.0 --port 8000 --reload
+```
+- Interactive API Docs: [`http://localhost:8000/api/v1/docs`](http://localhost:8000/api/v1/docs)
+- Service Liveness: [`http://localhost:8000/api/v1/health`](http://localhost:8000/api/v1/health)
+- Infrastructure Readiness: [`http://localhost:8000/api/v1/ready`](http://localhost:8000/api/v1/ready)
+
+### 6. Running Backend Tests
+```bash
+pytest -v
+```
+
+### 7. Running with Docker Compose
+```bash
+docker compose up -d
+```
 
 ---
 
@@ -161,7 +205,8 @@ CoachPath is engineered under a phased methodology:
 
 - [x] **Phase 0: Product Definition & System Architecture** *(Completed — All 10 architecture records finalized)*
 - [x] **Phase 1: Frontend Foundation, Design System & Product Shell** *(Completed — Next.js 14, Tailwind, 12 Domain Shells)*
-- [ ] **Phase 2: Backend Foundation & Database Setup** *(Next: FastAPI, PostgreSQL + pgvector, Redis, Alembic)*
+- [x] **Phase 2A: Backend Foundation & Infrastructure Setup** *(Completed — FastAPI, SQLAlchemy 2.0, Alembic, 22 Passing Tests)*
+- [ ] **Phase 2B: Master Taxonomy Seed & Database Migrations** *(Next: Initial 7 roles, skills taxonomy, role requirements)*
 - [ ] **Phase 3: Authentication & User Profile Graph**
 - [ ] **Phase 4: AI Career Onboarding Conversation**
 - [ ] **Phase 5: Resume Ingestion & Parsing Engine**
