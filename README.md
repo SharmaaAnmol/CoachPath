@@ -2,9 +2,21 @@
 
 > **Production-Grade AI-Powered Career Intelligence Platform**
 
-CoachPath is an AI-powered personal career assistant that guides university students and early-career technology professionals from their current skill baseline to job readiness and employment.
+CoachPath is an AI-powered personal career intelligence platform that systematically guides university students, recent graduates, and early-career technology professionals from their baseline skills to verifiable job readiness and employment.
 
-Rather than acting as a simple conversational bot, static resume builder, or generic job board, CoachPath revolves around a **continuously updated, evidence-based career profile**. Every new signal—from skill assessments to course completions and application feedback—refines the user's profile and continuously updates downstream roadmaps, job matches, and resume recommendations.
+---
+
+## 💡 Product Overview
+
+Early-career job seekers face an opaque and disjointed landscape: generic course syllabi fail to match employer hiring criteria, job portals produce endless noisy listings with no gap feedback, resume tools encourage superficial keyword stuffing or untruthful hallucinations, and application tracking is scattered across spreadsheets.
+
+**CoachPath solves this by introducing a single, continuously updated career profile connected to an end-to-end intelligence loop:**
+- **Evidence-Based Skills**: Rather than relying on self-reported claims, candidate skills are calibrated through objective, practical scenario assessments.
+- **Transparent Skill-Gap Analysis**: Benchmarks candidate capabilities against empirical market requirements for target roles, categorizing skills into Met, Developing, and Missing.
+- **Dynamic Personalized Roadmaps**: Generates custom milestone learning plans targeted solely at verified gaps, automatically updating as new competencies are achieved.
+- **Semantic Job Matching**: Multi-dimensional matching (skills, experience, and semantic vector similarity) accompanied by human-readable explanations of match fit.
+- **Truthful Resume Optimization**: Contextually highlights genuine candidate experience against target roles with an automated anti-hallucination verification engine and visual diff review.
+- **Application Tracking & Readiness**: Integrated Kanban tracker tied directly to a composite Career Readiness Index (0–100%) providing clear next actions.
 
 ---
 
@@ -12,15 +24,15 @@ Rather than acting as a simple conversational bot, static resume builder, or gen
 
 ```mermaid
 flowchart TD
-    User([User]) --> Profile[Career Profile]
-    Profile --> Assessment[Skill Assessment]
-    Assessment --> Gap[Skill Gap Analysis]
-    Gap --> Roadmap[Personalized Roadmap]
-    Roadmap --> Market[Market & Job Intelligence]
-    Market --> Matching[Intelligent Job Matching]
+    User([User]) --> Profile[Central Career Profile]
+    Profile --> Assessment[Objective Skill Assessment]
+    Assessment --> Gap[Transparent Skill-Gap Analysis]
+    Gap --> Roadmap[Dynamic Personalized Roadmap]
+    Roadmap --> Market[Market Intelligence & Jobs]
+    Market --> Matching[Semantic Job Matching + Explanations]
     Matching --> Resume[Truthful Resume Optimization]
-    Resume --> Approval{User Review & Approval}
-    Approval --> Tracker[Application Tracking]
+    Resume --> Approval{Human-in-the-Loop Review}
+    Approval --> Tracker[Application Pipeline Tracker]
     Tracker --> Readiness[Career Readiness Score]
     Readiness --> Profile
 ```
@@ -45,7 +57,7 @@ flowchart TD
 
 For early iterations, CoachPath prioritizes university students and early-career tech professionals across 7 primary paths:
 
-- Software Engineer
+- Software Engineer (Generalist)
 - Backend Developer
 - Frontend Developer
 - Data Analyst
@@ -79,16 +91,16 @@ For early iterations, CoachPath prioritizes university students and early-career
 ```
 .
 ├── docs/                             # Architecture & Product Documentation
-│   ├── product-requirements.md       # Product vision, scope, and personas
-│   ├── user-flows.md                 # Detailed step-by-step user journeys
-│   ├── system-architecture.md        # Technical component topology & design
-│   ├── database-schema.md            # PostgreSQL, pgvector & Redis data models
-│   ├── api-specification.md          # REST API contracts & schemas
-│   ├── ai-architecture.md            # LLM pipelines, RAG, guardrails, and scoring
-│   ├── security-and-privacy.md       # Auth, PII handling, and anti-abuse safeguards
-│   ├── testing-strategy.md           # Unit, integration, E2E, and AI evaluation
-│   ├── development-roadmap.md        # Engineering phase breakdown & milestones
-│   └── architecture-decisions.md     # Architecture Decision Records (ADRs)
+│   ├── product-requirements.md       # Complete PRD: vision, personas, epics, NFRs, acceptance criteria
+│   ├── user-flows.md                 # Detailed step-by-step user journeys (Phase 0)
+│   ├── system-architecture.md        # Technical component topology & design (Phase 0)
+│   ├── database-schema.md            # PostgreSQL, pgvector & Redis data models (Phase 0)
+│   ├── api-specification.md          # REST API contracts & schemas (Phase 0)
+│   ├── ai-architecture.md            # LLM pipelines, RAG, guardrails, and scoring (Phase 0)
+│   ├── security-and-privacy.md       # Auth, PII handling, and anti-abuse safeguards (Phase 0)
+│   ├── testing-strategy.md           # Unit, integration, E2E, and AI evaluation (Phase 0)
+│   ├── development-roadmap.md        # Engineering phase breakdown & milestones (Phase 0)
+│   └── architecture-decisions.md     # Architecture Decision Records (ADRs) (Phase 0)
 ├── .env.example                      # Configuration template for local & production
 ├── .gitignore                        # Global ignore rules for Node, Python, and env
 └── README.md                         # Project overview and guidance
@@ -100,8 +112,9 @@ For early iterations, CoachPath prioritizes university students and early-career
 
 CoachPath is engineered under a phased methodology:
 
-- [x] **Phase 0: Project Inception & Scaffolding** *(Completed)*
-- [ ] **Phase 0.1: Architecture & Technical Specifications** *(Next: Authoring `/docs`)*
+- [x] **Phase 0.0: Project Inception & Scaffolding** *(Completed)*
+- [x] **Phase 0.1: Product Requirements Document (PRD)** *(Completed in [`/docs/product-requirements.md`](docs/product-requirements.md))*
+- [ ] **Phase 0.2: Technical Design & Architecture Specifications** *(Next in `/docs`)*
 - [ ] **Phase 1: Foundation & Infrastructure Setup**
 - [ ] **Phase 2: Career Profile & Skill Ingestion Engine**
 - [ ] **Phase 3: Evidence-Based Assessment & Skill Gap Engine**
