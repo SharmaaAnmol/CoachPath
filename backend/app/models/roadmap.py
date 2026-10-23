@@ -1,6 +1,6 @@
 """
 Dynamic Personalized Roadmaps Domain Models.
-Implements Roadmap, RoadmapPhase, and RoadmapTask.
+Implements Roadmap, RoadmapPhase, and RoadmapTask with Phase 7A curriculum enhancements.
 """
 
 from __future__ import annotations
@@ -25,17 +25,19 @@ from app.models.base import Base, JsonB, TimestampMixin, UUIDMixin
 
 if TYPE_CHECKING:
     from app.models.career import CareerProfile, Role
-    from app.models.skills import Skill
+    from app.models.skills import Skill, SkillGapAnalysis
 
 
 class Roadmap(Base, UUIDMixin, TimestampMixin):
     """
     Active personalized learning roadmap tied to the candidate's primary target role.
+    Integrates with deterministic skill-gap analysis snapshots and user time constraints.
     """
 
     __tablename__ = "roadmaps"
     __table_args__ = (
         Index("roadmaps_profile_active_idx", "career_profile_id", "is_active"),
+        Index("roadmaps_gap_analysis_idx", "skill_gap_analysis_id"),
     )
 
     career_profile_id: Mapped[uuid.UUID] = mapped_column(
@@ -50,10 +52,21 @@ class Roadmap(Base, UUIDMixin, TimestampMixin):
         nullable=False,
         doc="Target benchmark role reference",
     )
+    skill_gap_analysis_id: Mapped[Optional[uuid.UUID]] = mapped_column(
+        sa.Uuid(as_uuid=True),
+        ForeignKey("skill_gap_analyses.id", ondelete="SET NULL"),
+        nullable=True,
+        doc="Skill gap analysis snapshot reference used for roadmap generation",
+    )
     title: Mapped[str] = mapped_column(
         String(255),
         nullable=False,
         doc="Roadmap curriculum title",
+    )
+    description: Mapped[Optional[str]] = mapped_column(
+        Text,
+        nullable=True,
+        doc="Curriculum summary narrative and strategic learning path overview",
     )
     version: Mapped[int] = mapped_column(
         Integer,
@@ -69,6 +82,34 @@ class Roadmap(Base, UUIDMixin, TimestampMixin):
         nullable=False,
         doc="Active roadmap indicator",
     )
+    status: Mapped[str] = mapped_column(
+        String(32),
+        default="active",
+        server_default=sa.text("'active'"),
+        nullable=False,
+        doc="Lifecycle status ('active', 'completed', 'archived')",
+    )
+    generation_mode: Mapped[str] = mapped_column(
+        String(32),
+        default="deterministic_ai",
+        server_default=sa.text("'deterministic_ai'"),
+        nullable=False,
+        doc="Generation method ('deterministic', 'deterministic_ai')",
+    )
+    weekly_hours: Mapped[int] = mapped_column(
+        Integer,
+        default=10,
+        server_default=sa.text("10"),
+        nullable=False,
+        doc="Planned weekly study effort in hours",
+    )
+    total_estimated_hours: Mapped[int] = mapped_column(
+        Integer,
+        default=0,
+        server_default=sa.text("0"),
+        nullable=False,
+        doc="Total estimated study effort required across all phases",
+    )
     total_tasks: Mapped[int] = mapped_column(
         Integer,
         default=0,
@@ -83,6 +124,16 @@ class Roadmap(Base, UUIDMixin, TimestampMixin):
         nullable=False,
         doc="Number of verified completed tasks",
     )
+    start_date: Mapped[Optional[datetime]] = mapped_column(
+        DateTime(timezone=True),
+        nullable=True,
+        doc="Curriculum start timestamp",
+    )
+    target_completion_date: Mapped[Optional[datetime]] = mapped_column(
+        DateTime(timezone=True),
+        nullable=True,
+        doc="Projected completion timestamp based on weekly hours",
+    )
 
     # Relationships
     career_profile: Mapped[CareerProfile] = relationship(
@@ -93,10 +144,14 @@ class Roadmap(Base, UUIDMixin, TimestampMixin):
         "Role",
         back_populates="roadmaps",
     )
+    skill_gap_analysis: Mapped[Optional[SkillGapAnalysis]] = relationship(
+        "SkillGapAnalysis",
+    )
     phases: Mapped[List[RoadmapPhase]] = relationship(
         "RoadmapPhase",
         back_populates="roadmap",
         cascade="all, delete-orphan",
+        order_by="RoadmapPhase.order_index",
     )
 
 
@@ -127,6 +182,35 @@ class RoadmapPhase(Base, UUIDMixin):
         nullable=False,
         doc="Phase conceptual focus and goals",
     )
+    objective: Mapped[Optional[str]] = mapped_column(
+        Text,
+        nullable=True,
+        doc="Specific technical milestone objective for this phase",
+    )
+    estimated_hours: Mapped[int] = mapped_column(
+        Integer,
+        default=0,
+        server_default=sa.text("0"),
+        nullable=False,
+        doc="Sum of task hours in phase",
+    )
+    prerequisites: Mapped[Optional[str]] = mapped_column(
+        Text,
+        nullable=True,
+        doc="Entry prerequisites for phase",
+    )
+    completion_criteria: Mapped[Optional[str]] = mapped_column(
+        Text,
+        nullable=True,
+        doc="Criteria required to complete phase",
+    )
+    status: Mapped[str] = mapped_column(
+        String(32),
+        default="pending",
+        server_default=sa.text("'pending'"),
+        nullable=False,
+        doc="Phase status ('pending', 'in_progress', 'completed')",
+    )
     order_index: Mapped[int] = mapped_column(
         Integer,
         nullable=False,
@@ -149,6 +233,7 @@ class RoadmapPhase(Base, UUIDMixin):
         "RoadmapTask",
         back_populates="phase",
         cascade="all, delete-orphan",
+        order_by="RoadmapTask.order_index",
     )
 
 
@@ -167,6 +252,7 @@ class RoadmapTask(Base, UUIDMixin):
         ),
         Index("roadmap_tasks_phase_idx", "phase_id", "order_index"),
         Index("roadmap_tasks_status_idx", "status"),
+        Index("roadmap_tasks_skill_idx", "skill_id"),
     )
 
     phase_id: Mapped[uuid.UUID] = mapped_column(
@@ -191,6 +277,25 @@ class RoadmapTask(Base, UUIDMixin):
         nullable=False,
         doc="Detailed milestone guidance and execution steps",
     )
+    learning_objective: Mapped[Optional[str]] = mapped_column(
+        Text,
+        nullable=True,
+        doc="Concrete learning objective or competence verified",
+    )
+    task_type: Mapped[str] = mapped_column(
+        String(32),
+        default="project",
+        server_default=sa.text("'project'"),
+        nullable=False,
+        doc="Task type ('course', 'reading', 'practice', 'project', 'assessment')",
+    )
+    priority: Mapped[str] = mapped_column(
+        String(16),
+        default="medium",
+        server_default=sa.text("'medium'"),
+        nullable=False,
+        doc="Task priority ('critical', 'high', 'medium', 'low')",
+    )
     estimated_hours: Mapped[int] = mapped_column(
         Integer,
         default=5,
@@ -205,6 +310,13 @@ class RoadmapTask(Base, UUIDMixin):
         nullable=False,
         doc="Array of curated educational resources [{title, url, type}]",
     )
+    prerequisite_task_ids: Mapped[List[str]] = mapped_column(
+        JsonB(),
+        default=list,
+        server_default=sa.text("'[]'"),
+        nullable=False,
+        doc="Prerequisite task IDs within this roadmap",
+    )
     deliverable_requirement: Mapped[Optional[str]] = mapped_column(
         Text,
         nullable=True,
@@ -215,12 +327,22 @@ class RoadmapTask(Base, UUIDMixin):
         nullable=True,
         doc="Candidate submitted deliverable proof URL",
     )
+    completion_criteria: Mapped[Optional[str]] = mapped_column(
+        Text,
+        nullable=True,
+        doc="Detailed verification / acceptance criteria",
+    )
     status: Mapped[str] = mapped_column(
         String(32),
         default="pending",
         server_default=sa.text("'pending'"),
         nullable=False,
         doc="Task status ('pending', 'in_progress', 'completed', 'skipped')",
+    )
+    due_date: Mapped[Optional[datetime]] = mapped_column(
+        DateTime(timezone=True),
+        nullable=True,
+        doc="Estimated scheduled milestone due date",
     )
     completed_at: Mapped[Optional[datetime]] = mapped_column(
         DateTime(timezone=True),
@@ -231,6 +353,11 @@ class RoadmapTask(Base, UUIDMixin):
         Integer,
         nullable=False,
         doc="Sequential order of the task within its phase",
+    )
+    source_gap_priority: Mapped[Optional[str]] = mapped_column(
+        String(32),
+        nullable=True,
+        doc="Source gap priority from skill gap analysis (e.g. 'CRITICAL', 'HIGH')",
     )
 
     # Relationships

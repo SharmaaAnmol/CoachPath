@@ -52,7 +52,7 @@ flowchart TD
 | **Vector Storage** | **pgvector** | Relational vector similarity search, unified backup/transactions |
 | **Cache & Queue** | **Redis** | Fast token validation, rate-limiting, asynchronous task brokering |
 | **AI Integration** | **Google Gemini (`gemini-3.5-flash-lite`), Instructor/Pydantic** | Zero-fabrication structured parsing, adaptive onboarding, quarantined prompts |
-| **Testing** | **Pytest (Async), HTTPX, TypeScript (`tsc`), ESLint** | 152 automated backend integration tests, 100% type-checked frontend |
+| **Testing** | **Pytest (Async), HTTPX, TypeScript (`tsc`), ESLint** | 162 automated backend integration tests, 100% type-checked frontend |
 
 ---
 
@@ -195,7 +195,7 @@ Open your browser at **[http://localhost:3000](http://localhost:3000)**.
 To verify all system contracts, run:
 
 ```bash
-# Backend test suite (143 integration tests)
+# Backend test suite (162 integration tests)
 cd /Users/anmolsharma/Desktop/Coach_Path/backend
 source .venv/bin/activate
 pytest tests/ -v
@@ -230,8 +230,10 @@ CoachPath follows a phased engineering methodology:
 - [x] **Phase 6A: Skill Gap Analysis Engine (Backend)** *(Completed — Canonical taxonomy of 48 skills, 9 benchmark roles, 79 requirements, deterministic alignment and coverage scoring)*
 - [x] **Phase 6B: Skill Gap Analysis Dashboard (Frontend)** *(Completed — Target role selector, radial SVG gauges, 4-level competency breakdown, prioritized gaps list, evidence drilldown modal, snapshot history)*
 - [x] **Phase 6C: Skill Gap Analysis End-to-End Testing & Final Audit** *(Completed — 20-step journey verified, 152 automated tests passing, 100% audit pass verdict)*
-- [ ] **Phase 7: Dynamic Milestone Roadmap Engine**
-- [ ] **Phase 7: Job Feed Ingestion Pipeline**
+- [x] **Phase 7A: Personalized Learning Roadmap Engine (Backend)** *(Completed — 4-phase sequential milestones, topological prerequisite DAG validation, scheduling feasibility calculation, task tracking, dynamic evidence adaptation, 162 automated tests passing)*
+- [ ] **Phase 7B: Learning Roadmap Frontend Dashboard & Milestone Tracking**
+- [ ] **Phase 7C: Learning Roadmap End-to-End Integration Testing & Audit**
+- [ ] **Phase 8: Job Feed Ingestion Pipeline**
 - [ ] **Phase 8: Intelligent Job Matching Engine**
 - [ ] **Phase 9: Truthful Resume Optimization Engine**
 - [ ] **Phase 10: Application Pipeline Tracker**
