@@ -52,7 +52,7 @@ flowchart TD
 | **Vector Storage** | **pgvector** | Relational vector similarity search, unified backup/transactions |
 | **Cache & Queue** | **Redis** | Fast token validation, rate-limiting, asynchronous task brokering |
 | **AI Integration** | **Google Gemini (`gemini-3.5-flash-lite`), Instructor/Pydantic** | Zero-fabrication structured parsing, adaptive onboarding, quarantined prompts |
-| **Testing** | **Pytest (Async), HTTPX, TypeScript (`tsc`), ESLint** | 168 automated backend integration tests, 100% type-checked frontend |
+| **Testing** | **Pytest (Async), HTTPX, TypeScript (`tsc`), ESLint** | 185 automated backend integration tests, 100% type-checked frontend |
 
 ---
 
@@ -121,7 +121,7 @@ CoachPath provides curated industry benchmark requirements across 7 canonical en
 │   │   ├── schemas/                               # Pydantic v2 validation contracts
 │   │   └── services/                              # Engine implementations (Onboarding, Resume, Assessment, Skill Gap, Roadmap)
 │   ├── alembic/                                   # Async schema migrations (all tables to head)
-│   └── tests/                                     # Comprehensive Pytest test suite (168 passing tests)
+│   └── tests/                                     # Comprehensive Pytest test suite (185 passing tests)
 ├── frontend/                                      # Next.js 14 App Router Frontend Workspace
 │   ├── src/app/(public)/                          # Landing, Login, Signup, About, Features, Privacy
 │   ├── src/app/(app)/                             # Protected routes: /dashboard, /onboarding, /resume, /assessments, /skills, /roadmap
@@ -200,7 +200,7 @@ Open your browser at **[http://localhost:3000](http://localhost:3000)**.
 To verify all system contracts, run:
 
 ```bash
-# Backend test suite (168 integration tests)
+# Backend test suite (185 integration tests)
 cd /Users/anmolsharma/Desktop/Coach_Path/backend
 source .venv/bin/activate
 pytest tests/ -v
@@ -238,8 +238,9 @@ CoachPath follows a phased engineering methodology:
 - [x] **Phase 7A: Personalized Learning Roadmap Engine (Backend)** *(Completed — 4-phase sequential milestones, topological prerequisite DAG validation, scheduling feasibility calculation, task tracking, dynamic evidence adaptation, 162 automated tests passing)*
 - [x] **Phase 7B: Learning Roadmap Frontend Dashboard & Milestone Tracking** *(Completed — Interactive phase accordions, DAG dependency lock enforcement, task status transitions, deliverable proof URL submission, feasibility schedule banner, dynamic assessment adaptation, 100% type-checked Next.js pages)*
 - [x] **Phase 7C: Learning Roadmap End-to-End Integration Testing & Audit** *(Completed — 20-step lifecycle verified, multi-profile personalization, workload feasibility calculations, deliverable proof URL validation, 168 automated tests passing, 100% audit pass verdict)*
-- [ ] **Phase 8: Job Feed Ingestion Pipeline**
-- [ ] **Phase 8: Intelligent Job Matching Engine**
+- [x] **Phase 8A: Job Market Intelligence and Permitted Job Ingestion Engine (Backend)** *(Completed — Provider adapters for Seed, Manual, Arbeitnow, and Mock; data normalization, canonical skill extraction, idempotent upserts, search & market intelligence APIs, 185 automated tests passing)*
+- [ ] **Phase 8B: Semantic Job Matching & Recommendation Engine**
+- [ ] **Phase 8C: Job Market & Recommendations Frontend Dashboard**
 - [ ] **Phase 9: Truthful Resume Optimization Engine**
 - [ ] **Phase 10: Application Pipeline Tracker**
 - [ ] **Phase 11: Recruiter Discovery & High-Context Networking**

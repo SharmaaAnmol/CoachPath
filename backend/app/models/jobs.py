@@ -1,6 +1,6 @@
 """
 Jobs and Semantic Matching Domain Models.
-Implements Job, JobSkill, and JobMatch.
+Implements JobSource, JobIngestionRun, Job, JobSkill, and JobMatch.
 """
 
 from __future__ import annotations
@@ -28,6 +28,7 @@ from app.models.base import (
     Base,
     JsonB,
     StringArray,
+    TimestampMixin,
     UUIDMixin,
     VectorType,
     utc_now,
@@ -38,6 +39,166 @@ if TYPE_CHECKING:
     from app.models.career import CareerProfile, Role
     from app.models.resume import ResumeVersion
     from app.models.skills import Skill
+
+
+class JobSource(Base, UUIDMixin, TimestampMixin):
+    """
+    Permitted job data source configuration (seed datasets, APIs, manual import).
+    Tracks provider capabilities, rate limits, and ingestion state.
+    """
+
+    __tablename__ = "job_sources"
+    __table_args__ = (
+        CheckConstraint(
+            "provider_type IN ('seed', 'manual', 'api', 'mock')",
+            name="job_sources_provider_type_check",
+        ),
+        Index("job_sources_name_idx", "name", unique=True),
+    )
+
+    name: Mapped[str] = mapped_column(
+        String(64),
+        unique=True,
+        nullable=False,
+        doc="Unique identifier for the job source ('seed', 'manual', 'arbeitnow', 'mock')",
+    )
+    provider_type: Mapped[str] = mapped_column(
+        String(32),
+        nullable=False,
+        doc="Source modality ('seed', 'manual', 'api', 'mock')",
+    )
+    base_url: Mapped[Optional[str]] = mapped_column(
+        String(255),
+        nullable=True,
+        doc="API root endpoint or documentation URL",
+    )
+    is_active: Mapped[bool] = mapped_column(
+        Boolean,
+        default=True,
+        server_default=sa.text("TRUE"),
+        nullable=False,
+        doc="Whether this ingestion source is currently enabled",
+    )
+    rate_limit_per_minute: Mapped[int] = mapped_column(
+        Integer,
+        default=30,
+        server_default=sa.text("30"),
+        nullable=False,
+        doc="Allowed rate limit in calls/batches per minute",
+    )
+    last_ingested_at: Mapped[Optional[datetime]] = mapped_column(
+        DateTime(timezone=True),
+        nullable=True,
+        doc="Timestamp of most recent successful ingestion run",
+    )
+    config_metadata: Mapped[Optional[Dict[str, Any]]] = mapped_column(
+        JsonB(),
+        nullable=True,
+        default=dict,
+        doc="Provider-specific configuration or pagination offsets",
+    )
+
+    # Relationships
+    ingestion_runs: Mapped[List[JobIngestionRun]] = relationship(
+        "JobIngestionRun",
+        back_populates="source",
+        cascade="all, delete-orphan",
+        order_by="desc(JobIngestionRun.started_at)",
+    )
+
+
+class JobIngestionRun(Base, UUIDMixin):
+    """
+    Audit log of an execution run of the job ingestion engine.
+    Records fetch, insert, update, skip, and error metrics.
+    """
+
+    __tablename__ = "job_ingestion_runs"
+    __table_args__ = (
+        CheckConstraint(
+            "status IN ('pending', 'running', 'completed', 'failed', 'partial')",
+            name="job_ingestion_runs_status_check",
+        ),
+        Index("job_ingestion_runs_source_idx", "source_name", "started_at"),
+    )
+
+    source_id: Mapped[Optional[uuid.UUID]] = mapped_column(
+        sa.Uuid(as_uuid=True),
+        ForeignKey("job_sources.id", ondelete="SET NULL"),
+        nullable=True,
+        doc="Associated JobSource foreign key (if known)",
+    )
+    source_name: Mapped[str] = mapped_column(
+        String(64),
+        nullable=False,
+        doc="Name of the ingestion source adapter",
+    )
+    status: Mapped[str] = mapped_column(
+        String(32),
+        default="pending",
+        server_default=sa.text("'pending'"),
+        nullable=False,
+        doc="Run execution state ('pending', 'running', 'completed', 'failed', 'partial')",
+    )
+    items_fetched: Mapped[int] = mapped_column(
+        Integer,
+        default=0,
+        server_default=sa.text("0"),
+        nullable=False,
+        doc="Raw job records fetched from source",
+    )
+    items_inserted: Mapped[int] = mapped_column(
+        Integer,
+        default=0,
+        server_default=sa.text("0"),
+        nullable=False,
+        doc="New jobs inserted into catalog",
+    )
+    items_updated: Mapped[int] = mapped_column(
+        Integer,
+        default=0,
+        server_default=sa.text("0"),
+        nullable=False,
+        doc="Existing jobs refreshed or updated",
+    )
+    items_skipped: Mapped[int] = mapped_column(
+        Integer,
+        default=0,
+        server_default=sa.text("0"),
+        nullable=False,
+        doc="Jobs skipped due to quality filters or duplicates",
+    )
+    items_errored: Mapped[int] = mapped_column(
+        Integer,
+        default=0,
+        server_default=sa.text("0"),
+        nullable=False,
+        doc="Record processing failures",
+    )
+    error_log: Mapped[Optional[List[Dict[str, Any]]]] = mapped_column(
+        JsonB(),
+        nullable=True,
+        default=list,
+        doc="Structured error details for failed items",
+    )
+    started_at: Mapped[datetime] = mapped_column(
+        DateTime(timezone=True),
+        default=utc_now,
+        server_default=sa.text("CURRENT_TIMESTAMP"),
+        nullable=False,
+        doc="Run initiation timestamp (UTC)",
+    )
+    finished_at: Mapped[Optional[datetime]] = mapped_column(
+        DateTime(timezone=True),
+        nullable=True,
+        doc="Run completion timestamp (UTC)",
+    )
+
+    # Relationships
+    source: Mapped[Optional[JobSource]] = relationship(
+        "JobSource",
+        back_populates="ingestion_runs",
+    )
 
 
 class Job(Base, UUIDMixin):
@@ -55,8 +216,14 @@ class Job(Base, UUIDMixin):
             "experience_level IN ('internship', 'entry_level', 'junior', 'mid')",
             name="jobs_exp_level_check",
         ),
+        CheckConstraint(
+            "freshness_status IN ('active', 'needs_refresh', 'expired', 'closed')",
+            name="jobs_freshness_status_check",
+        ),
         Index("jobs_role_active_idx", "role_id", "is_active"),
         Index("jobs_company_title_loc_idx", "company_name", "title", "location"),
+        Index("jobs_source_external_idx", "source", "external_id"),
+        Index("jobs_freshness_idx", "freshness_status", "is_active"),
     )
 
     external_id: Mapped[Optional[str]] = mapped_column(
@@ -69,12 +236,22 @@ class Job(Base, UUIDMixin):
         default="seed",
         server_default=sa.text("'seed'"),
         nullable=False,
-        doc="Ingestion source pipeline ('seed', 'official_api', 'partner')",
+        doc="Ingestion source pipeline ('seed', 'manual', 'arbeitnow', 'mock')",
+    )
+    source_url: Mapped[Optional[str]] = mapped_column(
+        String(512),
+        nullable=True,
+        doc="Original external source job URL",
     )
     title: Mapped[str] = mapped_column(
         String(255),
         nullable=False,
         doc="Job title",
+    )
+    normalized_title: Mapped[Optional[str]] = mapped_column(
+        String(255),
+        nullable=True,
+        doc="Normalized canonical title for aggregation",
     )
     company_name: Mapped[str] = mapped_column(
         String(255),
@@ -86,12 +263,24 @@ class Job(Base, UUIDMixin):
         nullable=False,
         doc="Geographic location or primary metro market",
     )
+    normalized_location: Mapped[Optional[str]] = mapped_column(
+        String(128),
+        nullable=True,
+        doc="Standardized city/region or Remote identifier",
+    )
     remote_type: Mapped[str] = mapped_column(
         String(32),
         default="hybrid",
         server_default=sa.text("'hybrid'"),
         nullable=False,
         doc="Workplace flexibility ('remote', 'hybrid', 'onsite')",
+    )
+    employment_type: Mapped[Optional[str]] = mapped_column(
+        String(32),
+        default="full_time",
+        server_default=sa.text("'full_time'"),
+        nullable=True,
+        doc="Employment modality ('full_time', 'contract', 'part_time', 'internship')",
     )
     role_id: Mapped[str] = mapped_column(
         String(64),
@@ -126,14 +315,32 @@ class Job(Base, UUIDMixin):
         nullable=False,
         doc="Full job description in Markdown format",
     )
+    responsibilities: Mapped[Optional[List[str]]] = mapped_column(
+        JsonB(),
+        nullable=True,
+        default=list,
+        doc="Extracted key job responsibilities",
+    )
+    required_qualifications: Mapped[Optional[List[str]]] = mapped_column(
+        JsonB(),
+        nullable=True,
+        default=list,
+        doc="Extracted mandatory qualifications",
+    )
+    preferred_qualifications: Mapped[Optional[List[str]]] = mapped_column(
+        JsonB(),
+        nullable=True,
+        default=list,
+        doc="Extracted preferred / nice-to-have qualifications",
+    )
     application_url: Mapped[str] = mapped_column(
         String(512),
         nullable=False,
         doc="Direct application or careers page URL",
     )
-    embedding: Mapped[List[float]] = mapped_column(
+    embedding: Mapped[Optional[List[float]]] = mapped_column(
         VectorType(1536),
-        nullable=False,
+        nullable=True,
         doc="Semantic embedding of job requirements (1536-dim)",
     )
     is_active: Mapped[bool] = mapped_column(
@@ -142,6 +349,28 @@ class Job(Base, UUIDMixin):
         server_default=sa.text("TRUE"),
         nullable=False,
         doc="Active recruitment posting status",
+    )
+    freshness_status: Mapped[str] = mapped_column(
+        String(32),
+        default="active",
+        server_default=sa.text("'active'"),
+        nullable=False,
+        doc="Listing freshness lifecycle ('active', 'needs_refresh', 'expired', 'closed')",
+    )
+    last_verified_at: Mapped[Optional[datetime]] = mapped_column(
+        DateTime(timezone=True),
+        nullable=True,
+        doc="Timestamp posting was last confirmed alive and available",
+    )
+    raw_source_payload: Mapped[Optional[Dict[str, Any]]] = mapped_column(
+        JsonB(),
+        nullable=True,
+        doc="Unprocessed provider response payload for data lineage",
+    )
+    data_quality_score: Mapped[Optional[decimal.Decimal]] = mapped_column(
+        Numeric(4, 2),
+        nullable=True,
+        doc="Data completeness score from 0.00 to 1.00",
     )
     posted_at: Mapped[datetime] = mapped_column(
         DateTime(timezone=True),
@@ -209,6 +438,18 @@ class JobSkill(Base, UUIDMixin):
         server_default=sa.text("TRUE"),
         nullable=False,
         doc="True if requirement is mandatory/hard qualification",
+    )
+    confidence_score: Mapped[Optional[decimal.Decimal]] = mapped_column(
+        Numeric(4, 2),
+        default=decimal.Decimal("1.00"),
+        server_default=sa.text("1.00"),
+        nullable=True,
+        doc="Confidence score of skill extraction (0.00 to 1.00)",
+    )
+    source_phrase: Mapped[Optional[str]] = mapped_column(
+        String(255),
+        nullable=True,
+        doc="Matched source text fragment from job description",
     )
 
     # Relationships

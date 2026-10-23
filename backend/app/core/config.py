@@ -81,6 +81,16 @@ class Settings(BaseSettings):
     MAX_RESUME_SIZE_BYTES: int = 10 * 1024 * 1024  # 10 MB
     RESUME_EXTRACTION_TIMEOUT: int = 45
 
+    # Job Ingestion & Market Intelligence Configuration (Phase 8A)
+    JOB_INGESTION_ENABLED: bool = True
+    JOB_API_PROVIDER: str = "seed"  # "seed" | "manual" | "arbeitnow" | "mock"
+    JOB_API_KEY: str = ""
+    JOB_API_BASE_URL: str = ""
+    JOB_INGESTION_BATCH_SIZE: int = 50
+    JOB_INGESTION_RATE_LIMIT_PER_MINUTE: int = 30
+    JOB_FRESHNESS_DAYS_ACTIVE: int = 30
+    JOB_FRESHNESS_DAYS_STALE: int = 60
+
     @model_validator(mode="after")
     def validate_production_environment(self) -> "Settings":
         if self.ENVIRONMENT == "production":

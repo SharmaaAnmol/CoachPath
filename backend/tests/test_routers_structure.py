@@ -30,7 +30,7 @@ async def test_domain_router_structural_placeholder(
 ):
     """Verifies that each domain router is registered and responds under /api/v1."""
     response = await client.get(route_path)
-    if expected_module in ("profile", "resume", "assessments", "roadmap"):
+    if expected_module in ("profile", "resume", "assessments", "roadmap", "jobs"):
         assert response.status_code == 401
     elif expected_module == "skills":
         assert response.status_code == 200

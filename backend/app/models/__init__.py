@@ -42,7 +42,13 @@ from app.models.career import (
     Project,
     Role,
 )
-from app.models.jobs import Job, JobMatch, JobSkill
+from app.models.jobs import (
+    Job,
+    JobIngestionRun,
+    JobMatch,
+    JobSkill,
+    JobSource,
+)
 from app.models.onboarding import OnboardingSession, OnboardingTurn
 from app.models.readiness import CareerReadinessScore
 from app.models.resume import Resume, ResumeVersion
@@ -88,6 +94,8 @@ __all__ = [
     "RoadmapPhase",
     "RoadmapTask",
     # Jobs Domain
+    "JobSource",
+    "JobIngestionRun",
     "Job",
     "JobSkill",
     "JobMatch",
