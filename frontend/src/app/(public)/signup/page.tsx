@@ -94,7 +94,7 @@ export default function SignupPage() {
           email: trimmedEmail,
           password,
         });
-        router.push('/dashboard');
+        router.push('/onboarding');
       } catch {
         // Fallback: If immediate login had an issue, route to login screen with success banner
         router.push(`/login?registered=true&email=${encodeURIComponent(trimmedEmail)}`);

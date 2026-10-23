@@ -205,47 +205,74 @@ To maintain delivery velocity without compromising on the complete career intell
 ---
 
 ### Phase 4: AI Onboarding & Role Selection
-- **Objective**: Guide new users through target role selection, career stage calibration, and optional conversational career discovery.
+- **Objective**: Guide new users through target role selection, career stage calibration, and conversational career discovery.
 - **Dependencies**: Phase 3.
-- **Backend Tasks**:
-  - Implement `OnboardingService` tracking progress steps.
-  - Implement conversational streaming endpoint via Server-Sent Events (SSE) for exploratory role discovery.
-- **Frontend Tasks**:
-  - Build multi-step Onboarding Wizard (`/onboarding/*`): Step 1 (Role Selection), Step 2 (Experience Stage), Step 3 (Work Preferences).
-  - Build optional AI Career Dialogue drawer with quick-reply suggested chips.
-- **Database Tasks**:
-  - Persist onboarding state flags on `career_profiles`.
-- **AI Tasks**:
-  - Author `role_alignment_v1.py` prompt mapping conversational user interests to the 7 target tech roles.
-  - Implement Tier 1 model adapter (`gpt-4o-mini` / `claude-3-haiku`).
-- **API Tasks**:
-  - Group 2 endpoints: `POST /api/v1/onboarding/start`, `POST /api/v1/onboarding/step`, `GET /api/v1/onboarding/progress`, `POST /api/v1/onboarding/complete`.
-- **Testing Tasks**:
-  - Test role selection constraint (maximum 2 roles).
-  - Test SSE streaming endpoint disconnection handling.
-- **Acceptance Criteria**: New user completes onboarding, selects *Backend Developer*, and lands on `/dashboard` with onboarding marked complete.
-- **Definition of Done**: End-to-end user flow verified in browser with zero console errors.
+- **Phase 4A: Backend Implementation (Completed)**:
+  - Implemented `OnboardingService` managing state machine (`not_started`, `in_progress`, `awaiting_confirmation`, `completed`).
+  - Implemented `onboarding_sessions` and `onboarding_turns` database models and Alembic migration `a1b2c3d4e5f6`.
+  - Implemented LLM provider abstraction layer (`LLMProvider`, `OpenAIProviderAdapter`, `AnthropicProviderAdapter`, `MockLLMProvider`, `create_llm_provider`).
+  - Authored version-controlled prompt templates (`onboarding_v1.py`) with strict delimiter quarantine.
+  - Implemented 7 conversational REST endpoints (`/start`, `/session`, `/progress`, `/respond`, `/history`, `/summary`, `/confirm`).
+  - Enforced anti-hallucination truthfulness and atomic `CareerProfile` merging upon candidate confirmation.
+  - Authored 20 integration & unit tests in `tests/test_onboarding.py` (83 total passing across suite).
+- **Phase 4B: Frontend Implementation (Completed)**:
+  - Built production conversational Onboarding Interface (`/onboarding`) in Next.js 14 App Router.
+  - Connected `onboardingClient` to all 7 Phase 4A endpoints (`/start`, `/session`, `/progress`, `/respond`, `/history`, `/summary`, `/confirm`).
+  - Implemented responsive message bubbles (`ConversationMessage`), thinking indicators (`AIMessageThinking`), and auto-scrolling.
+  - Implemented `QuestionInput` with suggestions, Cmd+Enter shortcut, character counter, and skip action.
+  - Implemented `OnboardingProgress` tracker with turn counter and expandable 15-topic checklist.
+  - Implemented `CareerSummaryReview` with full inline editing mode across all career dimensions.
+  - Implemented `OnboardingCompletion` celebration view with direct CTAs to Career Profile and Dashboard.
+  - Implemented resilient `OnboardingErrorBanner` handling unconfigured AI key (HTTP 503) and network retries.
+  - Enforced edge protection in middleware and integrated resume banner into Dashboard.
+- **Phase 4C: End-to-End Testing and Final Audit (Completed)**:
+  - Authored comprehensive E2E integration test suite in `tests/test_phase4c_e2e_audit.py` (6/6 tests passing, 89/89 overall test suite passing).
+  - Verified complete 17-step discovery journey from registration through profile reflection.
+  - Verified live PostgreSQL tables (`onboarding_sessions`, `onboarding_turns`, `career_profiles`) and constraints.
+  - Verified live API endpoints on localhost:8000 and documented AI provider key requirements.
+  - Verified Next.js 14 frontend production build (25/25 static pages), TypeScript typecheck, and ESLint compliance.
+  - Authored formal completion audit report in `docs/phase-4-final-audit.md`.
+- **Testing Tasks (Completed)**:
+  - Verified state machine transitions, max-turn caps (20), skip handling, and multi-tenant isolation.
+  - Verified 503 error handling and user messaging when live LLM provider is unconfigured.
+- **Acceptance Criteria**: Candidate completes conversational onboarding, reviews and confirms summary, and profile is updated in PostgreSQL. (VERIFIED)
+- **Definition of Done**: 100% test coverage over onboarding service and routes; zero ungrounded facts persisted. (VERIFIED)
 
 ---
 
 ### Phase 5: Resume Ingestion & Parsing Pipeline
-- **Objective**: Asynchronous resume document upload (PDF/DOCX), deterministic layout parsing, AI structured schema extraction, and mandatory candidate verification review.
+- **Objective**: Secure resume document upload (PDF/DOCX), deterministic layout parsing, AI structured schema extraction, canonical skill normalization, and mandatory candidate verification review.
 - **Dependencies**: Phase 3.
-- **Backend Tasks**:
-  - Implement `FileStorageService` with local storage driver and MIME magic-bytes validator.
-  - Implement document layout extractor using `pdfplumber` and `python-docx`.
-  - Author asynchronous task worker extracting structured resume schemas via Pydantic.
-  - Implement skill normalization engine matching raw terms against canonical `skills.id`.
-- **Frontend Tasks**:
-  - Build drag-and-drop file upload zone with animated progress skeleton (`/resume/upload`).
-  - Build interactive **Candidate Verification Screen** (`/resume/review-extracted`): editable form cards for Education, Experience, Projects, and Skills.
+- **Phase 5A: Backend Implementation (Completed)**:
+  - Implemented multi-format document text extraction (`DocumentExtractorService`) via `pypdf` and `python-docx` with scanned PDF detection (`INSUFFICIENT_TEXT_OCR_REQUIRED`) and corrupted file trapping.
+  - Implemented secure storage service (`LocalFileStorageService`) with magic-byte validation (`%PDF-`, `PK\x03\x04`), 10MB file size ceiling, directory traversal guards (`os.path.commonpath`), atomic disk commits, and SHA-256 integrity hashing.
+  - Implemented zero-fabrication AI parsing (`resume_v1.py`) with prompt injection quarantine delimiters (`<<<RESUME_DOCUMENT_TEXT>>>`) and Pydantic v2 schemas (`ExtractedResumeSchema`).
+  - Implemented canonical skill normalization (`SkillNormalizerService`) projecting raw terms against PostgreSQL `skills` table by ID, name, and synonyms.
+  - Maintained absolute profile isolation: parsed data persisted as review draft on `Resume.extracted_data`; zero mutations to `CareerProfile` or `UserSkill`.
+  - Authored Alembic migration `b2c3d4e5f6a1` enhancing `resumes` table with error tracking and status check constraints.
+  - Implemented 7 production REST endpoints under `/api/v1/resume` (upload, list, get, get parsed draft, retry, download, delete).
+  - Authored 17 integration & security tests in `tests/test_resume.py` (106 total passing across backend suite).
+- **Phase 5B: Frontend Review & Profile Integration (Completed)**:
+  - Built production Resume Intelligence & Review workbench (`/resume`) in Next.js 14 App Router.
+  - Connected `resumeClient` to all Phase 5 endpoints including upload, list, status, parsed draft, download, delete, retry, and confirmation.
+  - Implemented `ResumeUpload` drag-and-drop file zone with client-side format and 10MB limit pre-validation.
+  - Implemented `ResumeProcessingStatusCard` tracking active AI parsing, error categories (`INSUFFICIENT_TEXT_OCR_REQUIRED`, `AI_PROVIDER_UNAVAILABLE`, etc.), and retry triggers.
+  - Implemented `ResumeCard` and `ResumeHistory` displaying document archives with download, review, and deletion actions.
+  - Implemented `ParsedResumeReview` workbench with inline editing, adding/removing items, and inclusion checkboxes across Education, Experience, Skills, Projects, Certifications, and Contact info.
+  - Implemented `ProfileConflictIndicator` comparing draft credentials against existing `CareerProfile` records.
+  - Implemented `ResumeApprovalSummary` tracking selected merge entities and providing explicit confirmation CTA.
+  - Implemented backend explicit approval gateway `POST /api/v1/resume/{id}/confirm` with duplicate prevention and transactional `CareerProfile`/`UserSkill` merging.
+  - Authored 3 new backend tests (20 passed in `test_resume.py`, 109 total passing across backend suite).
+  - Verified static typecheck (`npx tsc --noEmit`), ESLint compliance, and Next.js 14 production build (25/25 static pages).
+- **Phase 5C: End-to-End Testing & Final Audit (Upcoming)**:
+  - Complete end-to-end user journey verification: Signup $\to$ Login $\to$ Resume Upload $\to$ Status Tracking $\to$ Review & Edit $\to$ Explicit Confirmation $\to$ Profile Reflection.
+  - Final integration audit and verification against all documented edge cases.
 - **Database Tasks**:
-  - Alembic migrations for `resumes` table.
+  - Alembic migration `b2c3d4e5f6a1` executed and verified on PostgreSQL head.
 - **AI Tasks**:
-  - Author `resume_extraction_v1.py` with strict Pydantic `ExtractedProfileSchema` validation.
-  - Enforce zero-fabrication prompt invariants.
+  - Authored `resume_v1.py` with zero-fabrication prompt invariants and delimiter quarantine.
 - **API Tasks**:
-  - Group 5 endpoints: `POST /api/v1/resumes/upload`, `GET /api/v1/resumes/{id}/parsed`, `POST /api/v1/resumes/{id}/confirm`.
+  - Group 5 endpoints live on `/api/v1/resume` (`upload`, `""`, `{id}`, `{id}/parsed`, `{id}/retry`, `{id}/download`, `{id}`).
 - **Testing Tasks**:
   - Test upload size capping ($> 10\text{MB}$ rejected with HTTP 400).
   - Test corrupted and password-protected PDF handling.

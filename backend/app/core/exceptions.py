@@ -24,6 +24,22 @@ class AppException(Exception):
         self.details = details
 
 
+class BadRequestException(AppException):
+    """Exception raised when client sends an invalid request or file (400)."""
+
+    def __init__(
+        self,
+        message: str = "Invalid request or file provided.",
+        details: Optional[List[ErrorDetail]] = None,
+    ) -> None:
+        super().__init__(
+            status_code=400,
+            code="BAD_REQUEST",
+            message=message,
+            details=details,
+        )
+
+
 class NotFoundException(AppException):
     """Exception raised when a requested resource is not found (404)."""
 

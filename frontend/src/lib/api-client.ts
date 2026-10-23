@@ -68,12 +68,17 @@ export class ApiClient {
       }
     }
 
+    const isFormData = typeof FormData !== 'undefined' && rest.body instanceof FormData;
+
     const requestHeaders: Record<string, string> = {
-      'Content-Type': 'application/json',
       Accept: 'application/json',
       'X-Request-ID': this.generateRequestId(),
       ...((headers as Record<string, string>) || {}),
     };
+
+    if (!isFormData && !requestHeaders['Content-Type']) {
+      requestHeaders['Content-Type'] = 'application/json';
+    }
 
     let response: Response;
     try {
@@ -149,6 +154,61 @@ export class ApiClient {
 
   public delete<T>(endpoint: string, options?: RequestOptions): Promise<T> {
     return this.request<T>(endpoint, { ...options, method: 'DELETE' });
+  }
+
+  public postMultipart<T>(endpoint: string, formData: FormData, options?: RequestOptions): Promise<T> {
+    return this.request<T>(endpoint, {
+      ...options,
+      method: 'POST',
+      body: formData,
+    });
+  }
+
+  public async downloadBlob(endpoint: string, options?: RequestOptions): Promise<{ blob: Blob; filename?: string }> {
+    const { params, headers, ...rest } = options || {};
+    let url = `${this.baseUrl.replace(/\/$/, '')}/${endpoint.replace(/^\//, '')}`;
+
+    if (params) {
+      const searchParams = new URLSearchParams();
+      Object.entries(params).forEach(([key, value]) => {
+        if (value !== undefined) {
+          searchParams.append(key, String(value));
+        }
+      });
+      const queryString = searchParams.toString();
+      if (queryString) {
+        url += `?${queryString}`;
+      }
+    }
+
+    const response = await fetch(url, {
+      credentials: 'include',
+      ...rest,
+      headers: {
+        'X-Request-ID': this.generateRequestId(),
+        ...((headers as Record<string, string>) || {}),
+      },
+    });
+
+    if (!response.ok) {
+      throw new ApiClientError({
+        code: 'DOWNLOAD_FAILED',
+        message: response.statusText || 'Download failed.',
+        status: response.status,
+      });
+    }
+
+    const disposition = response.headers.get('Content-Disposition');
+    let filename: string | undefined;
+    if (disposition && disposition.includes('filename=')) {
+      const match = disposition.match(/filename="?([^";]+)"?/);
+      if (match && match[1]) {
+        filename = match[1];
+      }
+    }
+
+    const blob = await response.blob();
+    return { blob, filename };
   }
 
   /**

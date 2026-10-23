@@ -22,7 +22,7 @@ import {
   Sparkles,
   X,
 } from 'lucide-react';
-import { mockProfile, mockReadinessData } from '@/lib/mock/data';
+import { mockReadinessData } from '@/lib/mock/data';
 import { useAuth } from '@/hooks/use-auth';
 
 interface NavItem {
@@ -42,8 +42,9 @@ const navGroups: NavGroup[] = [
     groupName: 'Foundation',
     items: [
       { title: 'Dashboard', href: '/dashboard', icon: LayoutDashboard },
+      { title: 'AI Onboarding', href: '/onboarding', icon: Sparkles },
       { title: 'Career Profile', href: '/career-profile', icon: User },
-      { title: 'Skill Taxonomy', href: '/skills', icon: Cpu, badge: '12' },
+      { title: 'Skill Gap Analysis', href: '/skills', icon: Cpu },
       { title: 'Assessments', href: '/assessments', icon: ClipboardCheck, badge: 'New' },
     ],
   },
@@ -80,7 +81,7 @@ export function Sidebar({ isMobileOpen = false, onMobileClose }: SidebarProps) {
   const { user } = useAuth();
   const [isCollapsed, setIsCollapsed] = React.useState(false);
 
-  const displayName = user?.full_name || mockProfile.name;
+  const displayName = user?.full_name || 'Candidate';
   const initials = React.useMemo(() => {
     if (!displayName) return 'CP';
     const parts = displayName.trim().split(/\s+/);
@@ -192,7 +193,7 @@ export function Sidebar({ isMobileOpen = false, onMobileClose }: SidebarProps) {
           {!isCollapsed && (
             <div className="flex-1 min-w-0">
               <div className="text-xs font-semibold text-white truncate">{displayName}</div>
-              <div className="text-[10px] text-slate-400 truncate">{mockProfile.targetRole}</div>
+              <div className="text-[10px] text-slate-400 truncate">Candidate Profile</div>
             </div>
           )}
         </Link>

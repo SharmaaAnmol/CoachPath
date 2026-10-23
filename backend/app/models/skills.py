@@ -8,7 +8,7 @@ from __future__ import annotations
 import decimal
 import uuid
 from datetime import datetime
-from typing import TYPE_CHECKING, List, Optional
+from typing import TYPE_CHECKING, Any, Dict, List, Optional
 import sqlalchemy as sa
 from sqlalchemy import (
     Boolean,
@@ -16,6 +16,7 @@ from sqlalchemy import (
     DateTime,
     ForeignKey,
     Index,
+    Integer,
     Numeric,
     String,
     Text,
@@ -25,6 +26,7 @@ from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from app.models.base import (
     Base,
+    JsonB,
     StringArray,
     TimestampMixin,
     UUIDMixin,
@@ -166,6 +168,18 @@ class RoleRequirement(Base, UUIDMixin):
         String(32),
         nullable=False,
         doc="Minimum required proficiency ('basic', 'demonstrated', 'proficient', 'mastered')",
+    )
+    required_level: Mapped[int] = mapped_column(
+        Integer,
+        default=3,
+        server_default=sa.text("3"),
+        nullable=False,
+        doc="Numeric proficiency level required on 1-4 scale (1: Foundational, 2: Developing, 3: Proficient, 4: Advanced)",
+    )
+    rationale: Mapped[Optional[str]] = mapped_column(
+        Text,
+        nullable=True,
+        doc="Explanation of why this skill is required for the target role",
     )
     weight: Mapped[decimal.Decimal] = mapped_column(
         Numeric(3, 2),
@@ -330,3 +344,154 @@ class SkillGap(Base, UUIDMixin):
         back_populates="skill_gaps",
     )
     role: Mapped[Role] = relationship("Role", back_populates="skill_gaps")
+
+
+class SkillGapAnalysis(Base, UUIDMixin):
+    """
+    Comprehensive, immutable snapshot of skill gap analysis comparing candidate
+    evidence against benchmark role requirements.
+    Supports historical trending with an is_current active flag.
+    """
+
+    __tablename__ = "skill_gap_analyses"
+    __table_args__ = (
+        Index("skill_gap_analyses_profile_idx", "career_profile_id"),
+        Index("skill_gap_analyses_profile_current_idx", "career_profile_id", "is_current"),
+        Index("skill_gap_analyses_role_idx", "role_id"),
+    )
+
+    career_profile_id: Mapped[uuid.UUID] = mapped_column(
+        sa.Uuid(as_uuid=True),
+        ForeignKey("career_profiles.id", ondelete="CASCADE"),
+        nullable=False,
+        doc="Owning career profile reference",
+    )
+    role_id: Mapped[str] = mapped_column(
+        String(64),
+        ForeignKey("roles.id", ondelete="CASCADE"),
+        nullable=False,
+        doc="Benchmarked role reference",
+    )
+    is_current: Mapped[bool] = mapped_column(
+        Boolean,
+        default=True,
+        server_default=sa.text("TRUE"),
+        nullable=False,
+        doc="True if this is the active/latest gap analysis snapshot for the profile",
+    )
+    role_version: Mapped[str] = mapped_column(
+        String(32),
+        default="1.0.0",
+        server_default="1.0.0",
+        nullable=False,
+        doc="Version of role benchmark used for analysis",
+    )
+    algorithm_version: Mapped[str] = mapped_column(
+        String(32),
+        default="1.0.0",
+        server_default="1.0.0",
+        nullable=False,
+        doc="Version of scoring algorithm used",
+    )
+    role_alignment_score: Mapped[decimal.Decimal] = mapped_column(
+        Numeric(4, 1),
+        nullable=False,
+        doc="Overall benchmark role alignment score (0.0 to 100.0)",
+    )
+    evidence_coverage_score: Mapped[decimal.Decimal] = mapped_column(
+        Numeric(4, 1),
+        nullable=False,
+        doc="Evidence coverage score across required role competencies (0.0 to 100.0)",
+    )
+    status: Mapped[str] = mapped_column(
+        String(32),
+        default="completed",
+        server_default="completed",
+        nullable=False,
+        doc="Analysis status ('completed', 'recalculating')",
+    )
+    strongest_skills: Mapped[List[Dict[str, Any]]] = mapped_column(
+        JsonB(),
+        default=list,
+        server_default=sa.text("'[]'"),
+        nullable=False,
+        doc="List of skills where user meets or exceeds benchmark requirements",
+    )
+    developing_skills: Mapped[List[Dict[str, Any]]] = mapped_column(
+        JsonB(),
+        default=list,
+        server_default=sa.text("'[]'"),
+        nullable=False,
+        doc="List of skills where user has demonstrated some competence but is below benchmark",
+    )
+    skill_gaps: Mapped[List[Dict[str, Any]]] = mapped_column(
+        JsonB(),
+        default=list,
+        server_default=sa.text("'[]'"),
+        nullable=False,
+        doc="List of confirmed skill gaps where user falls short of requirement",
+    )
+    missing_skills: Mapped[List[Dict[str, Any]]] = mapped_column(
+        JsonB(),
+        default=list,
+        server_default=sa.text("'[]'"),
+        nullable=False,
+        doc="List of mandatory or preferred skills with zero profile or assessment evidence",
+    )
+    unassessed_skills: Mapped[List[Dict[str, Any]]] = mapped_column(
+        JsonB(),
+        default=list,
+        server_default=sa.text("'[]'"),
+        nullable=False,
+        doc="List of claimed skills that lack objective diagnostic or project verification",
+    )
+    skill_details: Mapped[Dict[str, Any]] = mapped_column(
+        JsonB(),
+        default=dict,
+        server_default=sa.text("'{}'"),
+        nullable=False,
+        doc="Detailed per-skill breakdown dictionary indexed by skill_id",
+    )
+    prioritized_gaps: Mapped[List[Dict[str, Any]]] = mapped_column(
+        JsonB(),
+        default=list,
+        server_default=sa.text("'[]'"),
+        nullable=False,
+        doc="Deterministically ranked gaps with suggested next actions",
+    )
+    recommended_assessments: Mapped[List[Dict[str, Any]]] = mapped_column(
+        JsonB(),
+        default=list,
+        server_default=sa.text("'[]'"),
+        nullable=False,
+        doc="Diagnostic assessments recommended to verify unassessed or developing skills",
+    )
+    explanation_narrative: Mapped[str] = mapped_column(
+        Text,
+        nullable=False,
+        doc="Deterministic narrative explaining alignment, strengths, gaps, and recommendations",
+    )
+    created_at: Mapped[datetime] = mapped_column(
+        DateTime(timezone=True),
+        default=utc_now,
+        server_default=sa.text("CURRENT_TIMESTAMP"),
+        nullable=False,
+        doc="Timestamp of record creation",
+    )
+    calculated_at: Mapped[datetime] = mapped_column(
+        DateTime(timezone=True),
+        default=utc_now,
+        server_default=sa.text("CURRENT_TIMESTAMP"),
+        nullable=False,
+        doc="Timestamp when analysis was calculated",
+    )
+
+    # Relationships
+    career_profile: Mapped[CareerProfile] = relationship(
+        "CareerProfile",
+        back_populates="gap_analyses",
+    )
+    role: Mapped[Role] = relationship(
+        "Role",
+        back_populates="gap_analyses",
+    )

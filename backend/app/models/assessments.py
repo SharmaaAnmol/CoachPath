@@ -160,6 +160,13 @@ class AssessmentQuestion(Base, UUIDMixin):
         nullable=False,
         doc="Difficulty rating ('basic', 'intermediate', 'advanced')",
     )
+    topic: Mapped[str] = mapped_column(
+        String(128),
+        default="General",
+        server_default=sa.text("'General'"),
+        nullable=False,
+        doc="Subtopic classification",
+    )
     created_at: Mapped[datetime] = mapped_column(
         DateTime(timezone=True),
         default=utc_now,
@@ -239,6 +246,13 @@ class AssessmentAttempt(Base, UUIDMixin):
         DateTime(timezone=True),
         nullable=True,
         doc="Timestamp test was finalized (UTC)",
+    )
+    question_ids: Mapped[Optional[List[str]]] = mapped_column(
+        JsonB(),
+        nullable=True,
+        default=list,
+        server_default=sa.text("'[]'"),
+        doc="Ordered list of question UUID strings selected for this attempt",
     )
 
     # Relationships
@@ -350,6 +364,20 @@ class AssessmentResult(Base, UUIDMixin):
         Numeric(3, 2),
         nullable=False,
         doc="Score improvement delta applied to candidate user_skills",
+    )
+    topic_breakdown: Mapped[Optional[List[Dict[str, Any]]]] = mapped_column(
+        JsonB(),
+        nullable=True,
+        default=list,
+        server_default=sa.text("'[]'"),
+        doc="Granular performance breakdown by topic",
+    )
+    difficulty_breakdown: Mapped[Optional[Dict[str, Any]]] = mapped_column(
+        JsonB(),
+        nullable=True,
+        default=dict,
+        server_default=sa.text("'{}'"),
+        doc="Granular performance breakdown by difficulty level",
     )
     created_at: Mapped[datetime] = mapped_column(
         DateTime(timezone=True),

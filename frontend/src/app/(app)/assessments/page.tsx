@@ -1,16 +1,19 @@
 'use client';
 
 import * as React from 'react';
-import { mockAssessments } from '@/lib/mock/data';
-import { Assessment } from '@/types';
+import {
+  AssessmentCategoryItem,
+  AssessmentResultResponse,
+  AttemptSession,
+} from '@/types';
+import { assessmentClient } from '@/lib/assessment-client';
+import { AssessmentRunner } from '@/components/assessments/assessment-runner';
+import { AssessmentResultView } from '@/components/assessments/assessment-result-view';
 import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
-import { AssessmentCard } from '@/components/ui/assessment-card';
 import { Tabs } from '@/components/ui/tabs';
-import { Modal } from '@/components/ui/modal';
 import {
-  ClipboardCheck,
   CheckCircle2,
   Clock,
   Award,
@@ -18,183 +21,318 @@ import {
   HelpCircle,
   Play,
   RotateCcw,
+  AlertCircle,
+  Code2,
+  Database,
+  Layers,
+  Brain,
+  Cpu,
+  Globe,
+  Binary,
 } from 'lucide-react';
 
 export default function AssessmentsPage() {
+  const [categories, setCategories] = React.useState<AssessmentCategoryItem[]>([]);
+  const [isLoading, setIsLoading] = React.useState(true);
+  const [errorMessage, setErrorMessage] = React.useState<string | null>(null);
   const [filter, setFilter] = React.useState('all');
-  const [activeModalAssessment, setActiveModalAssessment] = React.useState<Assessment | null>(null);
-  const [selectedOption, setSelectedOption] = React.useState<number | null>(null);
-  const [hasSubmittedAnswer, setHasSubmittedAnswer] = React.useState(false);
 
-  const completed = mockAssessments.filter((a) => a.status === 'completed');
-  const available = mockAssessments.filter((a) => a.status === 'available');
+  // View state: 'catalog' | 'runner' | 'result'
+  const [viewState, setViewState] = React.useState<'catalog' | 'runner' | 'result'>('catalog');
+  const [activeSession, setActiveSession] = React.useState<AttemptSession | null>(null);
+  const [activeResult, setActiveResult] = React.useState<AssessmentResultResponse | null>(null);
+  const [startingCategoryId, setStartingCategoryId] = React.useState<string | null>(null);
 
-  const filteredList = mockAssessments.filter((a) => {
-    if (filter === 'completed') return a.status === 'completed';
-    if (filter === 'available') return a.status === 'available';
+  const fetchCategories = React.useCallback(async () => {
+    try {
+      setIsLoading(true);
+      setErrorMessage(null);
+      const data = await assessmentClient.listAssessments();
+      setCategories(data);
+    } catch (err: any) {
+      setErrorMessage(err?.message || 'Failed to load assessment catalog.');
+    } finally {
+      setIsLoading(false);
+    }
+  }, []);
+
+  React.useEffect(() => {
+    fetchCategories();
+  }, [fetchCategories]);
+
+  const handleStartOrResume = async (categoryId: string) => {
+    try {
+      setStartingCategoryId(categoryId);
+      setErrorMessage(null);
+      const session = await assessmentClient.startOrResumeAttempt(categoryId);
+      setActiveSession(session);
+      setViewState('runner');
+    } catch (err: any) {
+      setErrorMessage(err?.message || 'Failed to start assessment attempt.');
+    } finally {
+      setStartingCategoryId(null);
+    }
+  };
+
+  const handleReviewResults = async (category: AssessmentCategoryItem) => {
+    try {
+      setStartingCategoryId(category.skill_id);
+      setErrorMessage(null);
+      const history = await assessmentClient.getHistory();
+      const match = history.find(
+        (h) => h.assessment_id === category.id && h.status === 'completed'
+      );
+      if (match) {
+        const result = await assessmentClient.getAttemptResult(match.attempt_id);
+        setActiveResult(result);
+        setViewState('result');
+      } else {
+        // Fallback: start new attempt
+        await handleStartOrResume(category.skill_id);
+      }
+    } catch (err: any) {
+      setErrorMessage(err?.message || 'Failed to load assessment result.');
+    } finally {
+      setStartingCategoryId(null);
+    }
+  };
+
+  const completed = categories.filter((c) => c.user_status === 'completed');
+  const inProgress = categories.filter((c) => c.user_status === 'in_progress');
+  const available = categories.filter((c) => c.user_status === 'available');
+
+  const filteredCategories = categories.filter((c) => {
+    if (filter === 'completed') return c.user_status === 'completed';
+    if (filter === 'in_progress') return c.user_status === 'in_progress';
+    if (filter === 'available') return c.user_status === 'available';
     return true;
   });
 
   const filterTabs = [
-    { id: 'all', label: 'All Diagnostic Tests', badge: mockAssessments.length },
-    { id: 'available', label: 'Available to Take', badge: available.length },
-    { id: 'completed', label: 'Completed & Calibrated', badge: completed.length },
+    { id: 'all', label: 'All Diagnostic Tests', badge: categories.length },
+    { id: 'available', label: 'Ready to Take', badge: available.length },
+    { id: 'in_progress', label: 'In Progress', badge: inProgress.length },
+    { id: 'completed', label: 'Completed & Verified', badge: completed.length },
   ];
 
-  const handleStart = (asmt: Assessment) => {
-    setActiveModalAssessment(asmt);
-    setSelectedOption(null);
-    setHasSubmittedAnswer(false);
+  // Helper icons per domain
+  const getDomainIcon = (skillId: string) => {
+    switch (skillId) {
+      case 'python':
+      case 'java':
+      case 'c-cpp':
+      case 'javascript-typescript':
+        return <Code2 className="w-4 h-4 text-brand-600" />;
+      case 'sql-databases':
+        return <Database className="w-4 h-4 text-emerald-600" />;
+      case 'dsa':
+        return <Binary className="w-4 h-4 text-indigo-600" />;
+      case 'web-development':
+        return <Globe className="w-4 h-4 text-sky-600" />;
+      case 'machine-learning':
+        return <Brain className="w-4 h-4 text-purple-600" />;
+      case 'ai-llm':
+        return <Sparkles className="w-4 h-4 text-amber-500" />;
+      default:
+        return <Layers className="w-4 h-4 text-slate-500" />;
+    }
   };
 
+  // ─── RUNNER VIEW ─────────────────────────────────────────────────────
+  if (viewState === 'runner' && activeSession) {
+    return (
+      <AssessmentRunner
+        session={activeSession}
+        onComplete={(result) => {
+          setActiveResult(result);
+          setViewState('result');
+          fetchCategories();
+        }}
+        onExit={() => {
+          setViewState('catalog');
+          fetchCategories();
+        }}
+      />
+    );
+  }
+
+  // ─── RESULT VIEW ─────────────────────────────────────────────────────
+  if (viewState === 'result' && activeResult) {
+    return (
+      <AssessmentResultView
+        result={activeResult}
+        onRetake={async () => {
+          await handleStartOrResume(activeResult.skill_id);
+        }}
+        onBackToCatalog={() => {
+          setViewState('catalog');
+          fetchCategories();
+        }}
+      />
+    );
+  }
+
+  // ─── CATALOG VIEW (Default) ──────────────────────────────────────────
   return (
     <div className="space-y-6">
-      {/* Header */}
+      {/* Page Header */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
           <h2 className="text-2xl font-bold text-slate-900 dark:text-white">
             Diagnostic Skill Assessments
           </h2>
-          <p className="text-xs text-slate-500 dark:text-slate-400 mt-1">
-            Deterministic evaluation calibrated to calibrate self-reported confidence into verified market credentials.
+          <p className="text-xs sm:text-sm text-slate-500 dark:text-slate-400 mt-1">
+            Server-side deterministic evaluations calibrated across 9 core engineering domains with 20 questions per diagnostic attempt.
           </p>
         </div>
 
         <div className="flex items-center gap-2">
           <Badge variant="verified" size="md">
-            <CheckCircle2 className="w-3.5 h-3.5 mr-1" /> 2 Skills Calibrated
+            <CheckCircle2 className="w-3.5 h-3.5 mr-1" />
+            {completed.length} of 9 Domains Verified
           </Badge>
         </div>
       </div>
 
+      {/* Error Alert */}
+      {errorMessage && (
+        <div className="p-4 rounded-xl bg-rose-50 border border-rose-200 text-rose-800 dark:bg-rose-950/40 dark:border-rose-800 dark:text-rose-200 text-xs sm:text-sm flex items-center justify-between">
+          <div className="flex items-center gap-2">
+            <AlertCircle className="w-4 h-4 shrink-0 text-rose-600" />
+            <span>{errorMessage}</span>
+          </div>
+          <Button size="sm" variant="outline" onClick={fetchCategories}>
+            Retry
+          </Button>
+        </div>
+      )}
+
       {/* Tabs */}
       <Tabs tabs={filterTabs} activeTab={filter} onChange={setFilter} />
 
-      {/* Assessments Grid */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-        {filteredList.map((asmt) => (
-          <AssessmentCard
-            key={asmt.id}
-            assessment={asmt}
-            onStart={handleStart}
-          />
-        ))}
-      </div>
+      {/* Loading Skeletons */}
+      {isLoading ? (
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          {[...Array(6)].map((_, i) => (
+            <Card key={i} className="p-5 space-y-4 animate-pulse">
+              <div className="h-4 bg-slate-200 dark:bg-slate-800 rounded-md w-1/3" />
+              <div className="h-6 bg-slate-200 dark:bg-slate-800 rounded-md w-3/4" />
+              <div className="h-12 bg-slate-100 dark:bg-slate-850 rounded-md w-full" />
+              <div className="h-8 bg-slate-200 dark:bg-slate-800 rounded-md w-full" />
+            </Card>
+          ))}
+        </div>
+      ) : (
+        /* Assessment Categories Grid */
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          {filteredCategories.map((asmt) => {
+            const isCompleted = asmt.user_status === 'completed';
+            const isInProgress = asmt.user_status === 'in_progress';
+            const isStarting = startingCategoryId === asmt.skill_id;
 
-      {/* Interactive Assessment Modal Runner */}
-      {activeModalAssessment && (
-        <Modal
-          isOpen={!!activeModalAssessment}
-          onClose={() => setActiveModalAssessment(null)}
-          title={`Diagnostic Runner: ${activeModalAssessment.title}`}
-          description={`Skill: ${activeModalAssessment.skillName} • Difficulty: ${activeModalAssessment.difficulty} • Question 1 of ${activeModalAssessment.questionCount}`}
-          maxWidth="2xl"
-          footer={
-            <div className="flex items-center justify-between w-full">
-              <span className="text-xs text-slate-400">
-                Deterministic autograding engine &bull; No LLM hallucination
-              </span>
-              <div className="flex items-center gap-2">
-                <Button
-                  size="sm"
-                  variant="outline"
-                  onClick={() => setActiveModalAssessment(null)}
-                >
-                  Exit Test
-                </Button>
-                {!hasSubmittedAnswer ? (
-                  <Button
-                    size="sm"
-                    variant="primary"
-                    disabled={selectedOption === null}
-                    onClick={() => setHasSubmittedAnswer(true)}
-                  >
-                    Submit Answer
-                  </Button>
-                ) : (
-                  <Button
-                    size="sm"
-                    variant="primary"
-                    onClick={() => {
-                      alert('Diagnostic completed! Calibrated score recorded to PostgreSQL profile.');
-                      setActiveModalAssessment(null);
-                    }}
-                  >
-                    Complete Assessment
-                  </Button>
-                )}
-              </div>
-            </div>
-          }
-        >
-          <div className="space-y-4 text-xs sm:text-sm">
-            {/* Question Prompt */}
-            <div className="p-4 rounded-xl bg-slate-50 dark:bg-slate-800/60 border border-slate-200 dark:border-slate-700 space-y-3">
-              <p className="font-semibold text-slate-900 dark:text-white leading-relaxed">
-                When scaling a high-throughput API with distributed caching in Redis, which technique best prevents cache stampedes (dog-piling effect) during the simultaneous expiration of hot keys?
-              </p>
+            return (
+              <Card
+                key={asmt.id}
+                className="p-5 flex flex-col justify-between hover:border-slate-300 dark:hover:border-slate-700 transition-all shadow-xs"
+              >
+                <div className="space-y-3">
+                  <div className="flex items-start justify-between gap-3">
+                    <div className="flex items-center gap-1.5">
+                      {getDomainIcon(asmt.skill_id)}
+                      <span className="text-xs font-bold text-slate-700 dark:text-slate-300">
+                        {asmt.skill_id.toUpperCase()}
+                      </span>
+                    </div>
 
-              {/* Code Snippet Box */}
-              <div className="rounded-lg bg-slate-900 text-slate-100 p-3 font-mono text-xs overflow-x-auto">
-                <pre>{`// Scenario: High-traffic product endpoint (50,000 req/sec)
-const productKey = "product:sku_90412";
-const cachedProduct = await redis.get(productKey);
+                    {isCompleted ? (
+                      <div className="flex items-center gap-1.5 text-xs font-bold text-emerald-700 bg-emerald-50 dark:bg-emerald-950/40 dark:text-emerald-300 px-2.5 py-1 rounded-full border border-emerald-200 dark:border-emerald-800">
+                        <Award className="w-3.5 h-3.5" />
+                        <span>Best: {asmt.user_best_score}%</span>
+                      </div>
+                    ) : isInProgress ? (
+                      <Badge variant="action" size="sm" className="animate-pulse">
+                        Resume Test
+                      </Badge>
+                    ) : (
+                      <Badge variant="outline" size="sm">
+                        Ready to Take
+                      </Badge>
+                    )}
+                  </div>
 
-if (!cachedProduct) {
-  // Vulnerability: 5,000 concurrent requests query the database at once!
-  const product = await db.query("SELECT * FROM products WHERE id = $1", [id]);
-  await redis.set(productKey, JSON.stringify(product), "EX", 300);
-}`}</pre>
-              </div>
-            </div>
+                  <div>
+                    <h4 className="text-base font-bold text-slate-900 dark:text-white leading-snug">
+                      {asmt.title}
+                    </h4>
+                    <p className="text-xs text-slate-500 dark:text-slate-400 mt-1 line-clamp-2 leading-relaxed">
+                      {asmt.description}
+                    </p>
+                  </div>
 
-            {/* Answer Options */}
-            <div className="space-y-2">
-              <div className="text-xs font-semibold text-slate-400 uppercase tracking-wider">
-                Select the architecturally sound mitigation:
-              </div>
-
-              {[
-                'Deploy Redis Cluster with 10 replicas and disable TTL expiration entirely.',
-                'Implement distributed mutex locking (Redlock) or probabilistic early expiration (XFetch algorithm).',
-                'Increase PostgreSQL connection pool size to 10,000 concurrent sockets.',
-                'Switch the caching data layer from Redis to client-side localStorage in React.',
-              ].map((opt, idx) => (
-                <button
-                  key={idx}
-                  type="button"
-                  disabled={hasSubmittedAnswer}
-                  onClick={() => setSelectedOption(idx)}
-                  className={`w-full p-3 rounded-xl border text-left text-xs transition-all flex items-start gap-3 ${
-                    selectedOption === idx
-                      ? hasSubmittedAnswer
-                        ? idx === 1
-                          ? 'border-emerald-500 bg-emerald-50 text-emerald-900 dark:bg-emerald-950/40 dark:text-emerald-200 font-semibold'
-                          : 'border-rose-500 bg-rose-50 text-rose-900 dark:bg-rose-950/40 dark:text-rose-200'
-                        : 'border-brand-600 bg-brand-50 text-brand-900 dark:bg-brand-950/40 dark:text-brand-200 font-medium'
-                      : 'border-slate-200 hover:bg-slate-50 dark:border-slate-800 dark:hover:bg-slate-800/50 text-slate-700 dark:text-slate-300'
-                  }`}
-                >
-                  <span className="font-mono font-bold">{String.fromCharCode(65 + idx)}.</span>
-                  <span className="flex-1">{opt}</span>
-                </button>
-              ))}
-            </div>
-
-            {/* Explanation Breakdown after submission */}
-            {hasSubmittedAnswer && (
-              <div className="p-4 rounded-xl bg-emerald-50/80 dark:bg-emerald-950/40 border border-emerald-300 dark:border-emerald-800 space-y-2 animate-in fade-in">
-                <div className="flex items-center gap-2 font-bold text-emerald-800 dark:text-emerald-300 text-xs">
-                  <CheckCircle2 className="w-4 h-4 text-emerald-600" />
-                  <span>Correct! Option B is the industry standard pattern.</span>
+                  <div className="flex items-center gap-4 text-xs text-slate-500 dark:text-slate-400 pt-1">
+                    <span className="flex items-center gap-1">
+                      <Clock className="w-3.5 h-3.5" />
+                      {asmt.time_limit_minutes} mins
+                    </span>
+                    <span className="flex items-center gap-1">
+                      <HelpCircle className="w-3.5 h-3.5" />
+                      20 of {asmt.question_count} questions
+                    </span>
+                  </div>
                 </div>
-                <p className="text-xs text-slate-600 dark:text-slate-300 leading-relaxed">
-                  Distributed mutex locking guarantees only one worker repopulates the cache while others wait. Alternatively, probabilistic early expiration refreshes the cache asynchronously before hard TTL expiration.
-                </p>
-              </div>
-            )}
-          </div>
-        </Modal>
+
+                <div className="pt-4 mt-4 border-t border-slate-100 dark:border-slate-800 flex items-center justify-between">
+                  {isCompleted ? (
+                    <div className="flex items-center gap-1 text-xs text-emerald-600 font-medium">
+                      <CheckCircle2 className="w-3.5 h-3.5" />
+                      <span>{asmt.attempt_count} Attempt{asmt.attempt_count > 1 ? 's' : ''}</span>
+                    </div>
+                  ) : (
+                    <span className="text-[11px] text-slate-400 font-medium">
+                      7 Basic &bull; 7 Inter &bull; 6 Adv
+                    </span>
+                  )}
+
+                  <div className="flex items-center gap-2">
+                    {isCompleted ? (
+                      <>
+                        <Button
+                          size="sm"
+                          variant="outline"
+                          disabled={isStarting}
+                          onClick={() => handleReviewResults(asmt)}
+                        >
+                          Review
+                        </Button>
+                        <Button
+                          size="sm"
+                          variant="primary"
+                          disabled={isStarting}
+                          onClick={() => handleStartOrResume(asmt.skill_id)}
+                        >
+                          {isStarting ? 'Loading...' : 'Retake'}
+                        </Button>
+                      </>
+                    ) : (
+                      <Button
+                        size="sm"
+                        variant="primary"
+                        disabled={isStarting}
+                        onClick={() => handleStartOrResume(asmt.skill_id)}
+                      >
+                        {isStarting
+                          ? 'Loading...'
+                          : isInProgress
+                          ? 'Resume Diagnostic'
+                          : 'Start Diagnostic'}
+                      </Button>
+                    )}
+                  </div>
+                </div>
+              </Card>
+            );
+          })}
+        </div>
       )}
     </div>
   );

@@ -97,8 +97,11 @@ classDiagram
         -model_name: str
     }
     class GeminiProviderAdapter {
-        -client: AsyncGeminiClient
+        -client: genai.Client
         -model_name: str
+        -timeout: int
+        +generate_structured()
+        +generate_text()
     }
     class LocalOllamaAdapter {
         -base_url: str

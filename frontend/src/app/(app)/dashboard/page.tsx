@@ -3,7 +3,6 @@
 import * as React from 'react';
 import Link from 'next/link';
 import {
-  mockProfile,
   mockReadinessData,
   mockRoadmapPhases,
   mockJobs,
@@ -17,6 +16,10 @@ import { Badge } from '@/components/ui/badge';
 import { ProgressBar } from '@/components/ui/progress-bar';
 import { JobCard } from '@/components/ui/job-card';
 import { Alert } from '@/components/ui/alert';
+import { useAuth } from '@/hooks/use-auth';
+import { profileClient } from '@/lib/profile-client';
+import { onboardingClient } from '@/lib/onboarding-client';
+import { MasterCareerProfile, OnboardingSessionData } from '@/types';
 import {
   Gauge,
   Cpu,
@@ -33,6 +36,44 @@ import {
 } from 'lucide-react';
 
 export default function DashboardPage() {
+  const { user } = useAuth();
+  const [profile, setProfile] = React.useState<MasterCareerProfile | null>(null);
+  const [onboardingSession, setOnboardingSession] = React.useState<OnboardingSessionData | null>(null);
+  const [hasCheckedOnboarding, setHasCheckedOnboarding] = React.useState(false);
+
+  React.useEffect(() => {
+    let isMounted = true;
+    profileClient
+      .getMasterProfile()
+      .then((data) => {
+        if (isMounted) setProfile(data);
+      })
+      .catch(() => {
+        // Fallback gracefully to default
+      });
+
+    onboardingClient
+      .getSession()
+      .then((session) => {
+        if (isMounted) {
+          setOnboardingSession(session);
+          setHasCheckedOnboarding(true);
+        }
+      })
+      .catch(() => {
+        if (isMounted) setHasCheckedOnboarding(true);
+      });
+
+    return () => {
+      isMounted = false;
+    };
+  }, []);
+
+  const candidateName = profile?.full_name || user?.full_name || 'Candidate';
+  const firstName = candidateName.split(' ')[0];
+  const targetRoleTitle = profile?.primary_role?.title || 'Backend Developer';
+  const completeness = profile?.completeness_score ?? 85;
+
   const currentPhase = mockRoadmapPhases[0];
   const activeTask = currentPhase.tasks.find((t) => t.status === 'in_progress') || currentPhase.tasks[0];
   const upcomingInterview = mockScheduledInterviews[0];
@@ -46,13 +87,13 @@ export default function DashboardPage() {
         <div className="space-y-2">
           <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white/10 text-purple-200 text-xs font-mono">
             <Sparkles className="w-3.5 h-3.5" />
-            <span>Target Role: {mockProfile.targetRole}</span>
+            <span>Target Role: {targetRoleTitle}</span>
           </div>
           <h2 className="text-2xl sm:text-3xl font-extrabold tracking-tight">
-            Welcome back, {mockProfile.name.split(' ')[0]}
+            Welcome back, {firstName}
           </h2>
           <p className="text-sm text-slate-300 max-w-xl leading-relaxed">
-            Your career graph is calibrated at <strong className="text-white">{mockReadinessData.overallScore}% Readiness</strong>. You have 1 active milestone task and 1 scheduled interview.
+            Your career profile is <strong className="text-white">{completeness.toFixed(0)}% Complete</strong> with calibrated readiness baseline. You have 1 active milestone task and 1 scheduled interview.
           </p>
         </div>
 
@@ -69,6 +110,43 @@ export default function DashboardPage() {
           </Link>
         </div>
       </div>
+
+      {/* Onboarding Resume / Completion Prompt */}
+      {hasCheckedOnboarding && onboardingSession?.status !== 'completed' && (
+        <Alert
+          variant={onboardingSession?.status === 'awaiting_confirmation' ? 'success' : 'intelligence'}
+          title={
+            onboardingSession?.status === 'awaiting_confirmation'
+              ? 'AI Career Profile Summary Ready for Review'
+              : onboardingSession?.status === 'in_progress'
+              ? `AI Career Discovery In Progress (Turn ${onboardingSession.turn_count || 1})`
+              : 'Complete Your AI Career Discovery Onboarding'
+          }
+        >
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mt-1">
+            <span className="text-xs text-slate-600 dark:text-slate-300">
+              {onboardingSession?.status === 'awaiting_confirmation'
+                ? 'Your personalized career summary is synthesized and awaiting your confirmation to update your profile.'
+                : onboardingSession?.status === 'in_progress'
+                ? 'Resume your personalized discovery conversation to calibrate your skill baseline and roadmap.'
+                : 'Establish your target role, experience baseline, and learning goals with our interactive AI interview.'}
+            </span>
+            <Link href="/onboarding">
+              <Button
+                size="sm"
+                variant={onboardingSession?.status === 'awaiting_confirmation' ? 'primary' : 'intelligence'}
+              >
+                <Sparkles className="w-3.5 h-3.5 mr-1.5" />
+                {onboardingSession?.status === 'awaiting_confirmation'
+                  ? 'Review & Confirm'
+                  : onboardingSession?.status === 'in_progress'
+                  ? 'Resume Discovery'
+                  : 'Start Onboarding'}
+              </Button>
+            </Link>
+          </div>
+        </Alert>
+      )}
 
       {/* High-Priority Alert: Scheduled Interview */}
       {upcomingInterview && (

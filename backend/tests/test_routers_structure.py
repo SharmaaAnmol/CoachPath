@@ -30,8 +30,15 @@ async def test_domain_router_structural_placeholder(
 ):
     """Verifies that each domain router is registered and responds under /api/v1."""
     response = await client.get(route_path)
-    assert response.status_code == 200
-    data = response.json()
-    assert data["module"] == expected_module
-    assert data["status"] in ("placeholder", "operational")
-    assert "phase" in data
+    if expected_module in ("profile", "resume", "assessments"):
+        assert response.status_code == 401
+    elif expected_module == "skills":
+        assert response.status_code == 200
+        data = response.json()
+        assert isinstance(data, list)
+    else:
+        assert response.status_code == 200
+        data = response.json()
+        assert data["module"] == expected_module
+        assert data["status"] in ("placeholder", "operational")
+        assert "phase" in data

@@ -8,6 +8,7 @@ from contextlib import asynccontextmanager
 from typing import AsyncGenerator, Dict
 from fastapi import FastAPI, status
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi.responses import RedirectResponse
 
 from app.api.router import api_router
 from app.core.config import settings
@@ -30,6 +31,17 @@ async def lifespan(app: FastAPI) -> AsyncGenerator[None, None]:
         f"Starting {settings.PROJECT_NAME} v{settings.VERSION} "
         f"[{settings.ENVIRONMENT}]..."
     )
+    # Ensure diagnostic assessments, skills taxonomy, and roles are seeded
+    try:
+        from app.db.session import AsyncSessionLocal
+        from app.db.seeds.assessment_seeder import seed_diagnostic_assessments
+        from app.db.seeds.gap_analysis_seeder import seed_skill_taxonomy_and_roles
+        async with AsyncSessionLocal() as db_session:
+            await seed_skill_taxonomy_and_roles(db_session)
+            await seed_diagnostic_assessments(db_session)
+    except Exception as exc:
+        logger.warning("Database baseline auto-seeding skipped: %s", exc)
+
     yield
     logger.info(f"Shutting down {settings.PROJECT_NAME}...")
     await close_db_connection()
@@ -78,6 +90,14 @@ def create_application() -> FastAPI:
             "docs_url": f"{settings.API_V1_PREFIX}/docs",
             "api_v1": settings.API_V1_PREFIX,
         }
+
+    @application.get("/docs", include_in_schema=False)
+    async def redirect_to_docs() -> RedirectResponse:
+        return RedirectResponse(url=f"{settings.API_V1_PREFIX}/docs")
+
+    @application.get("/redoc", include_in_schema=False)
+    async def redirect_to_redoc() -> RedirectResponse:
+        return RedirectResponse(url=f"{settings.API_V1_PREFIX}/redoc")
 
     # 5. Mount API v1 Master Router
     application.include_router(api_router, prefix=settings.API_V1_PREFIX)

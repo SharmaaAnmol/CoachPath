@@ -43,10 +43,11 @@ from app.models.career import (
     Role,
 )
 from app.models.jobs import Job, JobMatch, JobSkill
+from app.models.onboarding import OnboardingSession, OnboardingTurn
 from app.models.readiness import CareerReadinessScore
 from app.models.resume import Resume, ResumeVersion
 from app.models.roadmap import Roadmap, RoadmapPhase, RoadmapTask
-from app.models.skills import RoleRequirement, Skill, SkillGap, UserSkill
+from app.models.skills import RoleRequirement, Skill, SkillGap, SkillGapAnalysis, UserSkill
 
 __all__ = [
     # Base and Mixins
@@ -75,6 +76,7 @@ __all__ = [
     "RoleRequirement",
     "UserSkill",
     "SkillGap",
+    "SkillGapAnalysis",
     # Assessments Domain
     "Assessment",
     "AssessmentQuestion",
@@ -106,4 +108,7 @@ __all__ = [
     # Audit Domain
     "ActivityLog",
     "AuditLog",
+    # Onboarding Domain
+    "OnboardingSession",
+    "OnboardingTurn",
 ]

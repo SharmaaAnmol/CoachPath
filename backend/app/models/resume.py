@@ -42,7 +42,7 @@ class Resume(Base, UUIDMixin):
             name="resumes_mime_type_check",
         ),
         CheckConstraint(
-            "status IN ('uploaded', 'parsing', 'parsed', 'failed')",
+            "status IN ('uploaded', 'parsing', 'processing', 'parsed', 'needs_review', 'failed')",
             name="resumes_status_check",
         ),
         Index("resumes_user_id_idx", "user_id"),
@@ -97,6 +97,28 @@ class Resume(Base, UUIDMixin):
         server_default=sa.text("TRUE"),
         nullable=False,
         doc="True if this is the user's primary source resume",
+    )
+    parsing_error: Mapped[Optional[str]] = mapped_column(
+        Text,
+        nullable=True,
+        doc="Detailed error description if parsing failed",
+    )
+    parsing_error_category: Mapped[Optional[str]] = mapped_column(
+        String(64),
+        nullable=True,
+        doc="Category classification of parsing error",
+    )
+    parsed_at: Mapped[Optional[datetime]] = mapped_column(
+        DateTime(timezone=True),
+        nullable=True,
+        doc="Timestamp when parsing completed (UTC)",
+    )
+    updated_at: Mapped[datetime] = mapped_column(
+        DateTime(timezone=True),
+        default=utc_now,
+        server_default=sa.text("CURRENT_TIMESTAMP"),
+        nullable=False,
+        doc="Timestamp of last update (UTC)",
     )
     created_at: Mapped[datetime] = mapped_column(
         DateTime(timezone=True),

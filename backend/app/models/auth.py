@@ -19,6 +19,7 @@ if TYPE_CHECKING:
     from app.models.assessments import AssessmentAttempt
     from app.models.audit import ActivityLog, AuditLog
     from app.models.career import CareerProfile
+    from app.models.onboarding import OnboardingSession
     from app.models.readiness import CareerReadinessScore
     from app.models.resume import Resume
 
@@ -132,6 +133,12 @@ class User(Base, UUIDMixin, TimestampMixin):
     audit_logs: Mapped[List[AuditLog]] = relationship(
         "AuditLog",
         back_populates="user",
+        cascade="all, delete-orphan",
+    )
+    onboarding_session: Mapped[Optional[OnboardingSession]] = relationship(
+        "OnboardingSession",
+        back_populates="user",
+        uselist=False,
         cascade="all, delete-orphan",
     )
 

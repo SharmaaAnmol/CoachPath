@@ -201,61 +201,136 @@ All mutating, state-altering, or expensive operations (e.g., creating tailored r
 
 ---
 
-### Group 2: Personalized Onboarding (`/api/v1/onboarding`)
+### Group 2: AI-Powered Personalized Onboarding (`/api/v1/onboarding`)
 
-#### 2.1 Start Onboarding
+#### 2.1 Start or Resume Onboarding
 - **Method / URL**: `POST /api/v1/onboarding/start`
-- **Auth**: Authenticated
+- **Auth**: Authenticated (Candidate)
 - **Response (200 OK)**:
   ```json
   {
-    "current_step": "role_selection",
-    "supported_roles": [
-      {"id": "software-engineer", "title": "Software Engineer (Generalist)"},
-      {"id": "backend-developer", "title": "Backend Developer"},
-      {"id": "frontend-developer", "title": "Frontend Developer"},
-      {"id": "data-analyst", "title": "Data Analyst"},
-      {"id": "data-scientist", "title": "Data Scientist"},
-      {"id": "ml-engineer", "title": "Machine Learning Engineer"},
-      {"id": "ai-engineer", "title": "AI Engineer"}
-    ]
+    "session_id": "a1b2c3d4-e5f6-7890-abcd-ef1234567890",
+    "status": "in_progress",
+    "is_resumed": false,
+    "first_question": "Hi there! I'm your CoachPath career onboarding guide. Let's start with your target — what specific role or career path are you aiming for?",
+    "first_question_category": "target_role",
+    "message": "Welcome to CoachPath! Let's build your career profile together."
   }
   ```
+- **Errors**: 401 Unauthorized, 409 Conflict (`Onboarding has already been completed for this account`).
 
-#### 2.2 Submit Onboarding Step
-- **Method / URL**: `POST /api/v1/onboarding/step`
-- **Auth**: Authenticated
-- **Request Body**:
-  ```json
-  {
-    "step": "role_selection",
-    "payload": {
-      "primary_role_id": "backend-developer",
-      "secondary_role_id": "software-engineer",
-      "career_stage": "student",
-      "work_preference": "hybrid",
-      "target_locations": ["San Francisco, CA", "Remote"]
-    }
-  }
-  ```
-- **Validation**: `primary_role_id` must match supported role taxonomy; max 2 roles.
+#### 2.2 Get Current Onboarding Session
+- **Method / URL**: `GET /api/v1/onboarding/session`
+- **Auth**: Authenticated (Candidate, Owner)
 - **Response (200 OK)**:
   ```json
   {
-    "next_step": "resume_upload",
-    "progress_percentage": 50
+    "session_id": "a1b2c3d4-e5f6-7890-abcd-ef1234567890",
+    "status": "in_progress",
+    "current_question": "Which programming languages do you use most frequently?",
+    "current_question_category": "skills",
+    "turn_count": 1,
+    "started_at": "2026-10-21T18:30:00Z",
+    "last_activity_at": "2026-10-21T18:32:00Z",
+    "completed_at": null
   }
   ```
+- **Errors**: 401 Unauthorized, 403 Forbidden, 404 Not Found.
 
 #### 2.3 Retrieve Onboarding Progress
 - **Method / URL**: `GET /api/v1/onboarding/progress`
-- **Auth**: Authenticated
-- **Response (200 OK)**: `{"is_completed": false, "current_step": "resume_upload", "completed_steps": ["role_selection"]}`
+- **Auth**: Authenticated (Candidate, Owner)
+- **Response (200 OK)**:
+  ```json
+  {
+    "session_id": "a1b2c3d4-e5f6-7890-abcd-ef1234567890",
+    "status": "in_progress",
+    "turn_count": 2,
+    "areas_covered": ["target_role", "skills"],
+    "areas_remaining": ["career_stage", "education", "experience", "projects", "learning_time", "timeline", "preferences"],
+    "ready_to_summarize": false,
+    "current_question": "What is your highest level of completed education?"
+  }
+  ```
+- **Errors**: 401 Unauthorized, 403 Forbidden, 404 Not Found.
 
-#### 2.4 Complete Onboarding
-- **Method / URL**: `POST /api/v1/onboarding/complete`
-- **Auth**: Authenticated
-- **Response (200 OK)**: Transitions candidate into active state, recalculates initial readiness baseline, returns 200 OK.
+#### 2.4 Submit Response to Current Question
+- **Method / URL**: `POST /api/v1/onboarding/respond`
+- **Auth**: Authenticated (Candidate, Owner)
+- **Request Body**:
+  ```json
+  {
+    "response_text": "I primarily work with Python and PostgreSQL for web APIs."
+  }
+  ```
+- **Validation**: `response_text` 1–2000 characters, non-empty, extra fields forbidden.
+- **Response (200 OK)**:
+  ```json
+  {
+    "turn_completed": {
+      "turn_id": "b2c3d4e5-f678-9012-bcde-f12345678901",
+      "turn_number": 2,
+      "question": "Which programming languages do you use most frequently?",
+      "question_category": "skills",
+      "user_response": "I primarily work with Python and PostgreSQL for web APIs.",
+      "responded_at": "2026-10-21T18:33:00Z",
+      "created_at": "2026-10-21T18:32:00Z"
+    },
+    "next_question": "What is your highest level of completed education?",
+    "next_question_category": "education",
+    "session_status": "in_progress",
+    "ready_to_summarize": false
+  }
+  ```
+- **Errors**: 401 Unauthorized, 403 Forbidden, 409 Conflict, 422 Unprocessable, 503 Service Unavailable.
+
+#### 2.5 Retrieve Conversation History
+- **Method / URL**: `GET /api/v1/onboarding/history`
+- **Auth**: Authenticated (Candidate, Owner)
+- **Response (200 OK)**: Array of `ConversationTurnResponse` objects chronologically ordered.
+- **Errors**: 401 Unauthorized, 403 Forbidden, 404 Not Found.
+
+#### 2.6 Retrieve Synthesized Career Summary
+- **Method / URL**: `GET /api/v1/onboarding/summary`
+- **Auth**: Authenticated (Candidate, Owner)
+- **Constraint**: Only accessible when status is `awaiting_confirmation` or `completed`.
+- **Response (200 OK)**:
+  ```json
+  {
+    "session_id": "a1b2c3d4-e5f6-7890-abcd-ef1234567890",
+    "summary": {
+      "target_role": "Backend Developer",
+      "career_stage": "early_career",
+      "current_education": "Bachelor of Technology",
+      "education_field": "Computer Science",
+      "years_of_experience": 1.5,
+      "skills": ["Python", "PostgreSQL", "Docker", "FastAPI"],
+      "technologies": ["Git", "Linux", "Redis"],
+      "learning_hours_per_week": 12.0,
+      "work_preference": "remote",
+      "target_locations": ["Bengaluru", "Remote"],
+      "missing_areas": [],
+      "uncertain_fields": []
+    },
+    "generated_at": "2026-10-21T18:35:00Z",
+    "is_confirmed": false,
+    "confirmed_at": null
+  }
+  ```
+- **Errors**: 401 Unauthorized, 403 Forbidden, 404 Not Found, 409 Conflict.
+
+#### 2.7 Confirm Career Summary & Complete Onboarding
+- **Method / URL**: `POST /api/v1/onboarding/confirm`
+- **Auth**: Authenticated (Candidate, Owner)
+- **Request Body**:
+  ```json
+  {
+    "confirmed": true,
+    "edits": null
+  }
+  ```
+- **Response (200 OK)**: Returns updated `OnboardingSessionResponse` with status `completed`. CareerProfile is atomically updated.
+- **Errors**: 401 Unauthorized, 403 Forbidden, 409 Conflict, 422 Unprocessable.
 
 ---
 
@@ -448,20 +523,80 @@ All mutating, state-altering, or expensive operations (e.g., creating tailored r
   ```
 
 #### 5.3 Confirm Extracted Profile (Human Approval Gateway)
-- **Method / URL**: `POST /api/v1/resumes/{id}/confirm`
-- **Auth**: Authenticated
+- **Method / URL**: `POST /api/v1/resume/{id}/confirm`
+- **Auth**: Authenticated (Candidate Bearer)
 - **Request Body**:
   ```json
   {
-    "approved_data": {
-      "education": [...],
-      "experience": [...],
-      "projects": [...],
-      "confirmed_skills": ["python", "sql", "git", "fastapi"]
-    }
+    "personal_info": {
+      "headline": "Senior Backend Architect",
+      "location": "San Francisco, CA",
+      "phone_number": "+1 555-0192",
+      "linkedin_url": "https://linkedin.com/in/aarav",
+      "github_url": "https://github.com/aarav",
+      "portfolio_url": "https://aarav.dev",
+      "bio": "Passionate distributed systems engineer."
+    },
+    "education": [
+      {
+        "institution_name": "Stanford University",
+        "degree": "B.S. Computer Science",
+        "field_of_study": "Software Systems",
+        "start_date": "2018-09-01",
+        "end_date": "2022-06-15",
+        "is_current": false,
+        "gpa": 3.85
+      }
+    ],
+    "experience": [
+      {
+        "company_name": "TechCorp Global",
+        "role_title": "Senior Backend Engineer",
+        "location": "Remote",
+        "start_date": "2022-07-01",
+        "end_date": null,
+        "is_current": true,
+        "bullet_points": ["Engineered distributed pipelines", "Reduced latency by 45%"]
+      }
+    ],
+    "projects": [
+      {
+        "title": "Cloud Stream Gateway",
+        "description": "High-throughput API gateway built with FastAPI",
+        "technologies": ["Python", "FastAPI", "PostgreSQL"],
+        "github_url": "https://github.com/aarav/stream-gateway",
+        "bullet_points": ["Achieved 99.99% uptime"]
+      }
+    ],
+    "certifications": [
+      {
+        "name": "AWS Certified Solutions Architect",
+        "issuing_organization": "Amazon Web Services",
+        "issue_date": "2023-01-15",
+        "credential_id": "AWS-PSA-9921"
+      }
+    ],
+    "confirmed_skills": ["python", "postgresql", "fastapi"],
+    "make_primary": true
   }
   ```
-- **Response (200 OK)**: Commits verified data to `career_profiles` and creates immutable audit log record.
+- **Response (200 OK)**:
+  ```json
+  {
+    "resume_id": "r1-uuid",
+    "status": "confirmed",
+    "message": "Resume data merged into career profile successfully.",
+    "merged_summary": {
+      "education_added": 1,
+      "experience_added": 1,
+      "projects_added": 1,
+      "certifications_added": 1,
+      "skills_added": 3,
+      "profile_updated": true
+    },
+    "completeness_score": 85.0
+  }
+  ```
 
 #### 5.4 Create Tailored Resume Version
 - **Method / URL**: `POST /api/v1/resumes/{id}/tailor`

@@ -10,7 +10,11 @@ from typing import Optional
 from fastapi import APIRouter, Body, Depends, Request, Response, status
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from app.api.dependencies import get_current_user, get_session
+from app.api.dependencies import (
+    get_current_user,
+    get_optional_current_user,
+    get_session,
+)
 from app.core.config import settings
 from app.core.exceptions import UnauthorizedException
 from app.models.auth import User
@@ -187,7 +191,7 @@ async def logout(
     response: Response,
     request: Request,
     payload: Optional[RefreshTokenRequest] = Body(None),
-    current_user: User = Depends(get_current_user),
+    current_user: Optional[User] = Depends(get_optional_current_user),
     db: AsyncSession = Depends(get_session),
 ) -> LogoutResponse:
     """Invalidates active session and clears auth cookies."""
@@ -197,11 +201,12 @@ async def logout(
     elif "refresh_token" in request.cookies:
         raw_token = request.cookies["refresh_token"]
 
-    await auth_service.logout(
-        db=db,
-        user_id=current_user.id,
-        raw_refresh_token=raw_token,
-    )
+    if current_user:
+        await auth_service.logout(
+            db=db,
+            user_id=current_user.id,
+            raw_refresh_token=raw_token,
+        )
 
     clear_auth_cookies(response)
     return LogoutResponse(message="Logged out successfully")

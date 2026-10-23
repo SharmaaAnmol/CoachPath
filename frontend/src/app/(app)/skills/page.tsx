@@ -2,233 +2,357 @@
 
 import * as React from 'react';
 import Link from 'next/link';
-import { mockSkills } from '@/lib/mock/data';
-import { SkillItem, SkillStatus } from '@/types';
+import {
+  SkillGapAnalysisData,
+  TargetRoleDetail,
+} from '@/types';
+import { skillGapClient } from '@/lib/skill-gap-client';
+import { profileClient } from '@/lib/profile-client';
 import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
-import { SkillBadge } from '@/components/ui/skill-badge';
-import { Tabs } from '@/components/ui/tabs';
+import { Skeleton } from '@/components/ui/skeleton';
+import { Alert } from '@/components/ui/alert';
+import { TargetRoleSelector } from '@/components/skills/TargetRoleSelector';
+import { ScoreOverviewCards } from '@/components/skills/ScoreOverviewCards';
+import { ScoreExplanationModal } from '@/components/skills/ScoreExplanationModal';
+import { SkillComparisonTable } from '@/components/skills/SkillComparisonTable';
+import { SkillEvidenceModal } from '@/components/skills/SkillEvidenceModal';
+import { GapPriorityList } from '@/components/skills/GapPriorityList';
+import { RecommendedAssessmentsSection } from '@/components/skills/RecommendedAssessmentsSection';
+import { AnalysisHistoryModal } from '@/components/skills/AnalysisHistoryModal';
+import { DiagnosticNarrativeCard } from '@/components/skills/DiagnosticNarrativeCard';
 import {
   Cpu,
-  CheckCircle2,
-  Clock,
-  AlertCircle,
-  Plus,
-  ArrowRight,
+  RotateCcw,
+  History,
   ClipboardCheck,
-  Compass,
-  Filter,
+  AlertCircle,
+  Loader2,
+  Sparkles,
+  Calendar,
+  CheckCircle2,
 } from 'lucide-react';
 
 export default function SkillsPage() {
-  const [statusFilter, setStatusFilter] = React.useState<string>('all');
-  const [selectedCategory, setSelectedCategory] = React.useState<string>('All');
+  const [roles, setRoles] = React.useState<TargetRoleDetail[]>([]);
+  const [selectedRoleId, setSelectedRoleId] = React.useState<string>('backend-developer');
+  const [profileRoleId, setProfileRoleId] = React.useState<string | null>(null);
+  const [analysis, setAnalysis] = React.useState<SkillGapAnalysisData | null>(null);
 
-  const categories = ['All', 'Languages', 'Frameworks', 'Databases', 'Cloud & DevOps', 'Architecture'];
+  const [isLoading, setIsLoading] = React.useState<boolean>(true);
+  const [isRecalculating, setIsRecalculating] = React.useState<boolean>(false);
+  const [errorMessage, setErrorMessage] = React.useState<string | null>(null);
+  const [successToast, setSuccessToast] = React.useState<string | null>(null);
 
-  const verifiedSkills = mockSkills.filter((s) => s.status === 'verified');
-  const developingSkills = mockSkills.filter((s) => s.status === 'developing');
-  const missingSkills = mockSkills.filter((s) => s.status === 'missing');
+  // Modal states
+  const [isExplanationOpen, setIsExplanationOpen] = React.useState<boolean>(false);
+  const [isHistoryOpen, setIsHistoryOpen] = React.useState<boolean>(false);
+  const [evidenceModalSkill, setEvidenceModalSkill] = React.useState<{ id: string; name: string } | null>(null);
 
-  const filteredSkills = mockSkills.filter((s) => {
-    const matchesStatus = statusFilter === 'all' || s.status === statusFilter;
-    const matchesCategory = selectedCategory === 'All' || s.category === selectedCategory;
-    return matchesStatus && matchesCategory;
-  });
+  // Initial Data Fetch
+  const loadInitialData = React.useCallback(async () => {
+    try {
+      setIsLoading(true);
+      setErrorMessage(null);
 
-  const filterTabs = [
-    { id: 'all', label: 'All Tracked Skills', badge: mockSkills.length },
-    { id: 'verified', label: 'Verified Strengths', badge: verifiedSkills.length },
-    { id: 'developing', label: 'Developing', badge: developingSkills.length },
-    { id: 'missing', label: 'Identified Gaps', badge: missingSkills.length },
-  ];
+      // 1. Fetch available target roles
+      const rolesRes = await skillGapClient.listRoles();
+      setRoles(rolesRes.roles);
+
+      // 2. Fetch profile career goals to preselect role if available
+      let candidateTargetRoleId = 'backend-developer';
+      try {
+        const goals = await profileClient.getCareerGoals();
+        if (goals.primary_role?.id) {
+          candidateTargetRoleId = goals.primary_role.id;
+          setProfileRoleId(goals.primary_role.id);
+        }
+      } catch {
+        // Fallback to default if profile not yet completed
+      }
+
+      // 3. Fetch latest active analysis
+      let activeAnalysis: SkillGapAnalysisData | null = null;
+      try {
+        activeAnalysis = await skillGapClient.getLatestAnalysis();
+      } catch {
+        // If no analysis exists yet, compute one
+        activeAnalysis = await skillGapClient.calculateAnalysis(candidateTargetRoleId);
+      }
+
+      if (activeAnalysis) {
+        setAnalysis(activeAnalysis);
+        setSelectedRoleId(activeAnalysis.role_id);
+      } else {
+        setSelectedRoleId(candidateTargetRoleId);
+      }
+    } catch (err: any) {
+      setErrorMessage(err?.message || 'Failed to initialize skill gap analysis engine.');
+    } finally {
+      setIsLoading(false);
+    }
+  }, []);
+
+  React.useEffect(() => {
+    loadInitialData();
+  }, [loadInitialData]);
+
+  // Handle switching target roles
+  const handleSelectRole = async (newRoleId: string) => {
+    if (newRoleId === selectedRoleId && analysis) return;
+
+    try {
+      setIsRecalculating(true);
+      setErrorMessage(null);
+      setSelectedRoleId(newRoleId);
+
+      const updated = await skillGapClient.calculateAnalysis(newRoleId);
+      setAnalysis(updated);
+      setSuccessToast(`Evaluated alignment against ${updated.role_title}.`);
+      setTimeout(() => setSuccessToast(null), 3000);
+    } catch (err: any) {
+      setErrorMessage(err?.message || `Failed to analyze gaps for ${newRoleId}.`);
+    } finally {
+      setIsRecalculating(false);
+    }
+  };
+
+  // Handle explicit recalculation
+  const handleRecalculate = async () => {
+    if (isRecalculating) return;
+
+    try {
+      setIsRecalculating(true);
+      setErrorMessage(null);
+
+      const refreshed = await skillGapClient.recalculateAnalysis(selectedRoleId);
+      setAnalysis(refreshed);
+      setSuccessToast('Analysis successfully updated with latest evidence!');
+      setTimeout(() => setSuccessToast(null), 3000);
+    } catch (err: any) {
+      setErrorMessage(err?.message || 'Failed to recalculate skill gap analysis.');
+    } finally {
+      setIsRecalculating(false);
+    }
+  };
+
+  // Inspect skill evidence callback
+  const handleInspectEvidence = (skillId: string, skillName: string) => {
+    setEvidenceModalSkill({ id: skillId, name: skillName });
+  };
+
+  const formatCalculatedTime = (isoString?: string) => {
+    if (!isoString) return '';
+    try {
+      const d = new Date(isoString);
+      return d.toLocaleDateString(undefined, {
+        month: 'short',
+        day: 'numeric',
+        year: 'numeric',
+        hour: '2-digit',
+        minute: '2-digit',
+      });
+    } catch {
+      return isoString;
+    }
+  };
 
   return (
-    <div className="space-y-6">
-      {/* Top Header */}
+    <div className="space-y-6 max-w-7xl mx-auto pb-12">
+      {/* Page Header */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
-          <h2 className="text-2xl font-bold text-slate-900 dark:text-white">
-            Skill Taxonomy & Competency Engine
-          </h2>
+          <div className="flex items-center gap-2">
+            <span className="p-2 rounded-xl bg-indigo-50 dark:bg-indigo-950 text-indigo-600 dark:text-indigo-400">
+              <Cpu className="w-5 h-5" />
+            </span>
+            <h1 className="text-2xl font-bold text-slate-900 dark:text-white tracking-tight">
+              Skill Gap Analysis Engine
+            </h1>
+          </div>
           <p className="text-xs text-slate-500 dark:text-slate-400 mt-1">
-            Grounded verification compares your profile against role standards for <strong className="text-purple-600">Full-Stack Engineer</strong>.
+            Grounded benchmark comparison comparing your verified assessments, projects, and career evidence against role requirements.
           </p>
         </div>
 
-        <div className="flex items-center gap-2">
+        {/* Action Controls */}
+        <div className="flex flex-wrap items-center gap-2">
+          <Button
+            size="sm"
+            variant="outline"
+            onClick={() => setIsHistoryOpen(true)}
+            disabled={isLoading || isRecalculating}
+            className="text-xs"
+          >
+            <History className="w-3.5 h-3.5 mr-1.5" /> Snapshot History
+          </Button>
+
+          <Button
+            size="sm"
+            variant="outline"
+            onClick={handleRecalculate}
+            disabled={isLoading || isRecalculating}
+            className="text-xs font-semibold"
+          >
+            {isRecalculating ? (
+              <>
+                <Loader2 className="w-3.5 h-3.5 mr-1.5 animate-spin" /> Recalculating...
+              </>
+            ) : (
+              <>
+                <RotateCcw className="w-3.5 h-3.5 mr-1.5" /> Recalculate
+              </>
+            )}
+          </Button>
+
           <Link href="/assessments">
-            <Button size="sm" variant="intelligence">
+            <Button size="sm" variant="intelligence" className="text-xs font-semibold">
               <ClipboardCheck className="w-3.5 h-3.5 mr-1.5" /> Take Assessment
             </Button>
           </Link>
-          <Button size="sm" variant="outline">
-            <Plus className="w-3.5 h-3.5 mr-1" /> Add Skill Claim
-          </Button>
         </div>
       </div>
 
-      {/* Tri-State Overview Cards */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-        {/* Verified Card */}
-        <Card className="p-5 border-emerald-200 bg-emerald-50/20 dark:bg-emerald-950/20 space-y-2">
-          <div className="flex items-center justify-between">
-            <div className="flex items-center gap-2 text-emerald-700 dark:text-emerald-300 font-bold text-sm">
-              <CheckCircle2 className="w-4 h-4" />
-              <span>Verified Strengths</span>
-            </div>
-            <span className="text-xl font-extrabold text-emerald-700 dark:text-emerald-300">
-              {verifiedSkills.length}
-            </span>
+      {/* Success Notification */}
+      {successToast && (
+        <div className="p-3 rounded-xl bg-emerald-50 dark:bg-emerald-950/40 border border-emerald-200 dark:border-emerald-800 text-xs text-emerald-800 dark:text-emerald-200 flex items-center justify-between animate-in fade-in-50">
+          <div className="flex items-center gap-2">
+            <CheckCircle2 className="w-4 h-4 text-emerald-600 dark:text-emerald-400 shrink-0" />
+            <span>{successToast}</span>
           </div>
-          <p className="text-xs text-slate-600 dark:text-slate-400">
-            Validated by diagnostic coding assessments and GitHub project evidence.
-          </p>
-        </Card>
-
-        {/* Developing Card */}
-        <Card className="p-5 border-amber-200 bg-amber-50/20 dark:bg-amber-950/20 space-y-2">
-          <div className="flex items-center justify-between">
-            <div className="flex items-center gap-2 text-amber-700 dark:text-amber-300 font-bold text-sm">
-              <Clock className="w-4 h-4" />
-              <span>Developing Skills</span>
-            </div>
-            <span className="text-xl font-extrabold text-amber-700 dark:text-amber-300">
-              {developingSkills.length}
-            </span>
-          </div>
-          <p className="text-xs text-slate-600 dark:text-slate-400">
-            Familiar concepts in progress. Ready for diagnostic calibration.
-          </p>
-        </Card>
-
-        {/* Missing Gaps Card */}
-        <Card className="p-5 border-rose-200 bg-rose-50/20 dark:bg-rose-950/20 space-y-2">
-          <div className="flex items-center justify-between">
-            <div className="flex items-center gap-2 text-rose-700 dark:text-rose-300 font-bold text-sm">
-              <AlertCircle className="w-4 h-4" />
-              <span>Target Market Gaps</span>
-            </div>
-            <span className="text-xl font-extrabold text-rose-700 dark:text-rose-300">
-              {missingSkills.length}
-            </span>
-          </div>
-          <p className="text-xs text-slate-600 dark:text-slate-400">
-            Required by top employer listings (e.g. Stripe, Datadog) not yet demonstrated.
-          </p>
-        </Card>
-      </div>
-
-      {/* Filter Tabs & Category Filter */}
-      <div className="space-y-4">
-        <Tabs tabs={filterTabs} activeTab={statusFilter} onChange={setStatusFilter} />
-
-        <div className="flex flex-wrap items-center gap-2 pt-1">
-          <span className="text-xs text-slate-400 flex items-center gap-1 mr-1">
-            <Filter className="w-3.5 h-3.5" /> Category:
-          </span>
-          {categories.map((cat) => (
-            <button
-              key={cat}
-              onClick={() => setSelectedCategory(cat)}
-              className={`px-3 py-1 rounded-lg text-xs font-medium transition-all ${
-                selectedCategory === cat
-                  ? 'bg-slate-900 text-white dark:bg-white dark:text-slate-900'
-                  : 'bg-slate-100 text-slate-600 hover:bg-slate-200 dark:bg-slate-800 dark:text-slate-300'
-              }`}
-            >
-              {cat}
-            </button>
-          ))}
         </div>
-      </div>
+      )}
 
-      {/* Skills Table / Grid */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-        {filteredSkills.map((skill) => (
-          <Card key={skill.id} className="p-4 flex flex-col justify-between space-y-3 hover:border-slate-300 transition-all">
+      {/* Error Alert */}
+      {errorMessage && (
+        <Alert variant="destructive">
+          <div className="flex items-start justify-between w-full">
+            <div className="flex items-center gap-2">
+              <AlertCircle className="w-4 h-4 shrink-0" />
+              <span>{errorMessage}</span>
+            </div>
+            <Button size="sm" variant="outline" className="text-xs h-6 px-2 ml-4" onClick={loadInitialData}>
+              Retry
+            </Button>
+          </div>
+        </Alert>
+      )}
+
+      {/* Initial Loading Skeleton */}
+      {isLoading && !analysis && (
+        <div className="space-y-4">
+          <Card className="p-5">
             <div className="space-y-2">
-              <div className="flex items-start justify-between gap-2">
-                <div>
-                  <h4 className="text-sm font-bold text-slate-900 dark:text-white">
-                    {skill.name}
-                  </h4>
-                  <span className="text-[11px] text-slate-400 font-medium">
-                    {skill.category}
-                  </span>
-                </div>
-                <Badge
-                  variant={
-                    skill.status === 'verified'
-                      ? 'verified'
-                      : skill.status === 'developing'
-                      ? 'action'
-                      : 'gap'
-                  }
-                  size="sm"
-                >
-                  {skill.status === 'verified'
-                    ? 'Verified'
-                    : skill.status === 'developing'
-                    ? 'Developing'
-                    : 'Missing Gap'}
-                </Badge>
-              </div>
-
-              <div className="space-y-1 pt-1">
-                <div className="flex justify-between text-xs">
-                  <span className="text-slate-500">Calibrated Confidence</span>
-                  <span className="font-mono font-bold text-slate-800 dark:text-slate-200">
-                    {skill.confidenceScore}%
-                  </span>
-                </div>
-                <div className="w-full h-1.5 rounded-full bg-slate-100 dark:bg-slate-800 overflow-hidden">
-                  <div
-                    className={`h-full rounded-full ${
-                      skill.status === 'verified'
-                        ? 'bg-emerald-500'
-                        : skill.status === 'developing'
-                        ? 'bg-amber-500'
-                        : 'bg-rose-500'
-                    }`}
-                    style={{ width: `${skill.confidenceScore}%` }}
-                  />
-                </div>
-              </div>
-
-              <div className="text-[11px] text-slate-500 pt-1 flex items-center justify-between">
-                <span>Evidence: <strong className="text-slate-700 dark:text-slate-300">{skill.evidenceSource}</strong></span>
-                {skill.lastEvaluated && (
-                  <span className="text-slate-400">{skill.lastEvaluated}</span>
-                )}
-              </div>
-            </div>
-
-            <div className="pt-3 border-t border-slate-100 dark:border-slate-800 flex items-center justify-end gap-2">
-              {skill.status === 'missing' && (
-                <Link href="/roadmap">
-                  <Button size="sm" variant="outline" className="text-xs">
-                    <Compass className="w-3.5 h-3.5 mr-1" /> Add to Roadmap
-                  </Button>
-                </Link>
-              )}
-              {skill.status === 'developing' && (
-                <Link href="/assessments">
-                  <Button size="sm" variant="intelligence" className="text-xs">
-                    Validate Now
-                  </Button>
-                </Link>
-              )}
-              {skill.status === 'verified' && (
-                <span className="text-[11px] font-semibold text-emerald-600 flex items-center gap-1">
-                  <CheckCircle2 className="w-3.5 h-3.5" /> High Confidence
-                </span>
-              )}
+              <Skeleton className="h-4 w-48" />
+              <Skeleton className="h-3 w-96" />
             </div>
           </Card>
-        ))}
-      </div>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <Skeleton className="h-40 rounded-xl" />
+            <Skeleton className="h-40 rounded-xl" />
+          </div>
+          <Skeleton className="h-96 rounded-xl" />
+        </div>
+      )}
+
+      {/* Loaded Analysis View */}
+      {!isLoading && analysis && (
+        <div className="space-y-6">
+          {/* Target Role Selector Component */}
+          <TargetRoleSelector
+            roles={roles}
+            selectedRoleId={selectedRoleId}
+            onSelectRole={handleSelectRole}
+            profileRoleId={profileRoleId}
+            isLoading={isRecalculating}
+            disabled={isRecalculating}
+          />
+
+          {/* Timestamp and Version Bar */}
+          <div className="flex items-center justify-between px-1 text-[11px] text-slate-400">
+            <div className="flex items-center gap-2">
+              <span className="flex items-center gap-1">
+                <Calendar className="w-3 h-3" />
+                Snapshot: <strong>{formatCalculatedTime(analysis.calculated_at)}</strong>
+              </span>
+              <span>•</span>
+              <span>Algorithm v{analysis.algorithm_version}</span>
+              <span>•</span>
+              <span>Benchmark v{analysis.role_version}</span>
+            </div>
+            {isRecalculating && (
+              <span className="flex items-center gap-1 text-indigo-600 dark:text-indigo-400 font-semibold animate-pulse">
+                <Loader2 className="w-3 h-3 animate-spin" /> Updating scores...
+              </span>
+            )}
+          </div>
+
+          {/* Primary Score Overview Cards */}
+          <ScoreOverviewCards
+            analysis={analysis}
+            onOpenExplanation={() => setIsExplanationOpen(true)}
+            onRecalculate={handleRecalculate}
+            isRecalculating={isRecalculating}
+          />
+
+          {/* Deterministic Diagnostic Narrative Report */}
+          <DiagnosticNarrativeCard
+            narrative={analysis.explanation_narrative}
+            roleTitle={analysis.role_title}
+          />
+
+          {/* Prioritized Remedial Gap Plan */}
+          <GapPriorityList
+            gaps={analysis.prioritized_gaps}
+            roleTitle={analysis.role_title}
+          />
+
+          {/* Recommended Diagnostic Assessments Bridge */}
+          <RecommendedAssessmentsSection
+            assessments={analysis.recommended_assessments}
+          />
+
+          {/* Granular Skill-by-Skill Comparison Table */}
+          <div className="space-y-2">
+            <div className="flex items-center justify-between">
+              <div>
+                <h3 className="text-sm font-bold text-slate-900 dark:text-white uppercase tracking-wider">
+                  Comprehensive Role Skill Breakdown
+                </h3>
+                <p className="text-xs text-slate-500 dark:text-slate-400">
+                  Individual competency calibration comparing required levels (1-4) against supported evidence.
+                </p>
+              </div>
+            </div>
+
+            <SkillComparisonTable
+              skills={analysis.skill_details}
+              onInspectEvidence={handleInspectEvidence}
+            />
+          </div>
+        </div>
+      )}
+
+      {/* Educational Explanation Modal */}
+      <ScoreExplanationModal
+        isOpen={isExplanationOpen}
+        onClose={() => setIsExplanationOpen(false)}
+      />
+
+      {/* Snapshot History Modal */}
+      <AnalysisHistoryModal
+        isOpen={isHistoryOpen}
+        onClose={() => setIsHistoryOpen(false)}
+      />
+
+      {/* Granular Evidence Drill-Down Modal */}
+      <SkillEvidenceModal
+        skillId={evidenceModalSkill?.id || null}
+        skillName={evidenceModalSkill?.name || ''}
+        isOpen={evidenceModalSkill !== null}
+        onClose={() => setEvidenceModalSkill(null)}
+      />
     </div>
   );
 }

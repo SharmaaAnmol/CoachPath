@@ -9,6 +9,7 @@ import type { NextRequest } from 'next/server';
 
 const PROTECTED_PREFIXES = [
   '/dashboard',
+  '/onboarding',
   '/career-profile',
   '/profile',
   '/skills',
@@ -39,18 +40,17 @@ export function middleware(request: NextRequest) {
     (page) => pathname === page || pathname.startsWith(`${page}/`)
   );
 
-  // 1. Unauthenticated user accessing protected route -> redirect to /login
+  // 1. Unauthenticated user accessing protected route without session -> redirect to /login
   if (isProtected && !hasAuthSession) {
     const loginUrl = new URL('/login', request.url);
     loginUrl.searchParams.set('redirect', pathname);
     return NextResponse.redirect(loginUrl);
   }
 
-  // 2. Authenticated user accessing /login or /signup -> redirect to /dashboard
-  if (isAuthPage && hasAuthSession) {
-    const dashboardUrl = new URL('/dashboard', request.url);
-    return NextResponse.redirect(dashboardUrl);
-  }
+  // Note: We intentionally do NOT force edge-redirecting /login or /signup to /dashboard here.
+  // When an auth token expires or becomes invalid, client-side AuthProvider handles verification.
+  // Edge-redirecting based purely on cookie presence causes an infinite redirect loop with AppLayout.
+  // /login and /signup pages perform safe client-side redirection once useAuth() confirms a valid session.
 
   return NextResponse.next();
 }

@@ -12,6 +12,7 @@ from app.api.routes import (
     onboarding,
     resume,
     assessments,
+    roles,
     skills,
     roadmap,
     jobs,
@@ -34,6 +35,7 @@ api_router.include_router(profile.router)
 api_router.include_router(onboarding.router)
 api_router.include_router(resume.router)
 api_router.include_router(assessments.router)
+api_router.include_router(roles.router)
 api_router.include_router(skills.router)
 api_router.include_router(roadmap.router)
 api_router.include_router(jobs.router)

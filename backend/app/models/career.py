@@ -37,7 +37,7 @@ if TYPE_CHECKING:
     from app.models.auth import User
     from app.models.jobs import Job, JobMatch
     from app.models.roadmap import Roadmap
-    from app.models.skills import RoleRequirement, SkillGap, UserSkill
+    from app.models.skills import RoleRequirement, SkillGap, SkillGapAnalysis, UserSkill
 
 
 class Role(Base):
@@ -67,6 +67,34 @@ class Role(Base):
         nullable=False,
         doc="Functional category (e.g., 'engineering', 'data')",
     )
+    version: Mapped[str] = mapped_column(
+        String(32),
+        default="1.0.0",
+        server_default="1.0.0",
+        nullable=False,
+        doc="Semantic version of role benchmark definition",
+    )
+    source: Mapped[str] = mapped_column(
+        String(64),
+        default="curated_baseline",
+        server_default="curated_baseline",
+        nullable=False,
+        doc="Benchmark provenance ('curated_baseline', 'industry_standard')",
+    )
+    is_complete: Mapped[bool] = mapped_column(
+        Boolean,
+        default=True,
+        server_default=sa.text("TRUE"),
+        nullable=False,
+        doc="True if requirement definitions are complete and active",
+    )
+    updated_at: Mapped[datetime] = mapped_column(
+        DateTime(timezone=True),
+        default=utc_now,
+        server_default=sa.text("CURRENT_TIMESTAMP"),
+        nullable=False,
+        doc="Timestamp when role definition was last updated",
+    )
     created_at: Mapped[datetime] = mapped_column(
         DateTime(timezone=True),
         default=utc_now,
@@ -93,6 +121,11 @@ class Role(Base):
     )
     skill_gaps: Mapped[List[SkillGap]] = relationship(
         "SkillGap",
+        back_populates="role",
+        cascade="all, delete-orphan",
+    )
+    gap_analyses: Mapped[List[SkillGapAnalysis]] = relationship(
+        "SkillGapAnalysis",
         back_populates="role",
         cascade="all, delete-orphan",
     )
@@ -218,6 +251,11 @@ class CareerProfile(Base, UUIDMixin, TimestampMixin):
     )
     skill_gaps: Mapped[List[SkillGap]] = relationship(
         "SkillGap",
+        back_populates="career_profile",
+        cascade="all, delete-orphan",
+    )
+    gap_analyses: Mapped[List[SkillGapAnalysis]] = relationship(
+        "SkillGapAnalysis",
         back_populates="career_profile",
         cascade="all, delete-orphan",
     )

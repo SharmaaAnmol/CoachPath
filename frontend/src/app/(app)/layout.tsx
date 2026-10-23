@@ -40,7 +40,19 @@ export default function AppLayout({
   }
 
   if (!isAuthenticated) {
-    return null;
+    return (
+      <div className="min-h-screen bg-slate-900 flex flex-col items-center justify-center text-white px-4">
+        <div className="flex flex-col items-center gap-4">
+          <div className="h-12 w-12 rounded-2xl bg-gradient-to-tr from-brand-600 to-purple-500 flex items-center justify-center text-white shadow-lg shadow-purple-500/20 animate-pulse">
+            <Sparkles className="h-6 w-6 text-white" />
+          </div>
+          <div className="text-center space-y-1">
+            <p className="font-bold text-base tracking-tight text-white">Redirecting to Sign In</p>
+            <p className="text-xs text-slate-400">Please sign in to access your workspace...</p>
+          </div>
+        </div>
+      </div>
+    );
   }
 
   return <AppShell>{children}</AppShell>;

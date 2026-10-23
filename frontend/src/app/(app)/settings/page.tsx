@@ -16,11 +16,38 @@ import {
   Bell,
   AlertTriangle,
 } from 'lucide-react';
+import { useAuth } from '@/hooks/use-auth';
+import { profileClient } from '@/lib/profile-client';
 
 export default function SettingsPage() {
+  const { user, refreshUser } = useAuth();
+  const [fullName, setFullName] = React.useState(user?.full_name || '');
+  const [isSaving, setIsSaving] = React.useState(false);
+  const [savedSuccess, setSavedSuccess] = React.useState(false);
   const [humanApprovalGate, setHumanApprovalGate] = React.useState(true);
   const [emailAlerts, setEmailAlerts] = React.useState(true);
   const [isDeleteModalOpen, setIsDeleteModalOpen] = React.useState(false);
+
+  React.useEffect(() => {
+    if (user?.full_name) {
+      setFullName(user.full_name);
+    }
+  }, [user?.full_name]);
+
+  const handleSaveAccount = async () => {
+    if (!fullName.trim()) return;
+    setIsSaving(true);
+    try {
+      await profileClient.updatePersonalProfile({ full_name: fullName.trim() });
+      await refreshUser();
+      setSavedSuccess(true);
+      setTimeout(() => setSavedSuccess(false), 3000);
+    } catch (err) {
+      console.error('Failed to update account name:', err);
+    } finally {
+      setIsSaving(false);
+    }
+  };
 
   return (
     <div className="space-y-6 max-w-4xl">
@@ -40,12 +67,34 @@ export default function SettingsPage() {
           Account Information
         </h3>
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 text-xs">
-          <Input label="Full Name" defaultValue="Aarav Mehta" />
-          <Input label="Email Address" defaultValue="aarav.mehta@example.com" />
+          <Input
+            label="Full Name"
+            value={fullName}
+            onChange={(e) => setFullName(e.target.value)}
+            placeholder="Your Full Name"
+          />
+          <Input
+            label="Email Address"
+            value={user?.email || ''}
+            disabled
+            helperText="Managed via authentication provider"
+          />
         </div>
-        <div className="pt-2 flex justify-end">
-          <Button size="sm" variant="primary">
-            Save Account Details
+        <div className="pt-2 flex items-center justify-between">
+          {savedSuccess ? (
+            <span className="text-xs text-emerald-600 font-semibold flex items-center gap-1">
+              <CheckCircle2 className="w-3.5 h-3.5" /> Details saved successfully!
+            </span>
+          ) : (
+            <div />
+          )}
+          <Button
+            size="sm"
+            variant="primary"
+            onClick={handleSaveAccount}
+            disabled={isSaving}
+          >
+            {isSaving ? 'Saving...' : 'Save Account Details'}
           </Button>
         </div>
       </Card>

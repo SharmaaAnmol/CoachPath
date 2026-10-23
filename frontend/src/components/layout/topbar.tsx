@@ -18,8 +18,8 @@ export function Topbar({ onMobileMenuToggle }: TopbarProps) {
   const [showUserMenu, setShowUserMenu] = React.useState(false);
   const [isLoggingOut, setIsLoggingOut] = React.useState(false);
 
-  const displayName = user?.full_name || 'Aarav Mehta';
-  const displayEmail = user?.email || 'aarav.mehta@example.com';
+  const displayName = user?.full_name || 'Candidate';
+  const displayEmail = user?.email || '';
   const initials = React.useMemo(() => {
     if (!displayName) return 'CP';
     const parts = displayName.trim().split(/\s+/);

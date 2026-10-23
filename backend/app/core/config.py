@@ -61,12 +61,32 @@ class Settings(BaseSettings):
     # Redis Cache Configuration (Placeholder / Future Phases)
     REDIS_URL: str = "redis://localhost:6379/0"
 
+    # AI Provider Configuration (Phase 4A & Multi-provider support)
+    AI_PROVIDER: str = "gemini"  # "gemini" | "groq" | "openai" | "anthropic" | "disabled"
+    GEMINI_API_KEY: str = ""
+    GEMINI_MODEL: str = "gemini-3.5-flash-lite"
+    OPENAI_API_KEY: str = ""
+    OPENAI_MODEL: str = "gpt-4o-mini"
+    OPENAI_REASONING_MODEL: str = "gpt-4o"
+    ANTHROPIC_API_KEY: str = ""
+    ANTHROPIC_MODEL: str = "claude-3-haiku-20240307"
+    GROQ_API_KEY: str = ""
+    GROQ_MODEL: str = "llama-3.3-70b-versatile"
+    AI_REQUEST_TIMEOUT: int = 30
+    AI_MAX_RETRIES: int = 2
+    ONBOARDING_MAX_TURNS: int = 20
+
+    # Resume Storage & Parsing Configuration (Phase 5A)
+    UPLOAD_DIR: str = "uploads"
+    MAX_RESUME_SIZE_BYTES: int = 10 * 1024 * 1024  # 10 MB
+    RESUME_EXTRACTION_TIMEOUT: int = 45
+
     @model_validator(mode="after")
     def validate_production_environment(self) -> "Settings":
         if self.ENVIRONMENT == "production":
             if self.DEBUG:
                 object.__setattr__(self, "DEBUG", False)
-            if self.SECRET_KEY.startswith("insecure-default"):
+            if self.SECRET_KEY.startswith(("insecure-default", "dev-secret-key")):
                 raise ValueError("Insecure default SECRET_KEY cannot be used in production environment.")
         return self
 
