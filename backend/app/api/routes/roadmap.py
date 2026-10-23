@@ -20,6 +20,7 @@ from app.models.auth import User
 from app.schemas.roadmap import (
     RoadmapAdaptationResponse,
     RoadmapGenerateRequest,
+    RoadmapHistoryResponse,
     RoadmapProgressResponse,
     RoadmapResponse,
     RoadmapTaskResponse,
@@ -95,6 +96,22 @@ async def get_active_roadmap_alias(
         user=current_user,
         db=db,
         role_id=role_id,
+    )
+
+
+@router.get(
+    "/history",
+    response_model=RoadmapHistoryResponse,
+    summary="Get Roadmap History",
+    description="Returns the historical list of all generated roadmap versions (both active and archived) for the authenticated user.",
+)
+async def get_roadmap_history(
+    current_user: User = Depends(require_active_user),
+    db: AsyncSession = Depends(get_session),
+) -> RoadmapHistoryResponse:
+    return await _engine.get_roadmap_history(
+        user=current_user,
+        db=db,
     )
 
 

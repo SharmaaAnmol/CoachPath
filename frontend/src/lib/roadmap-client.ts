@@ -8,6 +8,7 @@ import {
   RoadmapAdaptationData,
   RoadmapData,
   RoadmapGenerateRequestPayload,
+  RoadmapHistoryResponse,
   RoadmapProgressData,
   RoadmapTaskItem,
   UpdateRoadmapTaskPayload,
@@ -53,6 +54,14 @@ export class RoadmapClient {
    */
   public async updateTaskStatus(taskId: string, payload: UpdateRoadmapTaskPayload): Promise<RoadmapTaskItem> {
     return apiClient.patch<RoadmapTaskItem>(`/roadmap/tasks/${taskId}`, payload);
+  }
+
+  /**
+   * Retrieves chronological history of all roadmap versions for the authenticated user.
+   * Method: GET /api/v1/roadmap/history
+   */
+  public async getRoadmapHistory(): Promise<RoadmapHistoryResponse> {
+    return apiClient.get<RoadmapHistoryResponse>('/roadmap/history');
   }
 
   /**

@@ -27,6 +27,8 @@ from app.models.skills import RoleRequirement, Skill, SkillGapAnalysis
 from app.schemas.roadmap import (
     RoadmapAdaptationResponse,
     RoadmapGenerateRequest,
+    RoadmapHistoryItem,
+    RoadmapHistoryResponse,
     RoadmapPhaseResponse,
     RoadmapProgressResponse,
     RoadmapResponse,
@@ -160,7 +162,7 @@ class RoadmapEngine:
         # 7. Evaluate Feasibility and Scheduling
         start_date = _utc_now()
         estimated_weeks = math.ceil(total_estimated_hours / max(1, weekly_hours))
-        target_completion_date = start_date + timedelta(weeks=estimated_weeks)
+        target_completion_date = start_date + timedelta(days=int(timeline_months * 30.4375))
 
         target_weeks = timeline_months * 4.33
         if estimated_weeks <= target_weeks:
@@ -570,6 +572,50 @@ class RoadmapEngine:
 
         return self._format_roadmap_response(roadmap)
 
+    async def get_roadmap_history(
+        self,
+        user: User,
+        db: AsyncSession,
+    ) -> RoadmapHistoryResponse:
+        """Retrieves chronological history of all roadmap versions for the user."""
+        profile_stmt = select(CareerProfile).where(CareerProfile.user_id == user.id)
+        profile = await db.scalar(profile_stmt)
+        if not profile:
+            return RoadmapHistoryResponse(items=[], total=0)
+
+        stmt = (
+            select(Roadmap)
+            .options(selectinload(Roadmap.target_role))
+            .where(Roadmap.career_profile_id == profile.id)
+            .order_by(desc(Roadmap.version))
+        )
+        roadmaps = (await db.scalars(stmt)).all()
+
+        items = [
+            RoadmapHistoryItem(
+                id=r.id,
+                target_role_id=r.target_role_id,
+                target_role_title=r.target_role.title if r.target_role else r.target_role_id,
+                version=r.version,
+                is_active=r.is_active,
+                status=r.status,
+                generation_mode=r.generation_mode,
+                weekly_hours=r.weekly_hours,
+                total_estimated_hours=r.total_estimated_hours,
+                total_tasks=r.total_tasks,
+                completed_tasks=r.completed_tasks,
+                progress_percentage=(
+                    round((r.completed_tasks / max(1, r.total_tasks)) * 100, 1)
+                    if r.total_tasks > 0
+                    else 0.0
+                ),
+                created_at=r.created_at,
+                updated_at=r.updated_at,
+            )
+            for r in roadmaps
+        ]
+        return RoadmapHistoryResponse(items=items, total=len(items))
+
     async def get_roadmap_progress(
         self,
         roadmap_id: uuid.UUID,
@@ -673,8 +719,10 @@ class RoadmapEngine:
         phase.is_completed = all_completed
         if all_completed:
             phase.status = "completed"
-        elif any(t.status == "in_progress" for t in all_phase_tasks):
+        elif any(t.status in ("in_progress", "completed") for t in all_phase_tasks):
             phase.status = "in_progress"
+        else:
+            phase.status = "pending"
 
         # Recompute roadmap completed task count
         roadmap_tasks_stmt = (
@@ -688,6 +736,8 @@ class RoadmapEngine:
 
         if all(t.status in ("completed", "skipped") for t in all_roadmap_tasks):
             roadmap.status = "completed"
+        else:
+            roadmap.status = "active"
 
         await db.commit()
         await db.refresh(task)

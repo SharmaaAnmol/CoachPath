@@ -1147,6 +1147,29 @@ export interface RoadmapAdaptationData {
   roadmap: RoadmapData;
 }
 
+export interface RoadmapHistoryItem {
+  id: string;
+  target_role_id: string;
+  target_role_title: string;
+  version: number;
+  is_active: boolean;
+  status: string;
+  generation_mode: string;
+  weekly_hours: number;
+  total_estimated_hours: number;
+  total_tasks: number;
+  completed_tasks: number;
+  progress_percentage: number;
+  created_at: string;
+  updated_at: string;
+}
+
+export interface RoadmapHistoryResponse {
+  items: RoadmapHistoryItem[];
+  total: number;
+}
+
+
 
 
 

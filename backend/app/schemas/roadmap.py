@@ -60,6 +60,7 @@ class UpdateRoadmapTaskRequest(BaseModel):
     submission_url: Optional[str] = Field(
         None,
         max_length=255,
+        pattern=r"^(https?://[^\s]+)?$",
         description="Deliverable proof link (e.g. GitHub repository or pull request).",
     )
 
@@ -177,3 +178,30 @@ class RoadmapAdaptationResponse(BaseModel):
     tasks_adjusted: int
     message: str
     roadmap: RoadmapResponse
+
+
+class RoadmapHistoryItem(BaseModel):
+    """Summary of a roadmap version for history listing."""
+    model_config = ConfigDict(from_attributes=True)
+
+    id: uuid.UUID
+    target_role_id: str
+    target_role_title: str
+    version: int
+    is_active: bool
+    status: str
+    generation_mode: str
+    weekly_hours: int
+    total_estimated_hours: int
+    total_tasks: int
+    completed_tasks: int
+    progress_percentage: float
+    created_at: datetime
+    updated_at: datetime
+
+
+class RoadmapHistoryResponse(BaseModel):
+    """Historical list of roadmap versions for the user."""
+    items: List[RoadmapHistoryItem]
+    total: int
+
