@@ -32,6 +32,8 @@ import {
   Sparkles,
   Calendar,
   CheckCircle2,
+  Compass,
+  ArrowRight,
 } from 'lucide-react';
 
 export default function SkillsPage() {
@@ -206,6 +208,12 @@ export default function SkillsPage() {
             )}
           </Button>
 
+          <Link href="/roadmap">
+            <Button size="sm" variant="outline" className="text-xs font-semibold">
+              <Compass className="w-3.5 h-3.5 mr-1.5" /> Learning Roadmap
+            </Button>
+          </Link>
+
           <Link href="/assessments">
             <Button size="sm" variant="intelligence" className="text-xs font-semibold">
               <ClipboardCheck className="w-3.5 h-3.5 mr-1.5" /> Take Assessment
@@ -307,6 +315,24 @@ export default function SkillsPage() {
             gaps={analysis.prioritized_gaps}
             roleTitle={analysis.role_title}
           />
+
+          {/* Actionable Learning Roadmap Bridge */}
+          <Card className="p-4 bg-gradient-to-r from-brand-900/30 via-indigo-950/30 to-slate-900/50 border border-brand-500/30 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+            <div className="space-y-1">
+              <div className="flex items-center gap-2 text-brand-400 font-semibold text-xs uppercase tracking-wider">
+                <Compass className="w-4 h-4 text-brand-400" />
+                <span>Bridge Your Skill Gaps</span>
+              </div>
+              <p className="text-xs text-slate-300">
+                Ready to resolve these prioritized gaps? Follow your personalized milestone curriculum with verifiable deliverables.
+              </p>
+            </div>
+            <Link href="/roadmap" className="shrink-0">
+              <Button size="sm" variant="intelligence" className="text-xs font-semibold whitespace-nowrap">
+                Open Learning Roadmap <ArrowRight className="w-3.5 h-3.5 ml-1.5" />
+              </Button>
+            </Link>
+          </Card>
 
           {/* Recommended Diagnostic Assessments Bridge */}
           <RecommendedAssessmentsSection

@@ -1034,5 +1034,119 @@ export interface SkillEvidenceDetailResponse {
   evidence_items: SkillEvidenceItem[];
 }
 
+// ─── Phase 7: Dynamic Milestone Roadmap Types ─────────────────────────
+
+export interface ResourceUrlItem {
+  title: string;
+  url: string;
+  type: string;
+}
+
+export interface RoadmapTaskItem {
+  id: string;
+  phase_id: string;
+  skill_id?: string | null;
+  skill_name?: string | null;
+  title: string;
+  description: string;
+  learning_objective?: string | null;
+  task_type: 'course' | 'reading' | 'practice' | 'project' | 'assessment';
+  priority: 'critical' | 'high' | 'medium' | 'low';
+  estimated_hours: number;
+  resource_urls: ResourceUrlItem[];
+  prerequisite_task_ids: string[];
+  deliverable_requirement?: string | null;
+  submission_url?: string | null;
+  completion_criteria?: string | null;
+  status: 'pending' | 'in_progress' | 'completed' | 'skipped';
+  due_date?: string | null;
+  completed_at?: string | null;
+  order_index: number;
+  source_gap_priority?: string | null;
+}
+
+export interface RoadmapPhaseItem {
+  id: string;
+  roadmap_id: string;
+  title: string;
+  description: string;
+  objective?: string | null;
+  estimated_hours: number;
+  prerequisites?: string | null;
+  completion_criteria?: string | null;
+  status: 'pending' | 'in_progress' | 'completed';
+  order_index: number;
+  is_completed: boolean;
+  tasks: RoadmapTaskItem[];
+}
+
+export interface RoadmapData {
+  id: string;
+  career_profile_id: string;
+  target_role_id: string;
+  target_role_title: string;
+  skill_gap_analysis_id?: string | null;
+  title: string;
+  description?: string | null;
+  version: number;
+  is_active: boolean;
+  status: string;
+  generation_mode: string;
+  weekly_hours: number;
+  total_estimated_hours: number;
+  total_tasks: number;
+  completed_tasks: number;
+  progress_percentage: number;
+  start_date?: string | null;
+  target_completion_date?: string | null;
+  feasibility_status: 'feasible' | 'demanding' | 'unrealistic';
+  feasibility_note?: string | null;
+  phases: RoadmapPhaseItem[];
+  created_at: string;
+  updated_at: string;
+}
+
+export interface RoadmapProgressData {
+  roadmap_id: string;
+  target_role_id: string;
+  target_role_title: string;
+  total_tasks: number;
+  completed_tasks: number;
+  pending_tasks: number;
+  progress_percentage: number;
+  total_estimated_hours: number;
+  completed_hours: number;
+  remaining_hours: number;
+  weekly_hours: number;
+  estimated_weeks_remaining: number;
+  current_phase_index: number;
+  current_phase_title?: string | null;
+  next_recommended_tasks: RoadmapTaskItem[];
+}
+
+export interface RoadmapGenerateRequestPayload {
+  role_id?: string | null;
+  weekly_hours?: number | null;
+  target_timeline_months?: number | null;
+  preferred_resources?: string[] | null;
+  focus_areas?: string[] | null;
+  force_regenerate?: boolean;
+}
+
+export interface UpdateRoadmapTaskPayload {
+  status?: 'pending' | 'in_progress' | 'completed' | 'skipped' | null;
+  submission_url?: string | null;
+}
+
+export interface RoadmapAdaptationData {
+  roadmap_id: string;
+  adapted: boolean;
+  tasks_auto_completed: number;
+  tasks_adjusted: number;
+  message: string;
+  roadmap: RoadmapData;
+}
+
+
 
 
