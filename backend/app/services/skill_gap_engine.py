@@ -207,8 +207,8 @@ class SkillGapEngine:
         if not role:
             raise NotFoundException("Role")
 
-        if not role.requirements:
-            raise ValidationException(f"Target role '{role.title}' has no benchmark requirements defined.")
+        if not role.is_complete or not role.requirements:
+            raise ValidationException(f"Target role '{role.title}' is an incomplete profile and has insufficient benchmark requirements defined.")
 
         if not profile:
             profile = CareerProfile(
@@ -427,26 +427,32 @@ class SkillGapEngine:
         self,
         user: User,
         db: AsyncSession,
+        role_id: Optional[str] = None,
     ) -> SkillGapAnalysisResponse:
-        """Retrieves the active (is_current=True) gap analysis snapshot for the user."""
+        """Retrieves the active gap analysis snapshot for the user (optionally filtered by role_id)."""
         profile_stmt = select(CareerProfile).where(CareerProfile.user_id == user.id)
         profile = await db.scalar(profile_stmt)
         if not profile:
-            return await self.calculate_gap_analysis(user, db)
+            return await self.calculate_gap_analysis(user, db, role_id=role_id)
+
+        conditions = [
+            SkillGapAnalysis.career_profile_id == profile.id,
+        ]
+        if role_id:
+            conditions.append(SkillGapAnalysis.role_id == role_id)
+        else:
+            conditions.append(SkillGapAnalysis.is_current == True)
 
         stmt = (
             select(SkillGapAnalysis)
             .options(selectinload(SkillGapAnalysis.role))
-            .where(
-                SkillGapAnalysis.career_profile_id == profile.id,
-                SkillGapAnalysis.is_current == True,
-            )
+            .where(*conditions)
             .order_by(desc(SkillGapAnalysis.calculated_at))
         )
         record = await db.scalar(stmt)
         if not record:
             # Trigger calculation if none exists
-            return await self.calculate_gap_analysis(user, db)
+            return await self.calculate_gap_analysis(user, db, role_id=role_id)
 
         # Reconstruct typed skill details
         typed_details: Dict[str, SkillCompetencyDetail] = {}

@@ -7,7 +7,7 @@ historical snapshots, on-demand recalculation, and skill evidence drill-down.
 from __future__ import annotations
 
 from typing import List, Optional
-from fastapi import APIRouter, Depends, status
+from fastapi import APIRouter, Depends, Query, status
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.api.dependencies import get_session, require_active_user
@@ -81,14 +81,15 @@ async def calculate_skill_gap_analysis(
     response_model=SkillGapAnalysisResponse,
     status_code=status.HTTP_200_OK,
     summary="Get Latest Skill Gap Analysis",
-    description="Retrieves the active, latest deterministic gap analysis snapshot for the authenticated user.",
+    description="Retrieves the active, latest deterministic gap analysis snapshot for the authenticated user, optionally for a specific role.",
 )
 async def get_latest_skill_gap_analysis(
+    role_id: Optional[str] = Query(None, description="Optional target role ID to retrieve analysis for"),
     current_user: User = Depends(require_active_user),
     db: AsyncSession = Depends(get_session),
 ) -> SkillGapAnalysisResponse:
     """Returns the latest active skill gap analysis snapshot."""
-    return await _engine.get_latest_gap_analysis(user=current_user, db=db)
+    return await _engine.get_latest_gap_analysis(user=current_user, db=db, role_id=role_id)
 
 
 @router.get(
