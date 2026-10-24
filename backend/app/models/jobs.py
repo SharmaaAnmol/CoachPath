@@ -471,6 +471,7 @@ class JobMatch(Base, UUIDMixin):
         UniqueConstraint("career_profile_id", "job_id", name="uq_job_matches_profile_job"),
         Index("job_matches_profile_score_idx", "career_profile_id", "overall_score"),
         Index("job_matches_profile_job_idx", "career_profile_id", "job_id", unique=True),
+        Index("job_matches_is_stale_idx", "is_stale"),
     )
 
     career_profile_id: Mapped[uuid.UUID] = mapped_column(
@@ -500,10 +501,54 @@ class JobMatch(Base, UUIDMixin):
         nullable=False,
         doc="Experience and seniority alignment factor (0.0 to 100.0)",
     )
+    project_score: Mapped[decimal.Decimal] = mapped_column(
+        Numeric(4, 1),
+        default=decimal.Decimal("0.0"),
+        server_default=sa.text("0.0"),
+        nullable=False,
+        doc="Project relevance and hands-on artifact alignment (0.0 to 100.0)",
+    )
+    location_score: Mapped[decimal.Decimal] = mapped_column(
+        Numeric(4, 1),
+        default=decimal.Decimal("0.0"),
+        server_default=sa.text("0.0"),
+        nullable=False,
+        doc="Location and workplace flexibility alignment (0.0 to 100.0)",
+    )
+    preference_score: Mapped[decimal.Decimal] = mapped_column(
+        Numeric(4, 1),
+        default=decimal.Decimal("0.0"),
+        server_default=sa.text("0.0"),
+        nullable=False,
+        doc="Career and employment preference alignment (0.0 to 100.0)",
+    )
+    evidence_coverage: Mapped[decimal.Decimal] = mapped_column(
+        Numeric(4, 1),
+        default=decimal.Decimal("0.0"),
+        server_default=sa.text("0.0"),
+        nullable=False,
+        doc="Data completeness and evidence coverage score (0.0 to 100.0)",
+    )
     vector_score: Mapped[decimal.Decimal] = mapped_column(
         Numeric(4, 1),
+        default=decimal.Decimal("0.0"),
+        server_default=sa.text("0.0"),
         nullable=False,
         doc="Semantic vector cosine similarity factor (0.0 to 100.0)",
+    )
+    scoring_version: Mapped[str] = mapped_column(
+        String(32),
+        default="v1.0",
+        server_default=sa.text("'v1.0'"),
+        nullable=False,
+        doc="Scoring algorithm version identifier",
+    )
+    is_stale: Mapped[bool] = mapped_column(
+        Boolean,
+        default=False,
+        server_default=sa.text("FALSE"),
+        nullable=False,
+        doc="True if underlying profile, assessment, or job changed since last calculation",
     )
     matched_skills: Mapped[List[str]] = mapped_column(
         StringArray(64),
@@ -512,12 +557,26 @@ class JobMatch(Base, UUIDMixin):
         nullable=False,
         doc="Candidate verified skills present in job requirements",
     )
+    matched_preferred_skills: Mapped[List[str]] = mapped_column(
+        StringArray(64),
+        default=list,
+        server_default=sa.text("'{}'"),
+        nullable=False,
+        doc="Candidate verified/supported preferred skills present in job requirements",
+    )
     missing_skills: Mapped[List[str]] = mapped_column(
         StringArray(64),
         default=list,
         server_default=sa.text("'{}'"),
         nullable=False,
         doc="Job mandatory/preferred skills not yet verified in candidate profile",
+    )
+    unknown_skills: Mapped[List[str]] = mapped_column(
+        StringArray(64),
+        default=list,
+        server_default=sa.text("'{}'"),
+        nullable=False,
+        doc="Job skills for which candidate evidence is unrecorded or indeterminate",
     )
     explanation_json: Mapped[Dict[str, Any]] = mapped_column(
         JsonB(),

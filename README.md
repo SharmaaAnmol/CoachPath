@@ -115,7 +115,9 @@ CoachPath provides curated industry benchmark requirements across 7 canonical en
 │   ├── phase-8a-final-report.md                   # Phase 8A final implementation report
 │   ├── job-discovery-frontend-architecture.md     # Job Discovery Frontend & Market Intelligence Specification (Phase 8B)
 │   ├── phase-8b-final-report.md                   # Phase 8B final implementation report
-│   └── phase-8-final-audit.md                     # Phase 8C final integration audit & verification report
+│   ├── phase-8-final-audit.md                     # Phase 8C final integration audit & verification report
+│   ├── job-matching-architecture.md               # Intelligent Job Matching Engine Architecture (Phase 9A)
+│   └── phase-9a-final-report.md                   # Phase 9A final implementation report
 ├── backend/                                       # FastAPI / Python 3.13 Backend Workspace
 │   ├── app/
 │   │   ├── ai/                                    # LLM provider abstraction (Gemini, OpenAI, Anthropic, Mock)
@@ -246,7 +248,9 @@ CoachPath follows a phased engineering methodology:
 - [x] **Phase 8A: Job Market Intelligence and Permitted Job Ingestion Engine (Backend)** *(Completed — Provider adapters for Seed, Manual, Arbeitnow, and Mock; data normalization, canonical skill extraction, idempotent upserts, search & market intelligence APIs, 185 automated tests passing)*
 - [x] **Phase 8B: Job Discovery Frontend and Market Intelligence Integration** *(Completed — Next.js 14 interactive search & filter UI, sorting, canonical skill chips, job detail modal & deep-link route, real-time market intelligence dashboard, candidate manual import modal, 189 automated tests passing)*
 - [x] **Phase 8C: Job Market End-to-End Testing & Final Audit** *(Completed — Comprehensive 18-step discovery audit, provider failure resilience, SSRF protection, freshness lifecycle policies, 195 automated tests passing, 100% audit pass verdict)*
-- [ ] **Phase 9: Semantic Job Matching & Recommendation Engine**
+- [x] **Phase 9A: Intelligent Job Matching Engine (Backend)** *(Completed — Deterministic multi-factor scoring, required vs preferred skill weighting, evidence provenance calibration, evidence coverage & provisional flags, grounded explainability drawers, 211 automated tests passing)*
+- [ ] **Phase 9B: Recommendations UI & Match Drawer Integration (Frontend)**
+- [ ] **Phase 9C: Job Matching End-to-End Integration Testing & Audit**
 - [ ] **Phase 10: Truthful Resume Optimization Engine**
 - [ ] **Phase 11: Application Pipeline Tracker**
 - [ ] **Phase 12: Recruiter Discovery & High-Context Networking**

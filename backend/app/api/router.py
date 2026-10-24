@@ -15,6 +15,7 @@ from app.api.routes import (
     roles,
     skills,
     roadmap,
+    job_matching,
     jobs,
     applications,
     recruiters,
@@ -38,6 +39,7 @@ api_router.include_router(assessments.router)
 api_router.include_router(roles.router)
 api_router.include_router(skills.router)
 api_router.include_router(roadmap.router)
+api_router.include_router(job_matching.router)
 api_router.include_router(jobs.router)
 api_router.include_router(applications.router)
 api_router.include_router(recruiters.router)
