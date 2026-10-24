@@ -81,10 +81,7 @@ async def list_matches(
     current_user: User = Depends(require_active_user),
     db: AsyncSession = Depends(get_session),
 ) -> List[JobMatchResponse]:
-    profile_stmt = select(CareerProfile).where(CareerProfile.user_id == current_user.id)
-    profile = await db.scalar(profile_stmt)
-    if not profile:
-        raise NotFoundException("CareerProfile")
+    profile = await _engine._get_or_create_profile(db=db, user=current_user)
 
     matches_stmt = (
         select(JobMatch)

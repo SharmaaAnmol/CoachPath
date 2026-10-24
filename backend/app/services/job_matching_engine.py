@@ -752,6 +752,35 @@ class JobMatchingEngine:
     # 8. Persistence, Retrieval & Cache Operations
     # ─────────────────────────────────────────────
 
+    async def _get_or_create_profile(self, db: AsyncSession, user: User) -> CareerProfile:
+        """
+        Retrieves the user's CareerProfile with all related skills and projects,
+        or creates a baseline early-career profile if not yet initialized.
+        """
+        profile_stmt = (
+            select(CareerProfile)
+            .options(
+                selectinload(CareerProfile.user_skills).selectinload(UserSkill.skill),
+                selectinload(CareerProfile.experience),
+                selectinload(CareerProfile.projects),
+            )
+            .where(CareerProfile.user_id == user.id)
+        )
+        profile = await db.scalar(profile_stmt)
+        if not profile:
+            profile = CareerProfile(
+                user_id=user.id,
+                primary_role_id="backend-developer",
+                career_stage="early_career",
+                work_preference="flexible",
+                target_locations=["Remote"],
+                years_of_experience=decimal.Decimal("0.0"),
+            )
+            db.add(profile)
+            await db.commit()
+            profile = await db.scalar(profile_stmt)
+        return profile
+
     async def get_or_calculate_job_match(
         self,
         db: AsyncSession,
@@ -764,18 +793,7 @@ class JobMatchingEngine:
         Strictly scopes evaluation to current authenticated user.
         """
         # 1. Fetch CareerProfile with all relationships
-        profile_stmt = (
-            select(CareerProfile)
-            .options(
-                selectinload(CareerProfile.user_skills).selectinload(UserSkill.skill),
-                selectinload(CareerProfile.experience),
-                selectinload(CareerProfile.projects),
-            )
-            .where(CareerProfile.user_id == user.id)
-        )
-        profile = await db.scalar(profile_stmt)
-        if not profile:
-            raise NotFoundException("CareerProfile")
+        profile = await self._get_or_create_profile(db, user)
 
         # 2. Fetch Job with skills
         job_stmt = (
@@ -916,18 +934,7 @@ class JobMatchingEngine:
         sorted descending by overall match score.
         """
         # Fetch profile
-        profile_stmt = (
-            select(CareerProfile)
-            .options(
-                selectinload(CareerProfile.user_skills).selectinload(UserSkill.skill),
-                selectinload(CareerProfile.experience),
-                selectinload(CareerProfile.projects),
-            )
-            .where(CareerProfile.user_id == user.id)
-        )
-        profile = await db.scalar(profile_stmt)
-        if not profile:
-            raise NotFoundException("CareerProfile")
+        profile = await self._get_or_create_profile(db, user)
 
         # Fetch active candidate jobs from catalog
         criteria = [
@@ -1122,10 +1129,7 @@ class JobMatchingEngine:
         user: User,
     ) -> int:
         """Recalculates matches across all active catalog jobs for the current user."""
-        profile_stmt = select(CareerProfile).where(CareerProfile.user_id == user.id)
-        profile = await db.scalar(profile_stmt)
-        if not profile:
-            raise NotFoundException("CareerProfile")
+        profile = await self._get_or_create_profile(db, user)
 
         # Invalidate current matches
         await self.invalidate_matches_for_profile(db, profile.id)
