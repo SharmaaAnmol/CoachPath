@@ -120,7 +120,9 @@ CoachPath provides curated industry benchmark requirements across 7 canonical en
 │   ├── phase-9a-final-report.md                   # Phase 9A final implementation report
 │   ├── job-matching-frontend-architecture.md      # Recommendations UI & Match Drawer Architecture (Phase 9B)
 │   ├── phase-9b-final-report.md                   # Phase 9B final implementation report
-│   └── phase-9-final-audit.md                     # Phase 9C final integration audit & verification report
+│   ├── phase-9-final-audit.md                     # Phase 9C final integration audit & verification report
+│   ├── phase-10a-resume-tailoring-backend.md      # Resume Tailoring & Optimization Architecture (Phase 10A)
+│   └── phase-10a-test-report.md                   # Phase 10A Test Execution Report
 ├── backend/                                       # FastAPI / Python 3.13 Backend Workspace
 │   ├── app/
 │   │   ├── ai/                                    # LLM provider abstraction (Gemini, OpenAI, Anthropic, Mock)
@@ -129,9 +131,9 @@ CoachPath provides curated industry benchmark requirements across 7 canonical en
 │   │   ├── db/seeds/                              # Question bank (270 questions), Canonical taxonomy (48 skills), Roles, Seed jobs
 │   │   ├── models/                                # SQLAlchemy 2.0 async domain models (including Job, JobSource, JobSkill, JobIngestionRun, JobMatch)
 │   │   ├── schemas/                               # Pydantic v2 validation contracts
-│   │   └── services/                              # Engine implementations (Onboarding, Resume, Assessment, Skill Gap, Roadmap, Job Ingestion, Job Matching)
+│   │   └── services/                              # Engine implementations (Onboarding, Resume, Assessment, Skill Gap, Roadmap, Job Ingestion, Job Matching, Resume Tailoring)
 │   ├── alembic/                                   # Async schema migrations (all tables to head)
-│   └── tests/                                     # Comprehensive Pytest test suite (225 passing tests)
+│   └── tests/                                     # Comprehensive Pytest test suite (239 passing tests)
 ├── frontend/                                      # Next.js 14 App Router Frontend Workspace
 │   ├── src/app/(public)/                          # Landing, Login, Signup, About, Features, Privacy
 │   ├── src/app/(app)/                             # Protected routes: /dashboard, /onboarding, /resume, /assessments, /skills, /roadmap, /jobs, /jobs/[id]
@@ -210,7 +212,7 @@ Open your browser at **[http://localhost:3000](http://localhost:3000)**.
 To verify all system contracts, run:
 
 ```bash
-# Backend test suite (225 integration tests)
+# Backend test suite (239 integration tests)
 cd /Users/anmolsharma/Desktop/Coach_Path/backend
 source .venv/bin/activate
 pytest tests/ -v
@@ -254,7 +256,9 @@ CoachPath follows a phased engineering methodology:
 - [x] **Phase 9A: Intelligent Job Matching Engine (Backend)** *(Completed — Deterministic multi-factor scoring, required vs preferred skill weighting, evidence provenance calibration, evidence coverage & provisional flags, grounded explainability drawers, 211 automated tests passing)*
 - [x] **Phase 9B: Recommendations UI & Match Drawer Integration (Frontend)** *(Completed — Dual-tab recommendations hub, MatchScoreBadge with 4 fit tiers, MatchEvidenceCoverage progress indicators, JobMatchCard recommendations list, JobMatchDrawer with 4 explainability tabs, embedded personalized fit analysis in JobDetailPage & JobDetailModal, on-demand recalculation sync, 217 automated tests passing)*
 - [x] **Phase 9C: Job Matching End-to-End Integration Testing & Audit** *(Completed — Comprehensive 21-step candidate matching journey, 5-factor deterministic formula, evidence provenance weighting, explainability drawer, multi-tenant isolation, 225 automated tests passing, 100% audit pass verdict)*
-- [ ] **Phase 10: Truthful Resume Optimization Engine**
+- [x] **Phase 10A: Resume Tailoring & Optimization Engine (Backend)** *(Completed — Gemini-powered evidence-grounded tailoring, strict anti-hallucination reconciliation, original resume immutability, multi-version draft lifecycle & approval gate, keyword coverage & gap analysis, structured diff API, 239 automated tests passing)*
+- [ ] **Phase 10B: Resume Tailoring Workbench & Diff Inspector (Frontend)**
+- [ ] **Phase 10C: Resume Tailoring End-to-End Testing & Final Audit**
 - [ ] **Phase 11: Application Pipeline Tracker**
 - [ ] **Phase 12: Recruiter Discovery & High-Context Networking**
 - [ ] **Phase 13: Role-Specific Interview Preparation Engine**

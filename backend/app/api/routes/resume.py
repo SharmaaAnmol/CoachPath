@@ -10,12 +10,13 @@ from __future__ import annotations
 
 import logging
 import uuid
-from typing import List
+from typing import List, Optional
 
 from fastapi import (
     APIRouter,
     Depends,
     File,
+    Query,
     Response,
     UploadFile,
     status,
@@ -33,10 +34,18 @@ from app.schemas.resume import (
     ResumeDetailResponse,
     ResumeListItem,
     ResumeListResponse,
+    ResumeTailorRequest,
     ResumeUploadResponse,
     RetryParsingResponse,
+    TailoredResumeAnalysisResponse,
+    TailoredResumeApprovalRequest,
+    TailoredResumeDiffResponse,
+    TailoredResumeListResponse,
+    TailoredResumeResponse,
+    TailoredResumeUpdateRequest,
 )
 from app.services.resume import resume_service
+from app.services.resume_tailoring import resume_tailoring_service
 
 logger = logging.getLogger(__name__)
 
@@ -117,6 +126,149 @@ async def list_resumes(
     ]
     return ResumeListResponse(resumes=items, total=len(items))
 
+
+# ─── Phase 10A: Tailored Resume Versions Endpoints ───────────────────
+
+@router.get(
+    "/versions",
+    response_model=TailoredResumeListResponse,
+    summary="List Tailored Resume Versions",
+    description="Returns all tailored resume versions belonging to the authenticated candidate with optional filtering.",
+)
+async def list_tailored_versions(
+    resume_id: Optional[uuid.UUID] = Query(None, description="Filter by source resume UUID"),
+    job_id: Optional[uuid.UUID] = Query(None, description="Filter by target job UUID"),
+    status: Optional[str] = Query(None, pattern="^(draft|approved|archived)$", description="Filter by version status"),
+    page: int = Query(1, ge=1, description="Page number (1-indexed)"),
+    page_size: int = Query(20, ge=1, le=100, description="Items per page"),
+    current_user: User = Depends(require_active_user),
+    db: AsyncSession = Depends(get_session),
+) -> TailoredResumeListResponse:
+    return await resume_tailoring_service.list_tailored_versions(
+        user=current_user,
+        db=db,
+        resume_id=resume_id,
+        job_id=job_id,
+        status_filter=status,
+        page=page,
+        page_size=page_size,
+    )
+
+
+@router.get(
+    "/versions/{version_id}",
+    response_model=TailoredResumeResponse,
+    summary="Get Tailored Resume Version",
+    description="Retrieves a specific tailored resume draft or approved version by its UUID.",
+)
+async def get_tailored_version(
+    version_id: uuid.UUID,
+    current_user: User = Depends(require_active_user),
+    db: AsyncSession = Depends(get_session),
+) -> TailoredResumeResponse:
+    return await resume_tailoring_service.get_tailored_version(
+        user=current_user,
+        version_id=version_id,
+        db=db,
+    )
+
+
+@router.put(
+    "/versions/{version_id}",
+    response_model=TailoredResumeResponse,
+    summary="Update Editable Tailored Resume Draft",
+    description="Updates user-modified content or notes on a tailored version. Only allowed while status is 'draft'.",
+)
+async def update_tailored_version(
+    version_id: uuid.UUID,
+    request: TailoredResumeUpdateRequest,
+    current_user: User = Depends(require_active_user),
+    db: AsyncSession = Depends(get_session),
+) -> TailoredResumeResponse:
+    return await resume_tailoring_service.update_tailored_version(
+        user=current_user,
+        version_id=version_id,
+        request=request,
+        db=db,
+    )
+
+
+@router.delete(
+    "/versions/{version_id}",
+    status_code=status.HTTP_204_NO_CONTENT,
+    summary="Delete Tailored Resume Version",
+    description="Permanently deletes a tailored resume version under strict ownership check.",
+)
+async def delete_tailored_version(
+    version_id: uuid.UUID,
+    current_user: User = Depends(require_active_user),
+    db: AsyncSession = Depends(get_session),
+) -> Response:
+    await resume_tailoring_service.delete_tailored_version(
+        user=current_user,
+        version_id=version_id,
+        db=db,
+    )
+    return Response(status_code=status.HTTP_204_NO_CONTENT)
+
+
+@router.post(
+    "/versions/{version_id}/approve",
+    response_model=TailoredResumeResponse,
+    summary="Approve Tailored Resume Version",
+    description="Explicit human approval gate: certifies the tailored draft as candidate-approved.",
+)
+async def approve_tailored_version(
+    version_id: uuid.UUID,
+    request: TailoredResumeApprovalRequest,
+    current_user: User = Depends(require_active_user),
+    db: AsyncSession = Depends(get_session),
+) -> TailoredResumeResponse:
+    return await resume_tailoring_service.approve_tailored_version(
+        user=current_user,
+        version_id=version_id,
+        request=request,
+        db=db,
+    )
+
+
+@router.get(
+    "/versions/{version_id}/diff",
+    response_model=TailoredResumeDiffResponse,
+    summary="Get Tailored Resume Visual Diff",
+    description="Retrieves structured before-and-after change list for visual review.",
+)
+async def get_tailored_diff(
+    version_id: uuid.UUID,
+    current_user: User = Depends(require_active_user),
+    db: AsyncSession = Depends(get_session),
+) -> TailoredResumeDiffResponse:
+    return await resume_tailoring_service.get_diff(
+        user=current_user,
+        version_id=version_id,
+        db=db,
+    )
+
+
+@router.get(
+    "/versions/{version_id}/analysis",
+    response_model=TailoredResumeAnalysisResponse,
+    summary="Get Resume Optimization Analysis",
+    description="Retrieves quantitative optimization analysis, keyword coverage, and evidence gaps.",
+)
+async def get_tailored_analysis(
+    version_id: uuid.UUID,
+    current_user: User = Depends(require_active_user),
+    db: AsyncSession = Depends(get_session),
+) -> TailoredResumeAnalysisResponse:
+    return await resume_tailoring_service.get_analysis(
+        user=current_user,
+        version_id=version_id,
+        db=db,
+    )
+
+
+# ─── Source Resume Document Endpoints ─────────────────────────────────
 
 @router.get(
     "/{resume_id}",
@@ -268,4 +420,28 @@ async def confirm_resume(
         request=request,
         user=current_user,
         db=db,
+    )
+
+
+@router.post(
+    "/{resume_id}/tailor",
+    response_model=TailoredResumeResponse,
+    status_code=status.HTTP_201_CREATED,
+    summary="Create Tailored Resume Draft",
+    description="Generates an evidence-grounded tailored resume draft aligned with the target job posting.",
+)
+async def tailor_resume(
+    resume_id: uuid.UUID,
+    request: ResumeTailorRequest,
+    current_user: User = Depends(require_active_user),
+    db: AsyncSession = Depends(get_session),
+    llm: LLMProvider = Depends(_get_llm),
+) -> TailoredResumeResponse:
+    """Generates a job-specific tailored resume draft without mutating the source resume."""
+    return await resume_tailoring_service.tailor_resume(
+        user=current_user,
+        resume_id=resume_id,
+        request=request,
+        db=db,
+        llm=llm,
     )

@@ -150,8 +150,15 @@ class ResumeVersion(Base, UUIDMixin):
             name="resume_versions_status_check",
         ),
         Index("resume_versions_resume_job_idx", "resume_id", "target_job_id"),
+        Index("resume_versions_user_id_idx", "user_id"),
     )
 
+    user_id: Mapped[Optional[uuid.UUID]] = mapped_column(
+        sa.Uuid(as_uuid=True),
+        ForeignKey("users.id", ondelete="CASCADE"),
+        nullable=True,
+        doc="Owning candidate account reference",
+    )
     resume_id: Mapped[uuid.UUID] = mapped_column(
         sa.Uuid(as_uuid=True),
         ForeignKey("resumes.id", ondelete="CASCADE"),
@@ -207,8 +214,16 @@ class ResumeVersion(Base, UUIDMixin):
         nullable=False,
         doc="Timestamp of generation (UTC)",
     )
+    updated_at: Mapped[datetime] = mapped_column(
+        DateTime(timezone=True),
+        default=utc_now,
+        server_default=sa.text("CURRENT_TIMESTAMP"),
+        nullable=False,
+        doc="Timestamp of last modification (UTC)",
+    )
 
     # Relationships
+    user: Mapped[User] = relationship("User", back_populates="tailored_resume_versions")
     resume: Mapped[Resume] = relationship("Resume", back_populates="versions")
     target_job: Mapped[Job] = relationship(
         "Job",

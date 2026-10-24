@@ -7,7 +7,7 @@ from __future__ import annotations
 import uuid
 from datetime import datetime
 from typing import Any, Dict, List, Optional
-from pydantic import BaseModel, ConfigDict, Field, field_validator
+from pydantic import BaseModel, ConfigDict, Field, field_validator, model_validator
 
 
 # ─── Status & Error Constants ────────────────────────────────────────
@@ -357,3 +357,183 @@ class ResumeConfirmationResponse(BaseModel):
     message: str
     merged_summary: ResumeMergeSummary
     completeness_score: float
+
+
+# ─── Phase 10A: Tailored Resume Schemas ───────────────────────────────
+
+class StructuredChangeItem(BaseModel):
+    """An individual structured edit, rephrasing, or addition suggested by tailoring."""
+    model_config = ConfigDict(extra="forbid")
+
+    id: str = Field(..., description="Unique change identifier (e.g. 'chg_1')")
+    section: str = Field(..., description="Target section: 'executive_summary', 'experience', 'skills', 'projects', 'education'")
+    change_type: str = Field(..., description="Classification: 'addition', 'rephrasing', 'emphasis', 'reordering', 'omission'")
+    original_text: Optional[str] = Field(None, description="Original source resume snippet or section")
+    proposed_text: str = Field(..., description="Tailored replacement or emphasized text")
+    rationale: str = Field(..., description="Grounding explanation linking this change to the target job")
+    target_job_requirement: Optional[str] = Field(None, description="Specific job qualification or responsibility addressed")
+    supporting_evidence: Optional[str] = Field(None, description="Authentic source resume or profile evidence supporting this change")
+    needs_clarification: bool = Field(default=False, description="True if proposed point requires candidate input or clarification")
+
+
+class OptimizationAnalysis(BaseModel):
+    """Quantitative and diagnostic evaluation of resume alignment with target job."""
+    model_config = ConfigDict(extra="forbid")
+
+    keyword_coverage: float = Field(..., ge=0.0, le=100.0, description="Percentage of key technical job terms covered (0.0 - 100.0)")
+    matched_keywords: List[str] = Field(default_factory=list, description="Target job keywords evidenced in the candidate background")
+    missing_keywords: List[str] = Field(default_factory=list, description="Target job keywords not evidenced in candidate background")
+    supported_skills: List[str] = Field(default_factory=list, description="Canonical skills validated in candidate's profile/resume")
+    missing_requirements: List[str] = Field(default_factory=list, description="Job requirements that candidate currently lacks evidence for")
+    readability_score: Optional[float] = Field(None, ge=0.0, le=100.0, description="Readability and clarity index (0.0 - 100.0)")
+    formatting_recommendations: List[str] = Field(default_factory=list, description="Suggestions for formatting, density, or organization")
+    actionable_suggestions: List[str] = Field(default_factory=list, description="Next steps candidate can take to improve relevance")
+
+
+class DiffSummarySchema(BaseModel):
+    """Aggregate diff summary and optimization metadata for a tailored resume version."""
+    model_config = ConfigDict(extra="ignore")
+
+    changes: List[StructuredChangeItem] = Field(default_factory=list, description="Itemized before-and-after change list")
+    additions_count: int = Field(default=0, ge=0)
+    rephrasings_count: int = Field(default=0, ge=0)
+    deletions_count: int = Field(default=0, ge=0)
+    optimization_analysis: Optional[OptimizationAnalysis] = None
+    unsupported_claims: List[str] = Field(
+        default_factory=list,
+        description="Candidate claims or job requirements omitted from the draft due to zero evidence",
+    )
+    model_metadata: Dict[str, Any] = Field(
+        default_factory=dict,
+        description="Provider, model identifier, and prompt version metadata (without API keys)",
+    )
+    candidate_notes: Optional[str] = None
+    accepted_sections: List[str] = Field(default_factory=list)
+
+
+class ResumeTailorRequest(BaseModel):
+    """Payload to initiate AI-powered tailoring of a verified resume to a job."""
+    model_config = ConfigDict(extra="forbid")
+
+    job_id: Optional[uuid.UUID] = Field(None, description="Existing catalog Job UUID")
+    job_description_text: Optional[str] = Field(
+        None,
+        min_length=50,
+        max_length=50000,
+        description="Direct pasted job posting text (used if job_id is omitted)",
+    )
+    job_title: Optional[str] = Field(None, max_length=255, description="Target job title (used with direct text)")
+    company_name: Optional[str] = Field(None, max_length=255, description="Target company name (used with direct text)")
+    target_emphasis: List[str] = Field(
+        default_factory=list,
+        description="Specific topics or skills candidate wishes to emphasize (e.g. ['distributed systems'])",
+    )
+    user_notes: Optional[str] = Field(
+        None,
+        max_length=1000,
+        description="Optional additional candidate notes or context for tailoring",
+    )
+
+    @model_validator(mode="after")
+    def validate_job_source(self) -> "ResumeTailorRequest":
+        if not self.job_id and not (self.job_description_text and self.job_description_text.strip()):
+            raise ValueError("Either job_id or job_description_text must be provided for resume tailoring.")
+        return self
+
+
+class TailoredResumeResponse(BaseModel):
+    """Full representation of a persisted tailored resume version."""
+    model_config = ConfigDict(from_attributes=True)
+
+    id: uuid.UUID
+    resume_id: uuid.UUID
+    target_job_id: uuid.UUID
+    version_number: int
+    status: str = Field(description="'draft', 'approved', or 'archived'")
+    anti_hallucination_verified: bool
+    tailored_content: ExtractedResumeSchema
+    diff_summary: DiffSummarySchema
+    approved_at: Optional[datetime] = None
+    created_at: datetime
+    updated_at: datetime
+
+
+class TailoredResumeListItem(BaseModel):
+    """Compact summary of a tailored resume version for list views."""
+    model_config = ConfigDict(from_attributes=True)
+
+    id: uuid.UUID
+    resume_id: uuid.UUID
+    target_job_id: uuid.UUID
+    job_title: Optional[str] = None
+    company_name: Optional[str] = None
+    version_number: int
+    status: str
+    anti_hallucination_verified: bool
+    keyword_coverage: Optional[float] = None
+    changes_count: int
+    approved_at: Optional[datetime] = None
+    created_at: datetime
+    updated_at: datetime
+
+
+class TailoredResumeListResponse(BaseModel):
+    """Paginated collection of tailored resume versions."""
+    items: List[TailoredResumeListItem]
+    total: int
+    page: int
+    page_size: int
+    total_pages: int
+
+
+class TailoredResumeUpdateRequest(BaseModel):
+    """Payload to update editable draft content of a tailored resume version."""
+    model_config = ConfigDict(extra="forbid")
+
+    tailored_content: Optional[ExtractedResumeSchema] = Field(
+        None,
+        description="User-modified tailored resume content",
+    )
+    user_notes: Optional[str] = Field(
+        None,
+        max_length=1000,
+        description="User notes or review remarks",
+    )
+
+
+class TailoredResumeApprovalRequest(BaseModel):
+    """Explicit human approval payload to certify a tailored resume version."""
+    model_config = ConfigDict(extra="forbid")
+
+    accepted_sections: List[str] = Field(
+        default_factory=list,
+        description="List of sections approved (e.g. ['executive_summary', 'experience', 'skills'])",
+    )
+    user_confirmation: bool = Field(
+        ...,
+        description="Mandatory explicit confirmation that candidate has reviewed and approved the draft",
+    )
+
+
+class TailoredResumeDiffResponse(BaseModel):
+    """Structured view of original vs proposed changes for visual review."""
+    version_id: uuid.UUID
+    resume_id: uuid.UUID
+    target_job_id: uuid.UUID
+    status: str
+    changes: List[StructuredChangeItem]
+    additions_count: int
+    rephrasings_count: int
+    deletions_count: int
+    unsupported_claims: List[str]
+
+
+class TailoredResumeAnalysisResponse(BaseModel):
+    """Structured view of optimization analysis, keyword coverage, and evidence gaps."""
+    version_id: uuid.UUID
+    target_job_id: uuid.UUID
+    job_title: Optional[str] = None
+    company_name: Optional[str] = None
+    optimization_analysis: OptimizationAnalysis
+    anti_hallucination_verified: bool
+    unsupported_claims: List[str]

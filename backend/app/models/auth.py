@@ -21,7 +21,7 @@ if TYPE_CHECKING:
     from app.models.career import CareerProfile
     from app.models.onboarding import OnboardingSession
     from app.models.readiness import CareerReadinessScore
-    from app.models.resume import Resume
+    from app.models.resume import Resume, ResumeVersion
 
 
 class User(Base, UUIDMixin, TimestampMixin):
@@ -107,6 +107,11 @@ class User(Base, UUIDMixin, TimestampMixin):
     )
     resumes: Mapped[List[Resume]] = relationship(
         "Resume",
+        back_populates="user",
+        cascade="all, delete-orphan",
+    )
+    tailored_resume_versions: Mapped[List[ResumeVersion]] = relationship(
+        "ResumeVersion",
         back_populates="user",
         cascade="all, delete-orphan",
     )
