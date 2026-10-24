@@ -8,6 +8,7 @@ from __future__ import annotations
 
 import logging
 import uuid
+from datetime import datetime, timedelta, timezone
 from typing import List, Optional
 
 from fastapi import APIRouter, Depends, HTTPException, Query, status
@@ -20,12 +21,14 @@ from app.core.exceptions import NotFoundException, ValidationException
 from app.models.auth import User
 from app.models.jobs import Job, JobIngestionRun, JobSkill
 from app.schemas.jobs import (
+    FreshnessEvaluationSummary,
     JobImportRequest,
     JobIngestRequest,
     JobIngestionSummary,
     JobResponse,
     JobSearchResponse,
     JobSkillItem,
+    JobStatusUpdateRequest,
     MarketIntelligenceResponse,
 )
 from app.services.job_ingestion_pipeline import JobIngestionPipelineService
@@ -205,14 +208,16 @@ async def import_job(
 )
 async def search_jobs(
     role_id: Optional[str] = Query(None, description="Canonical role filter"),
-    remote_type: Optional[str] = Query(None, description="'remote', 'hybrid', or 'onsite'"),
-    employment_type: Optional[str] = Query(None, description="'full_time', 'contract', 'part_time', 'internship'"),
-    experience_level: Optional[str] = Query(None, description="'internship', 'entry_level', 'junior', 'mid'"),
+    remote_type: Optional[str] = Query(None, pattern="^(remote|hybrid|onsite)$", description="'remote', 'hybrid', or 'onsite'"),
+    employment_type: Optional[str] = Query(None, pattern="^(full_time|contract|part_time|internship)$", description="'full_time', 'contract', 'part_time', 'internship'"),
+    experience_level: Optional[str] = Query(None, pattern="^(internship|entry_level|junior|mid)$", description="'internship', 'entry_level', 'junior', 'mid'"),
     skill_id: Optional[str] = Query(None, description="Canonical skill filter"),
+    location: Optional[str] = Query(None, description="Geographic location or market filter"),
     keyword: Optional[str] = Query(None, description="Search in title or company"),
-    freshness_status: Optional[str] = Query(None, description="'active', 'needs_refresh', 'expired', 'closed'"),
+    days_ago: Optional[int] = Query(None, ge=1, le=365, description="Filter jobs posted within the last N days"),
+    freshness_status: Optional[str] = Query(None, pattern="^(active|needs_refresh|expired|closed)$", description="'active', 'needs_refresh', 'expired', 'closed'"),
     min_salary: Optional[int] = Query(None, ge=0, description="Minimum annualized salary"),
-    sort_by: str = Query("newest", description="'newest', 'salary_high', 'title_asc', 'oldest'"),
+    sort_by: str = Query("newest", pattern="^(newest|salary_high|title_asc|oldest)$", description="'newest', 'salary_high', 'title_asc', 'oldest'"),
     page: int = Query(1, ge=1, description="Page number"),
     page_size: int = Query(20, ge=1, le=100, description="Items per page"),
     current_user: User = Depends(require_active_user),
@@ -232,6 +237,11 @@ async def search_jobs(
         criteria.append(Job.freshness_status == freshness_status)
     if skill_id:
         criteria.append(Job.skills.any(JobSkill.skill_id == skill_id))
+    if location:
+        criteria.append(func.lower(Job.location).like(f"%{location.strip().lower()}%"))
+    if days_ago:
+        cutoff = datetime.now(timezone.utc) - timedelta(days=days_ago)
+        criteria.append(Job.posted_at >= cutoff)
     if min_salary is not None:
         criteria.append(
             or_(
@@ -311,3 +321,65 @@ async def get_job_by_id(
         raise NotFoundException("Job")
 
     return _format_job(job)
+
+
+# ─────────────────────────────────────────────
+# 7. Job Lifecycle & Freshness Maintenance
+# ─────────────────────────────────────────────
+
+@router.post(
+    "/evaluate-freshness",
+    response_model=FreshnessEvaluationSummary,
+    summary="Evaluate Catalog Freshness Policies",
+    description="Audits and transitions job freshness statuses based on verification recency.",
+)
+async def evaluate_freshness(
+    stale_days: int = Query(14, ge=1, le=180, description="Days before unverified active jobs become needs_refresh"),
+    expire_days: int = Query(30, ge=1, le=365, description="Days before unverified jobs expire"),
+    current_user: User = Depends(require_active_user),
+    db: AsyncSession = Depends(get_session),
+) -> FreshnessEvaluationSummary:
+    return await _pipeline_service.evaluate_catalog_freshness(
+        db=db,
+        stale_days=stale_days,
+        expire_days=expire_days,
+    )
+
+
+@router.patch(
+    "/{job_id}/status",
+    response_model=JobResponse,
+    summary="Update Job Freshness and Active Status",
+    description="Transitions a job posting to active, needs_refresh, expired, or closed.",
+)
+async def update_job_status(
+    job_id: uuid.UUID,
+    request: JobStatusUpdateRequest,
+    current_user: User = Depends(require_active_user),
+    db: AsyncSession = Depends(get_session),
+) -> JobResponse:
+    return await _pipeline_service.update_job_status(
+        job_id=job_id,
+        freshness_status=request.freshness_status,
+        is_active=request.is_active,
+        db=db,
+    )
+
+
+@router.post(
+    "/{job_id}/close",
+    response_model=JobResponse,
+    summary="Mark Job Posting as Closed",
+    description="Sets a job posting freshness to closed and deactivates it.",
+)
+async def close_job(
+    job_id: uuid.UUID,
+    current_user: User = Depends(require_active_user),
+    db: AsyncSession = Depends(get_session),
+) -> JobResponse:
+    return await _pipeline_service.update_job_status(
+        job_id=job_id,
+        freshness_status="closed",
+        is_active=False,
+        db=db,
+    )

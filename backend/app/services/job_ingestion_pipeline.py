@@ -9,17 +9,19 @@ from __future__ import annotations
 import decimal
 import logging
 import uuid
-from datetime import datetime, timezone
-from typing import Any, Dict, List, Optional, Tuple
+from datetime import datetime, timedelta, timezone
+from typing import Any, Dict, List, Optional, Set, Tuple
 
-from sqlalchemy import delete, select
+from sqlalchemy import delete, select, update
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.orm import selectinload
 
 from app.core.config import settings
+from app.core.exceptions import NotFoundException
 from app.models.jobs import Job, JobIngestionRun, JobSkill, JobSource
 from app.models.skills import Skill
 from app.schemas.jobs import (
+    FreshnessEvaluationSummary,
     JobImportRequest,
     JobIngestionSummary,
     JobResponse,
@@ -432,3 +434,83 @@ class JobIngestionPipelineService:
             created_at=job.created_at,
             skills=skill_items,
         )
+
+    async def evaluate_catalog_freshness(
+        self,
+        db: AsyncSession,
+        stale_days: int = 14,
+        expire_days: int = 30,
+    ) -> FreshnessEvaluationSummary:
+        """
+        Evaluates catalog freshness based on last_verified_at timestamp.
+        1. Jobs verified > stale_days ago and currently 'active' -> 'needs_refresh'
+        2. Jobs verified > expire_days ago and not 'closed' -> 'expired' & is_active = False
+        """
+        now = _utc_now()
+        stale_cutoff = now - timedelta(days=stale_days)
+        expire_cutoff = now - timedelta(days=expire_days)
+
+        # 1. Fetch total evaluated jobs
+        total_stmt = select(Job).options(selectinload(Job.skills).selectinload(JobSkill.skill))
+        all_jobs = (await db.scalars(total_stmt)).all()
+
+        marked_stale = 0
+        marked_expired = 0
+
+        for job in all_jobs:
+            ref_time = job.last_verified_at or job.posted_at or job.created_at
+            if ref_time.tzinfo is None:
+                ref_time = ref_time.replace(tzinfo=timezone.utc)
+
+            if ref_time < expire_cutoff:
+                if job.freshness_status != "closed" and job.freshness_status != "expired":
+                    job.freshness_status = "expired"
+                    job.is_active = False
+                    marked_expired += 1
+            elif ref_time < stale_cutoff:
+                if job.freshness_status == "active":
+                    job.freshness_status = "needs_refresh"
+                    marked_stale += 1
+
+        await db.commit()
+
+        return FreshnessEvaluationSummary(
+            evaluated_count=len(all_jobs),
+            marked_stale=marked_stale,
+            marked_expired=marked_expired,
+            evaluated_at=now,
+        )
+
+    async def update_job_status(
+        self,
+        job_id: uuid.UUID,
+        freshness_status: str,
+        is_active: Optional[bool],
+        db: AsyncSession,
+    ) -> JobResponse:
+        """Explicitly transitions a job's status and freshness."""
+        stmt = (
+            select(Job)
+            .options(selectinload(Job.skills).selectinload(JobSkill.skill))
+            .where(Job.id == job_id)
+        )
+        job = await db.scalar(stmt)
+        if not job:
+            raise NotFoundException("Job")
+
+        job.freshness_status = freshness_status
+        if is_active is not None:
+            job.is_active = is_active
+        else:
+            if freshness_status in ("expired", "closed"):
+                job.is_active = False
+            elif freshness_status == "active":
+                job.is_active = True
+
+        await db.commit()
+        refetched = await db.scalar(
+            select(Job)
+            .options(selectinload(Job.skills).selectinload(JobSkill.skill))
+            .where(Job.id == job_id)
+        )
+        return self._format_job_response(refetched or job)

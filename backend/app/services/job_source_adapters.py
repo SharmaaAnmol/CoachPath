@@ -199,17 +199,22 @@ class ArbeitnowJobAdapter(BaseJobSourceAdapter):
         try:
             async with httpx.AsyncClient(timeout=15.0) as client:
                 response = await client.get(self.BASE_URL, headers=headers, params=params)
-                if response.status_code != 200:
+                if response.status_code == 429:
+                    logger.warning("Arbeitnow API rate limit reached (HTTP 429)")
+                    raise RuntimeError("Arbeitnow API rate limit exceeded (HTTP 429).")
+                elif response.status_code != 200:
                     logger.warning(
                         "Arbeitnow API returned HTTP %d: %s",
                         response.status_code,
                         response.text[:200],
                     )
-                    return []
+                    raise RuntimeError(f"Arbeitnow API returned HTTP {response.status_code}")
                 payload = response.json()
         except Exception as exc:
             logger.error("Arbeitnow API request failed: %s", exc)
-            return []
+            if isinstance(exc, RuntimeError):
+                raise
+            raise RuntimeError(f"Arbeitnow provider failure: {exc}") from exc
 
         raw_items = payload.get("data", [])
         results: List[RawJobListing] = []

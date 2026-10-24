@@ -7,10 +7,36 @@ and market-intelligence aggregates.
 from __future__ import annotations
 
 import decimal
+import re
+import urllib.parse
 import uuid
 from datetime import datetime
 from typing import Any, Dict, List, Optional
-from pydantic import BaseModel, ConfigDict, Field
+from pydantic import BaseModel, ConfigDict, Field, field_validator
+
+
+# ─────────────────────────────────────────────
+# Helper for SSRF and Protocol Safety
+# ─────────────────────────────────────────────
+
+FORBIDDEN_HOSTS = {"localhost", "127.0.0.1", "0.0.0.0", "169.254.169.254", "::1"}
+
+def _validate_safe_url(url: Optional[str]) -> Optional[str]:
+    if not url:
+        return url
+    stripped = url.strip()
+    if not (stripped.startswith("http://") or stripped.startswith("https://")):
+        raise ValueError("URL must start with http:// or https://")
+    try:
+        parsed = urllib.parse.urlparse(stripped)
+        host = (parsed.hostname or "").lower()
+        if host in FORBIDDEN_HOSTS or host.startswith("10.") or host.startswith("192.168."):
+            raise ValueError("URL cannot point to private or internal loopback networks.")
+    except Exception as exc:
+        if isinstance(exc, ValueError):
+            raise
+        raise ValueError(f"Malformed URL: {exc}")
+    return stripped
 
 
 # ─────────────────────────────────────────────
@@ -97,6 +123,27 @@ class JobImportRequest(BaseModel):
     max_salary: Optional[int] = Field(None, ge=0, description="Maximum annualized salary")
     currency: str = Field("USD", min_length=3, max_length=8, description="Currency code")
 
+    @field_validator("application_url", "source_url")
+    @classmethod
+    def validate_urls(cls, v: Optional[str]) -> Optional[str]:
+        return _validate_safe_url(v)
+
+    @field_validator("remote_type")
+    @classmethod
+    def validate_remote_type(cls, v: str) -> str:
+        cleaned = v.lower().strip()
+        if cleaned not in ("remote", "hybrid", "onsite"):
+            raise ValueError("remote_type must be 'remote', 'hybrid', or 'onsite'")
+        return cleaned
+
+    @field_validator("experience_level")
+    @classmethod
+    def validate_experience_level(cls, v: str) -> str:
+        cleaned = v.lower().strip()
+        if cleaned not in ("internship", "entry_level", "junior", "mid"):
+            raise ValueError("experience_level must be 'internship', 'entry_level', 'junior', or 'mid'")
+        return cleaned
+
 
 class JobIngestRequest(BaseModel):
     """Execution trigger for a permitted job pipeline source."""
@@ -105,6 +152,30 @@ class JobIngestRequest(BaseModel):
     source: str = Field("seed", description="Source provider name ('seed', 'arbeitnow', 'mock')")
     batch_size: int = Field(50, ge=1, le=200, description="Batch fetch size")
     force_refresh: bool = Field(False, description="Whether to re-parse existing jobs")
+
+    @field_validator("source")
+    @classmethod
+    def validate_source(cls, v: str) -> str:
+        cleaned = v.lower().strip()
+        if cleaned not in ("seed", "manual", "arbeitnow", "mock"):
+            raise ValueError("source must be 'seed', 'manual', 'arbeitnow', or 'mock'")
+        return cleaned
+
+
+class JobStatusUpdateRequest(BaseModel):
+    """Update job active status and freshness state."""
+    model_config = ConfigDict(extra="forbid")
+
+    freshness_status: str = Field(..., pattern="^(active|needs_refresh|expired|closed)$")
+    is_active: Optional[bool] = None
+
+
+class FreshnessEvaluationSummary(BaseModel):
+    """Metrics summary of a freshness lifecycle evaluation run."""
+    evaluated_count: int
+    marked_stale: int
+    marked_expired: int
+    evaluated_at: datetime
 
 
 class JobIngestionSummary(BaseModel):
