@@ -254,6 +254,120 @@ export interface JobListing {
   applicationDeadline?: string;
 }
 
+// ─────────────────────────────────────────────
+// Phase 8B: Job Discovery & Market Intelligence Types
+// ─────────────────────────────────────────────
+
+export interface JobSkillItem {
+  skill_id: string;
+  name: string;
+  category?: string;
+  is_mandatory: boolean;
+  confidence_score?: number;
+  source_phrase?: string;
+}
+
+export type WorkplaceType = 'remote' | 'hybrid' | 'onsite';
+export type EmploymentType = 'full_time' | 'contract' | 'part_time' | 'internship';
+export type ExperienceTier = 'internship' | 'entry_level' | 'junior' | 'mid';
+export type FreshnessStatus = 'active' | 'needs_refresh' | 'expired' | 'closed';
+
+export interface JobOpportunity {
+  id: string;
+  external_id?: string;
+  source: string;
+  source_url?: string;
+  title: string;
+  normalized_title?: string;
+  company_name: string;
+  location: string;
+  normalized_location?: string;
+  remote_type: WorkplaceType;
+  employment_type?: EmploymentType;
+  role_id: string;
+  experience_level: ExperienceTier;
+  min_salary?: number;
+  max_salary?: number;
+  currency: string;
+  description_markdown: string;
+  responsibilities: string[];
+  required_qualifications: string[];
+  preferred_qualifications: string[];
+  application_url: string;
+  is_active: boolean;
+  freshness_status: FreshnessStatus;
+  last_verified_at?: string;
+  data_quality_score?: number;
+  posted_at: string;
+  created_at: string;
+  skills: JobSkillItem[];
+}
+
+export interface JobSearchQuery {
+  role_id?: string;
+  remote_type?: string;
+  employment_type?: string;
+  experience_level?: string;
+  skill_id?: string;
+  keyword?: string;
+  freshness_status?: string;
+  min_salary?: number;
+  sort_by?: 'newest' | 'salary_high' | 'title_asc' | 'oldest';
+  page?: number;
+  page_size?: number;
+}
+
+export interface JobSearchResponse {
+  items: JobOpportunity[];
+  total: number;
+  page: number;
+  page_size: number;
+  total_pages: number;
+}
+
+export interface TopSkillDemand {
+  skill_id: string;
+  name: string;
+  category: string;
+  job_count: number;
+  percentage: number;
+}
+
+export interface SalaryInsights {
+  sample_size: number;
+  average_min_salary?: number;
+  average_max_salary?: number;
+  median_salary?: number;
+  currency: string;
+}
+
+export interface MarketIntelligenceData {
+  total_active_jobs: number;
+  role_distribution: Record<string, number>;
+  remote_distribution: Record<string, number>;
+  experience_distribution: Record<string, number>;
+  top_demanded_skills: TopSkillDemand[];
+  salary_insights: SalaryInsights;
+  is_provisional: boolean;
+  provisional_reason?: string | null;
+  generated_at: string;
+}
+
+export interface ManualJobImportPayload {
+  title: string;
+  company_name: string;
+  location?: string;
+  description_text: string;
+  application_url?: string;
+  source_url?: string;
+  remote_type?: string;
+  role_id?: string;
+  experience_level?: string;
+  min_salary?: number;
+  max_salary?: number;
+  currency?: string;
+}
+
 export interface ResumeDiffChange {
   id: string;
   section: string;

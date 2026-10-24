@@ -52,7 +52,7 @@ flowchart TD
 | **Vector Storage** | **pgvector** | Relational vector similarity search, unified backup/transactions |
 | **Cache & Queue** | **Redis** | Fast token validation, rate-limiting, asynchronous task brokering |
 | **AI Integration** | **Google Gemini (`gemini-3.5-flash-lite`), Instructor/Pydantic** | Zero-fabrication structured parsing, adaptive onboarding, quarantined prompts |
-| **Testing** | **Pytest (Async), HTTPX, TypeScript (`tsc`), ESLint** | 185 automated backend integration tests, 100% type-checked frontend |
+| **Testing** | **Pytest (Async), HTTPX, TypeScript (`tsc`), ESLint** | 189 automated backend integration tests, 100% type-checked frontend |
 
 ---
 
@@ -110,23 +110,27 @@ CoachPath provides curated industry benchmark requirements across 7 canonical en
 │   ├── phase-7a-final-report.md                   # Phase 7A final implementation report
 │   ├── roadmap-frontend-architecture.md           # Learning Roadmap Dashboard & Frontend Architecture (Phase 7B)
 │   ├── phase-7b-final-report.md                   # Phase 7B final implementation report
-│   └── phase-7-final-audit.md                     # Phase 7C final integration audit & verification report
+│   ├── phase-7-final-audit.md                     # Phase 7C final integration audit & verification report
+│   ├── job-market-architecture.md                 # Job Market Intelligence & Ingestion Engine (Phase 8A)
+│   ├── phase-8a-final-report.md                   # Phase 8A final implementation report
+│   ├── job-discovery-frontend-architecture.md     # Job Discovery Frontend & Market Intelligence Specification (Phase 8B)
+│   └── phase-8b-final-report.md                   # Phase 8B final implementation report
 ├── backend/                                       # FastAPI / Python 3.13 Backend Workspace
 │   ├── app/
 │   │   ├── ai/                                    # LLM provider abstraction (Gemini, OpenAI, Anthropic, Mock)
-│   │   ├── api/routes/                            # Auth, Profile, Onboarding, Resume, Assessments, Skills, Roles, Roadmap
+│   │   ├── api/routes/                            # Auth, Profile, Onboarding, Resume, Assessments, Skills, Roles, Roadmap, Jobs
 │   │   ├── core/                                  # Config, Security, Database session, RFC 7807 Exceptions
-│   │   ├── db/seeds/                              # Question bank (270 questions), Canonical taxonomy (48 skills), Roles
-│   │   ├── models/                                # SQLAlchemy 2.0 async domain models (including Roadmap, Phase, Task)
+│   │   ├── db/seeds/                              # Question bank (270 questions), Canonical taxonomy (48 skills), Roles, Seed jobs
+│   │   ├── models/                                # SQLAlchemy 2.0 async domain models (including Job, JobSource, JobSkill, JobIngestionRun)
 │   │   ├── schemas/                               # Pydantic v2 validation contracts
-│   │   └── services/                              # Engine implementations (Onboarding, Resume, Assessment, Skill Gap, Roadmap)
+│   │   └── services/                              # Engine implementations (Onboarding, Resume, Assessment, Skill Gap, Roadmap, Job Ingestion)
 │   ├── alembic/                                   # Async schema migrations (all tables to head)
-│   └── tests/                                     # Comprehensive Pytest test suite (185 passing tests)
+│   └── tests/                                     # Comprehensive Pytest test suite (189 passing tests)
 ├── frontend/                                      # Next.js 14 App Router Frontend Workspace
 │   ├── src/app/(public)/                          # Landing, Login, Signup, About, Features, Privacy
-│   ├── src/app/(app)/                             # Protected routes: /dashboard, /onboarding, /resume, /assessments, /skills, /roadmap
-│   ├── src/components/                            # UI Design System, Onboarding, Resume Workbench, Skill Gap, Roadmap
-│   ├── src/lib/                                   # Typed API clients (Auth, Profile, Onboarding, Resume, Skill Gap, Roadmap)
+│   ├── src/app/(app)/                             # Protected routes: /dashboard, /onboarding, /resume, /assessments, /skills, /roadmap, /jobs, /jobs/[id]
+│   ├── src/components/                            # UI Design System, Onboarding, Resume Workbench, Skill Gap, Roadmap, Jobs
+│   ├── src/lib/                                   # Typed API clients (Auth, Profile, Onboarding, Resume, Skill Gap, Roadmap, JobClient)
 │   └── src/types/                                 # Strict TypeScript domain interfaces
 ├── docker-compose.yml                             # Container orchestration for FastAPI & PostgreSQL (pgvector)
 ├── .env.example                                   # Configuration template for local & production
@@ -200,7 +204,7 @@ Open your browser at **[http://localhost:3000](http://localhost:3000)**.
 To verify all system contracts, run:
 
 ```bash
-# Backend test suite (185 integration tests)
+# Backend test suite (189 integration tests)
 cd /Users/anmolsharma/Desktop/Coach_Path/backend
 source .venv/bin/activate
 pytest tests/ -v
@@ -239,17 +243,17 @@ CoachPath follows a phased engineering methodology:
 - [x] **Phase 7B: Learning Roadmap Frontend Dashboard & Milestone Tracking** *(Completed — Interactive phase accordions, DAG dependency lock enforcement, task status transitions, deliverable proof URL submission, feasibility schedule banner, dynamic assessment adaptation, 100% type-checked Next.js pages)*
 - [x] **Phase 7C: Learning Roadmap End-to-End Integration Testing & Audit** *(Completed — 20-step lifecycle verified, multi-profile personalization, workload feasibility calculations, deliverable proof URL validation, 168 automated tests passing, 100% audit pass verdict)*
 - [x] **Phase 8A: Job Market Intelligence and Permitted Job Ingestion Engine (Backend)** *(Completed — Provider adapters for Seed, Manual, Arbeitnow, and Mock; data normalization, canonical skill extraction, idempotent upserts, search & market intelligence APIs, 185 automated tests passing)*
-- [ ] **Phase 8B: Semantic Job Matching & Recommendation Engine**
-- [ ] **Phase 8C: Job Market & Recommendations Frontend Dashboard**
-- [ ] **Phase 9: Truthful Resume Optimization Engine**
-- [ ] **Phase 10: Application Pipeline Tracker**
-- [ ] **Phase 11: Recruiter Discovery & High-Context Networking**
-- [ ] **Phase 12: Role-Specific Interview Preparation Engine**
-- [ ] **Phase 13: Composite Career Readiness Engine**
-- [ ] **Phase 14: Settings, Privacy Controls & Data Deletion**
-- [ ] **Phase 15: Production Observability, Security Hardening & Rate Limiting**
-- [ ] **Phase 16: End-to-End System Integration Testing**
-- [ ] **Phase 17: Production Cloud Deployment & Launch Readiness**
+- [x] **Phase 8B: Job Discovery Frontend and Market Intelligence Integration** *(Completed — Next.js 14 interactive search & filter UI, sorting, canonical skill chips, job detail modal & deep-link route, real-time market intelligence dashboard, candidate manual import modal, 189 automated tests passing)*
+- [ ] **Phase 8C: Job Market End-to-End Testing & Final Audit**
+- [ ] **Phase 9: Semantic Job Matching & Recommendation Engine**
+- [ ] **Phase 10: Truthful Resume Optimization Engine**
+- [ ] **Phase 11: Application Pipeline Tracker**
+- [ ] **Phase 12: Recruiter Discovery & High-Context Networking**
+- [ ] **Phase 13: Role-Specific Interview Preparation Engine**
+- [ ] **Phase 14: Composite Career Readiness Engine**
+- [ ] **Phase 15: Settings, Privacy Controls & Data Deletion**
+- [ ] **Phase 16: Production Observability, Security Hardening & Rate Limiting**
+- [ ] **Phase 17: End-to-End System Integration Testing & Launch Readiness**
 
 ---
 

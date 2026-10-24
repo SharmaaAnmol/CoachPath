@@ -206,10 +206,13 @@ async def import_job(
 async def search_jobs(
     role_id: Optional[str] = Query(None, description="Canonical role filter"),
     remote_type: Optional[str] = Query(None, description="'remote', 'hybrid', or 'onsite'"),
+    employment_type: Optional[str] = Query(None, description="'full_time', 'contract', 'part_time', 'internship'"),
     experience_level: Optional[str] = Query(None, description="'internship', 'entry_level', 'junior', 'mid'"),
+    skill_id: Optional[str] = Query(None, description="Canonical skill filter"),
     keyword: Optional[str] = Query(None, description="Search in title or company"),
     freshness_status: Optional[str] = Query(None, description="'active', 'needs_refresh', 'expired', 'closed'"),
     min_salary: Optional[int] = Query(None, ge=0, description="Minimum annualized salary"),
+    sort_by: str = Query("newest", description="'newest', 'salary_high', 'title_asc', 'oldest'"),
     page: int = Query(1, ge=1, description="Page number"),
     page_size: int = Query(20, ge=1, le=100, description="Items per page"),
     current_user: User = Depends(require_active_user),
@@ -221,10 +224,14 @@ async def search_jobs(
         criteria.append(Job.role_id == role_id)
     if remote_type:
         criteria.append(Job.remote_type == remote_type)
+    if employment_type:
+        criteria.append(Job.employment_type == employment_type)
     if experience_level:
         criteria.append(Job.experience_level == experience_level)
     if freshness_status:
         criteria.append(Job.freshness_status == freshness_status)
+    if skill_id:
+        criteria.append(Job.skills.any(JobSkill.skill_id == skill_id))
     if min_salary is not None:
         criteria.append(
             or_(
@@ -242,6 +249,16 @@ async def search_jobs(
             )
         )
 
+    # Sort order
+    if sort_by == "salary_high":
+        order_clauses = [Job.max_salary.desc().nulls_last(), Job.posted_at.desc()]
+    elif sort_by == "title_asc":
+        order_clauses = [func.lower(Job.title).asc()]
+    elif sort_by == "oldest":
+        order_clauses = [Job.posted_at.asc(), Job.created_at.asc()]
+    else:  # newest
+        order_clauses = [Job.posted_at.desc(), Job.created_at.desc()]
+
     # Count total matching
     count_stmt = select(func.count(Job.id)).where(*criteria)
     total: int = (await db.scalar(count_stmt)) or 0
@@ -252,7 +269,7 @@ async def search_jobs(
         select(Job)
         .options(selectinload(Job.skills).selectinload(JobSkill.skill))
         .where(*criteria)
-        .order_by(Job.posted_at.desc(), Job.created_at.desc())
+        .order_by(*order_clauses)
         .offset(offset)
         .limit(page_size)
     )

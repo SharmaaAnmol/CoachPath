@@ -333,6 +333,27 @@ async def test_jobs_api_search_and_filters(client: AsyncClient, test_session: As
     assert r_kw.json()["total"] >= 1
     assert "Stripe" in r_kw.json()["items"][0]["company_name"]
 
+    # 5. Filter by skill_id
+    r_skill = await client.get(
+        "/api/v1/jobs?skill_id=python",
+        headers={"Authorization": f"Bearer {token}"},
+    )
+    assert r_skill.status_code == 200
+    assert r_skill.json()["total"] >= 1
+    for item in r_skill.json()["items"]:
+        skill_ids = [s["skill_id"] for s in item["skills"]]
+        assert "python" in skill_ids
+
+    # 6. Sort by salary_high
+    r_sort = await client.get(
+        "/api/v1/jobs?sort_by=salary_high",
+        headers={"Authorization": f"Bearer {token}"},
+    )
+    assert r_sort.status_code == 200
+    items = r_sort.json()["items"]
+    salaries = [item["max_salary"] for item in items if item["max_salary"] is not None]
+    assert salaries == sorted(salaries, reverse=True)
+
 
 @pytest.mark.asyncio
 async def test_jobs_api_get_by_id(client: AsyncClient, test_session: AsyncSession):
