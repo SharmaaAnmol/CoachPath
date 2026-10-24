@@ -52,7 +52,7 @@ flowchart TD
 | **Vector Storage** | **pgvector** | Relational vector similarity search, unified backup/transactions |
 | **Cache & Queue** | **Redis** | Fast token validation, rate-limiting, asynchronous task brokering |
 | **AI Integration** | **Google Gemini (`gemini-3.5-flash-lite`), Instructor/Pydantic** | Zero-fabrication structured parsing, adaptive onboarding, quarantined prompts |
-| **Testing** | **Pytest (Async), HTTPX, TypeScript (`tsc`), ESLint** | 195 automated backend integration tests, 100% type-checked frontend |
+| **Testing** | **Pytest (Async), HTTPX, TypeScript (`tsc`), ESLint** | 217 automated backend integration tests, 100% type-checked frontend |
 
 ---
 
@@ -249,7 +249,7 @@ CoachPath follows a phased engineering methodology:
 - [x] **Phase 8B: Job Discovery Frontend and Market Intelligence Integration** *(Completed — Next.js 14 interactive search & filter UI, sorting, canonical skill chips, job detail modal & deep-link route, real-time market intelligence dashboard, candidate manual import modal, 189 automated tests passing)*
 - [x] **Phase 8C: Job Market End-to-End Testing & Final Audit** *(Completed — Comprehensive 18-step discovery audit, provider failure resilience, SSRF protection, freshness lifecycle policies, 195 automated tests passing, 100% audit pass verdict)*
 - [x] **Phase 9A: Intelligent Job Matching Engine (Backend)** *(Completed — Deterministic multi-factor scoring, required vs preferred skill weighting, evidence provenance calibration, evidence coverage & provisional flags, grounded explainability drawers, 211 automated tests passing)*
-- [ ] **Phase 9B: Recommendations UI & Match Drawer Integration (Frontend)**
+- [x] **Phase 9B: Recommendations UI & Match Drawer Integration (Frontend)** *(Completed — Dual-tab recommendations hub, MatchScoreBadge with 4 fit tiers, MatchEvidenceCoverage progress indicators, JobMatchCard recommendations list, JobMatchDrawer with 4 explainability tabs, embedded personalized fit analysis in JobDetailPage & JobDetailModal, on-demand recalculation sync, 217 automated tests passing)*
 - [ ] **Phase 9C: Job Matching End-to-End Integration Testing & Audit**
 - [ ] **Phase 10: Truthful Resume Optimization Engine**
 - [ ] **Phase 11: Application Pipeline Tracker**

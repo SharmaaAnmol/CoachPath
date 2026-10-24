@@ -2,12 +2,18 @@
 
 import * as React from 'react';
 import { useRouter } from 'next/navigation';
-import { JobOpportunity } from '@/types';
+import { cn } from '@/lib/utils';
+import { JobOpportunity, JobMatchResponse } from '@/types';
 import { jobClient } from '@/lib/job-client';
+import { jobMatchingClient } from '@/lib/job-matching-client';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Card } from '@/components/ui/card';
 import { EmptyState } from '@/components/ui/empty-state';
+import { MatchScoreBadge } from '@/components/jobs/match-score-badge';
+import { MatchEvidenceCoverage } from '@/components/jobs/match-evidence-coverage';
+import { JobMatchDrawer } from '@/components/jobs/job-match-drawer';
+import { ProgressBar } from '@/components/ui/progress-bar';
 import {
   ArrowLeft,
   Building2,
@@ -24,29 +30,48 @@ import {
   AlertCircle,
   Copy,
   Check,
+  RefreshCw,
+  Layers,
+  ArrowRight,
 } from 'lucide-react';
 
 export default function JobDetailPage({ params }: { params: { id: string } }) {
   const router = useRouter();
   const [job, setJob] = React.useState<JobOpportunity | null>(null);
+  const [match, setMatch] = React.useState<JobMatchResponse | null>(null);
   const [isLoading, setIsLoading] = React.useState(true);
+  const [isLoadingMatch, setIsLoadingMatch] = React.useState(false);
+  const [isRecalculating, setIsRecalculating] = React.useState(false);
   const [error, setError] = React.useState<string | null>(null);
   const [copied, setCopied] = React.useState(false);
+  const [showDrawer, setShowDrawer] = React.useState(false);
 
   React.useEffect(() => {
-    async function loadJob() {
+    async function loadJobAndMatch() {
       setIsLoading(true);
       setError(null);
       try {
-        const data = await jobClient.getJobById(params.id);
-        setJob(data);
+        const jobData = await jobClient.getJobById(params.id);
+        setJob(jobData);
+
+        // Fetch match asynchronously (non-blocking for unauthenticated or first-time users)
+        setIsLoadingMatch(true);
+        try {
+          const matchData = await jobMatchingClient.getJobMatch(params.id);
+          setMatch(matchData);
+        } catch {
+          // If match fails or user has no profile, gracefully set null
+          setMatch(null);
+        } finally {
+          setIsLoadingMatch(false);
+        }
       } catch (err: any) {
         setError(err?.message || 'Job opportunity not found or has been archived.');
       } finally {
         setIsLoading(false);
       }
     }
-    loadJob();
+    loadJobAndMatch();
   }, [params.id]);
 
   const handleCopyLink = () => {
@@ -54,6 +79,19 @@ export default function JobDetailPage({ params }: { params: { id: string } }) {
       navigator.clipboard.writeText(window.location.href);
       setCopied(true);
       setTimeout(() => setCopied(false), 2000);
+    }
+  };
+
+  const handleRecalculate = async () => {
+    if (!job) return;
+    setIsRecalculating(true);
+    try {
+      const updated = await jobMatchingClient.recalculateJobMatch(job.id);
+      setMatch(updated);
+    } catch (err: any) {
+      console.error('Failed to recalculate match:', err);
+    } finally {
+      setIsRecalculating(false);
     }
   };
 
@@ -101,7 +139,7 @@ export default function JobDetailPage({ params }: { params: { id: string } }) {
           icon={<AlertCircle className="w-8 h-8 text-rose-500" />}
           title="Position Not Found"
           description={error || 'This job opportunity may have been removed, archived, or is unavailable.'}
-          actionLabel="Back to Jobs Search"
+          actionLabel="Back to Job Search"
           onAction={() => router.push('/jobs')}
         />
       </div>
@@ -184,6 +222,98 @@ export default function JobDetailPage({ params }: { params: { id: string } }) {
             )}
           </div>
         </div>
+
+        {/* Personalized Match Fit Banner (Phase 9B) */}
+        {match && (
+          <div className="p-5 rounded-2xl bg-gradient-to-r from-brand-50/80 via-indigo-50/40 to-white dark:from-slate-800/90 dark:via-slate-800/70 dark:to-slate-850 border border-brand-200/90 dark:border-brand-900/60 shadow-subtle space-y-4">
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+              <div className="flex items-center gap-4">
+                <MatchScoreBadge
+                  score={match.overall_score}
+                  isProvisional={match.breakdown?.is_provisional}
+                  size="lg"
+                />
+                <div className="space-y-1">
+                  <div className="flex items-center gap-2">
+                    <h3 className="text-sm font-bold text-slate-900 dark:text-white flex items-center gap-1.5">
+                      <Sparkles className="w-4 h-4 text-brand-600" />
+                      Personalized Match Fit Analysis
+                    </h3>
+                    {match.is_stale && (
+                      <Badge variant="action" size="sm">
+                        Stale
+                      </Badge>
+                    )}
+                  </div>
+                  <MatchEvidenceCoverage
+                    coverage={match.breakdown?.evidence_coverage || 0}
+                    isProvisional={match.breakdown?.is_provisional}
+                    size="sm"
+                  />
+                  <p className="text-xs text-slate-600 dark:text-slate-400">
+                    {match.matched_skills.length} matched mandatory skills • {match.missing_skills.length} missing skill gaps
+                  </p>
+                </div>
+              </div>
+
+              <div className="flex items-center gap-2">
+                <Button
+                  size="sm"
+                  variant="outline"
+                  onClick={handleRecalculate}
+                  disabled={isRecalculating}
+                  className="flex items-center gap-1.5 text-xs"
+                >
+                  <RefreshCw className={cn('w-3.5 h-3.5', isRecalculating && 'animate-spin')} />
+                  <span>{isRecalculating ? 'Recalculating...' : 'Recalculate'}</span>
+                </Button>
+                <Button
+                  size="sm"
+                  variant="primary"
+                  onClick={() => setShowDrawer(true)}
+                  className="flex items-center gap-1.5 text-xs"
+                >
+                  <span>Explain Fit</span>
+                  <ArrowRight className="w-3.5 h-3.5" />
+                </Button>
+              </div>
+            </div>
+
+            {/* Quick 5-factor preview */}
+            <div className="grid grid-cols-2 sm:grid-cols-5 gap-2 pt-3 border-t border-brand-100 dark:border-slate-700/80 text-[11px]">
+              <div>
+                <span className="text-slate-500 block">Skills (50%)</span>
+                <span className="font-bold text-slate-900 dark:text-white">
+                  {Math.round(match.breakdown?.skill_score || 0)}%
+                </span>
+              </div>
+              <div>
+                <span className="text-slate-500 block">Experience (15%)</span>
+                <span className="font-bold text-slate-900 dark:text-white">
+                  {Math.round(match.breakdown?.experience_score || 0)}%
+                </span>
+              </div>
+              <div>
+                <span className="text-slate-500 block">Projects (15%)</span>
+                <span className="font-bold text-slate-900 dark:text-white">
+                  {Math.round(match.breakdown?.project_score || 0)}%
+                </span>
+              </div>
+              <div>
+                <span className="text-slate-500 block">Location (10%)</span>
+                <span className="font-bold text-slate-900 dark:text-white">
+                  {Math.round(match.breakdown?.location_score || 0)}%
+                </span>
+              </div>
+              <div>
+                <span className="text-slate-500 block">Preference (10%)</span>
+                <span className="font-bold text-slate-900 dark:text-white">
+                  {Math.round(match.breakdown?.preference_score || 0)}%
+                </span>
+              </div>
+            </div>
+          </div>
+        )}
 
         {/* Compensation and Metadata Grid */}
         <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 p-4 rounded-xl bg-slate-50 dark:bg-slate-800/60 border border-slate-200/80 dark:border-slate-800 text-xs">
@@ -281,18 +411,18 @@ export default function JobDetailPage({ params }: { params: { id: string } }) {
           </div>
         )}
 
-        {/* Canonical Skills Breakdown */}
-        <div className="space-y-3 pt-3 border-t border-slate-100 dark:border-slate-800">
+        {/* Canonical Skill Tagging */}
+        <div className="space-y-3 pt-4 border-t border-slate-100 dark:border-slate-800">
           <h3 className="font-bold text-slate-900 dark:text-white text-sm sm:text-base">
-            Canonical Technical Skills Tagged
+            Standardized Canonical Skills
           </h3>
 
           {requiredSkills.length > 0 && (
             <div className="space-y-1.5">
-              <span className="text-[11px] font-semibold text-slate-500 uppercase tracking-wider block">
-                Mandatory Skills:
+              <span className="text-[11px] font-bold text-slate-500 uppercase tracking-wider block">
+                Mandatory Technical Skills:
               </span>
-              <div className="flex flex-wrap gap-1.5">
+              <div className="flex flex-wrap gap-2">
                 {requiredSkills.map((s) => (
                   <Badge key={s.skill_id} variant="verified" size="md">
                     <CheckCircle2 className="w-3.5 h-3.5 text-emerald-600 mr-1" />
@@ -309,11 +439,11 @@ export default function JobDetailPage({ params }: { params: { id: string } }) {
           )}
 
           {preferredSkills.length > 0 && (
-            <div className="space-y-1.5 pt-1">
-              <span className="text-[11px] font-semibold text-slate-500 uppercase tracking-wider block">
-                Preferred Skills:
+            <div className="space-y-1.5 pt-2">
+              <span className="text-[11px] font-bold text-slate-500 uppercase tracking-wider block">
+                Preferred Technical Skills:
               </span>
-              <div className="flex flex-wrap gap-1.5">
+              <div className="flex flex-wrap gap-2">
                 {preferredSkills.map((s) => (
                   <Badge key={s.skill_id} variant="default" size="md">
                     {s.name}
@@ -329,26 +459,35 @@ export default function JobDetailPage({ params }: { params: { id: string } }) {
           )}
         </div>
 
-        {/* Full Markdown Description */}
-        <div className="space-y-2 pt-3 border-t border-slate-100 dark:border-slate-800">
+        {/* Full Job Description */}
+        <div className="space-y-3 pt-4 border-t border-slate-100 dark:border-slate-800">
           <h3 className="font-bold text-slate-900 dark:text-white text-sm sm:text-base flex items-center gap-1.5">
-            <FileText className="w-4 h-4 text-slate-400" /> Full Description
+            <FileText className="w-4 h-4 text-slate-400" /> Full Job Description
           </h3>
-          <div className="prose prose-sm dark:prose-invert max-w-none text-slate-700 dark:text-slate-300 whitespace-pre-line leading-relaxed p-5 rounded-xl bg-slate-50/50 dark:bg-slate-900/50 border border-slate-100 dark:border-slate-800">
+          <div className="prose prose-sm dark:prose-invert max-w-none text-slate-700 dark:text-slate-300 whitespace-pre-line leading-relaxed p-4 rounded-xl bg-slate-50/50 dark:bg-slate-900/50 border border-slate-100 dark:border-slate-800">
             {job.description_markdown}
           </div>
         </div>
 
-        {/* External Safety Notice */}
+        {/* External Link Safety Notice */}
         {job.application_url && (
           <div className="p-3.5 rounded-xl border border-amber-200/80 bg-amber-50/50 dark:border-amber-900/40 dark:bg-amber-950/20 text-xs flex items-start gap-2.5">
             <AlertCircle className="w-4 h-4 text-amber-600 shrink-0 mt-0.5" />
             <p className="text-amber-800 dark:text-amber-300 text-[11px] leading-relaxed">
-              <strong>External Application Notice:</strong> Clicking &quot;Apply on Official Site&quot; opens an external career page ({job.application_url}). CoachPath does not collect recruitment fees, control employer hiring decisions, or solicit candidate credentials on behalf of third-party employers.
+              <strong>External Application Notice:</strong> Clicking &quot;Apply on Official Site&quot; opens an external career page ({job.application_url}). CoachPath does not collect fees, control recruitment pipelines, or solicit candidate credentials on behalf of third-party employers.
             </p>
           </div>
         )}
       </Card>
+
+      {/* Match Explainability Drawer */}
+      <JobMatchDrawer
+        job={job}
+        match={match}
+        isOpen={showDrawer}
+        onClose={() => setShowDrawer(false)}
+        onRecalculateSuccess={(updated) => setMatch(updated)}
+      />
     </div>
   );
 }

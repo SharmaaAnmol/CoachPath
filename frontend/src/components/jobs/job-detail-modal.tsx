@@ -1,10 +1,13 @@
 'use client';
 
 import * as React from 'react';
-import { JobOpportunity } from '@/types';
+import { JobOpportunity, JobMatchResponse } from '@/types';
+import { jobMatchingClient } from '@/lib/job-matching-client';
 import { Modal } from '@/components/ui/modal';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
+import { MatchScoreBadge } from './match-score-badge';
+import { MatchEvidenceCoverage } from './match-evidence-coverage';
 import {
   Building2,
   MapPin,
@@ -20,16 +23,42 @@ import {
   FileText,
   ListChecks,
   Sparkles,
+  ArrowRight,
+  RefreshCw,
 } from 'lucide-react';
 
 export interface JobDetailModalProps {
   job: JobOpportunity | null;
   isOpen: boolean;
   onClose: () => void;
+  onOpenMatchDrawer?: (job: JobOpportunity, match?: JobMatchResponse) => void;
 }
 
-export function JobDetailModal({ job, isOpen, onClose }: JobDetailModalProps) {
+export function JobDetailModal({
+  job,
+  isOpen,
+  onClose,
+  onOpenMatchDrawer,
+}: JobDetailModalProps) {
   const [copied, setCopied] = React.useState(false);
+  const [match, setMatch] = React.useState<JobMatchResponse | null>(null);
+  const [isLoadingMatch, setIsLoadingMatch] = React.useState(false);
+
+  React.useEffect(() => {
+    if (isOpen && job) {
+      setIsLoadingMatch(true);
+      jobMatchingClient
+        .getJobMatch(job.id)
+        .then((m) => setMatch(m))
+        .catch(() => {
+          // Non-blocking: if user is not logged in or profile uninitialized
+          setMatch(null);
+        })
+        .finally(() => setIsLoadingMatch(false));
+    } else {
+      setMatch(null);
+    }
+  }, [isOpen, job]);
 
   if (!job) return null;
 
@@ -96,6 +125,21 @@ export function JobDetailModal({ job, isOpen, onClose }: JobDetailModalProps) {
           </Button>
 
           <div className="flex items-center gap-2">
+            {onOpenMatchDrawer && match && (
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={() => {
+                  onClose();
+                  onOpenMatchDrawer(job, match);
+                }}
+                className="flex items-center gap-1.5 text-brand-600 dark:text-brand-400"
+              >
+                <Sparkles className="w-3.5 h-3.5" />
+                Explain Fit
+              </Button>
+            )}
+
             <Button variant="ghost" size="sm" onClick={onClose}>
               Close
             </Button>
@@ -115,6 +159,54 @@ export function JobDetailModal({ job, isOpen, onClose }: JobDetailModalProps) {
       }
     >
       <div className="space-y-6 text-xs sm:text-sm">
+        {/* Personalized Match Fit Banner (if match available) */}
+        {match && (
+          <div className="p-4 rounded-xl bg-gradient-to-r from-brand-50/70 via-indigo-50/50 to-white dark:from-slate-800 dark:via-slate-800 dark:to-slate-850 border border-brand-200/80 dark:border-brand-900/60 shadow-sm flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+            <div className="flex items-center gap-4">
+              <MatchScoreBadge
+                score={match.overall_score}
+                isProvisional={match.breakdown?.is_provisional}
+                size="lg"
+              />
+              <div className="space-y-1">
+                <div className="flex items-center gap-2">
+                  <h4 className="text-xs font-bold text-slate-900 dark:text-white">
+                    Your Personalized Match Fit
+                  </h4>
+                  {match.is_stale && (
+                    <span className="text-[10px] text-amber-700 bg-amber-50 dark:bg-amber-950 px-1.5 py-0.2 rounded font-semibold">
+                      Stale
+                    </span>
+                  )}
+                </div>
+                <MatchEvidenceCoverage
+                  coverage={match.breakdown?.evidence_coverage || 0}
+                  isProvisional={match.breakdown?.is_provisional}
+                  size="sm"
+                />
+                <p className="text-[11px] text-slate-500 dark:text-slate-400">
+                  {match.matched_skills.length} matched mandatory skills • {match.missing_skills.length} missing skill gaps
+                </p>
+              </div>
+            </div>
+
+            {onOpenMatchDrawer && (
+              <Button
+                size="sm"
+                variant="primary"
+                onClick={() => {
+                  onClose();
+                  onOpenMatchDrawer(job, match);
+                }}
+                className="flex items-center gap-1.5 self-start sm:self-auto text-xs"
+              >
+                <span>View Full Breakdown</span>
+                <ArrowRight className="w-3.5 h-3.5" />
+              </Button>
+            )}
+          </div>
+        )}
+
         {/* Key Metadata Grid */}
         <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 p-3.5 rounded-xl bg-slate-50 dark:bg-slate-800/60 border border-slate-200/80 dark:border-slate-800">
           <div>

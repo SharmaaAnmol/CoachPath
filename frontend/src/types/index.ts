@@ -368,6 +368,115 @@ export interface ManualJobImportPayload {
   currency?: string;
 }
 
+// ─── Group 9: Job Matching Types ─────────────────────────────────────
+
+export type SkillMatchClassification =
+  | 'MATCHED'
+  | 'PARTIALLY_MATCHED'
+  | 'MISSING'
+  | 'UNKNOWN'
+  | 'INSUFFICIENT_EVIDENCE';
+
+export interface SkillMatchItem {
+  skill_id: string;
+  name: string;
+  category: string;
+  is_mandatory: boolean;
+  classification: SkillMatchClassification;
+  user_evidence_source?: 'assessment' | 'project_evidence' | 'extracted' | 'self_reported' | string;
+  user_confidence: number;
+  user_proficiency_tier?: 'unverified' | 'demonstrated' | 'proficient' | 'mastered' | string;
+  assessment_score?: number;
+  explanation: string;
+}
+
+export interface MatchScoreBreakdown {
+  overall_score: number;
+  skill_score: number;
+  experience_score: number;
+  project_score: number;
+  location_score: number;
+  preference_score: number;
+  vector_score: number;
+  evidence_coverage: number;
+  is_provisional: boolean;
+  weights: Record<string, number>;
+  evaluated_factors: string[];
+  unevaluated_factors: string[];
+}
+
+export interface JobMatchExplanation {
+  summary: string;
+  strengths: string[];
+  gaps: string[];
+  recommended_actions: string[];
+}
+
+export interface JobMatchResponse {
+  match_id: string;
+  job_id: string;
+  career_profile_id: string;
+  overall_score: number;
+  breakdown: MatchScoreBreakdown;
+  matched_skills: string[];
+  matched_preferred_skills: string[];
+  missing_skills: string[];
+  unknown_skills: string[];
+  skills_detail: SkillMatchItem[];
+  explanation: JobMatchExplanation;
+  scoring_version: string;
+  is_stale: boolean;
+  freshness_status: string;
+  calculated_at: string;
+}
+
+export interface JobMatchExplanationDrawerResponse {
+  job_id: string;
+  overall_score: number;
+  evidence_coverage: number;
+  breakdown: Record<string, number>;
+  matched_skills: string[];
+  missing_skills: string[];
+  matched_preferred_skills: string[];
+  unknown_skills: string[];
+  hiring_rationale: string;
+  strengths: string[];
+  gaps: string[];
+  recommended_actions: string[];
+  skills_detail: SkillMatchItem[];
+}
+
+export interface JobRecommendationItem {
+  job: JobOpportunity;
+  match: JobMatchResponse;
+}
+
+export interface JobRecommendationResponse {
+  items: JobRecommendationItem[];
+  total: number;
+  page: number;
+  page_size: number;
+  total_pages: number;
+  scoring_version: string;
+  generated_at: string;
+}
+
+export interface JobRecommendationQuery {
+  min_score?: number;
+  role_id?: string;
+  remote_type?: 'remote' | 'hybrid' | 'onsite';
+  include_provisional?: boolean;
+  page?: number;
+  page_size?: number;
+}
+
+export interface JobMatchBatchRefreshResponse {
+  recalculated_count: number;
+  status: string;
+  scoring_version: string;
+  message: string;
+}
+
 export interface ResumeDiffChange {
   id: string;
   section: string;
