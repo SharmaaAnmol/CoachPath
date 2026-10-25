@@ -163,5 +163,140 @@ class LocalFileStorageService(FileStorageService):
             return False
 
 
+class S3FileStorageService(FileStorageService):
+    """
+    Durable S3-compatible object storage service (Cloudflare R2 / AWS S3).
+    Ensures uploaded candidate resumes survive service restarts and redeployments.
+    Enforces strictly private bucket access and server-controlled storage keys.
+    """
+
+    def __init__(
+        self,
+        bucket_name: str,
+        endpoint_url: Optional[str] = None,
+        access_key_id: str = "",
+        secret_access_key: str = "",
+        region_name: str = "auto",
+    ) -> None:
+        self._bucket = bucket_name
+        self._endpoint_url = endpoint_url
+        self._access_key = access_key_id
+        self._secret_key = secret_access_key
+        self._region = region_name or "auto"
+        self._client = None
+
+    def _get_client(self):
+        """Lazy initialization of boto3 S3 client."""
+        if self._client is not None:
+            return self._client
+        try:
+            import boto3
+            from botocore.config import Config
+        except ImportError as exc:
+            logger.error("boto3 is required for S3/R2 storage but is not installed.")
+            raise FileStorageException("S3 object storage driver is unavailable (missing boto3).") from exc
+
+        client_kwargs = {
+            "aws_access_key_id": self._access_key,
+            "aws_secret_access_key": self._secret_key,
+            "region_name": self._region,
+            "config": Config(signature_version="s3v4", retries={"max_attempts": 3, "mode": "standard"}),
+        }
+        if self._endpoint_url:
+            client_kwargs["endpoint_url"] = self._endpoint_url
+
+        self._client = boto3.client("s3", **client_kwargs)
+        return self._client
+
+    async def save_file(
+        self,
+        user_id: uuid.UUID,
+        file_bytes: bytes,
+        extension: str,
+    ) -> str:
+        """Saves resume document bytes to private S3 bucket."""
+        clean_ext = extension.lstrip(".").lower()
+        if clean_ext not in ("pdf", "docx"):
+            raise FileStorageException(f"Unsupported file extension '{clean_ext}'.")
+
+        mime_type = (
+            "application/pdf"
+            if clean_ext == "pdf"
+            else "application/vnd.openxmlformats-officedocument.wordprocessingml.document"
+        )
+        storage_id = uuid.uuid4()
+        relative_path = f"{user_id}/{storage_id}.{clean_ext}"
+
+        client = self._get_client()
+        try:
+            # Upload with private ACL and server-side encryption
+            client.put_object(
+                Bucket=self._bucket,
+                Key=relative_path,
+                Body=file_bytes,
+                ContentType=mime_type,
+                ServerSideEncryption="AES256",
+            )
+            logger.info(
+                "File saved successfully to S3/R2 storage: %s (%d bytes)",
+                relative_path,
+                len(file_bytes),
+            )
+            return relative_path
+        except Exception as exc:
+            logger.error("Failed to upload document to S3/R2: %s", exc)
+            raise FileStorageException("Could not persist uploaded file to durable object storage.") from exc
+
+    async def read_file(self, storage_path: str) -> bytes:
+        """Reads document bytes from S3/R2."""
+        client = self._get_client()
+        try:
+            response = client.get_object(Bucket=self._bucket, Key=storage_path)
+            return response["Body"].read()
+        except Exception as exc:
+            logger.error("Failed to read document from S3/R2 '%s': %s", storage_path, exc)
+            raise FileStorageException(f"Failed to read stored document '{storage_path}' from storage.") from exc
+
+    async def delete_file(self, storage_path: str) -> bool:
+        """Deletes document from S3/R2 bucket."""
+        client = self._get_client()
+        try:
+            client.delete_object(Bucket=self._bucket, Key=storage_path)
+            logger.info("Deleted S3/R2 document: %s", storage_path)
+            return True
+        except Exception as exc:
+            logger.warning("Error deleting document from S3/R2 '%s': %s", storage_path, exc)
+            return False
+
+    async def file_exists(self, storage_path: str) -> bool:
+        """Checks if document exists in S3/R2 bucket."""
+        client = self._get_client()
+        try:
+            client.head_object(Bucket=self._bucket, Key=storage_path)
+            return True
+        except Exception:
+            return False
+
+
+def create_storage_service() -> FileStorageService:
+    """Factory creating the appropriate FileStorageService based on configuration."""
+    provider = getattr(settings, "STORAGE_PROVIDER", "local").lower()
+    if provider in ("s3", "r2"):
+        logger.info(
+            "Initializing S3/R2 durable object storage driver for bucket '%s'...",
+            settings.S3_BUCKET_NAME,
+        )
+        return S3FileStorageService(
+            bucket_name=settings.S3_BUCKET_NAME,
+            endpoint_url=settings.S3_ENDPOINT_URL,
+            access_key_id=settings.S3_ACCESS_KEY_ID,
+            secret_access_key=settings.S3_SECRET_ACCESS_KEY,
+            region_name=settings.S3_REGION_NAME,
+        )
+
+    logger.info("Initializing Local filesystem storage driver (upload_dir='%s')...", settings.UPLOAD_DIR)
+    return LocalFileStorageService()
+
+
 # Singleton storage instance
-storage_service: FileStorageService = LocalFileStorageService()
+storage_service: FileStorageService = create_storage_service()

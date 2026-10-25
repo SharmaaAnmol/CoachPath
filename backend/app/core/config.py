@@ -4,7 +4,7 @@ Reads environment variables with validation and default fallback values.
 """
 
 from functools import lru_cache
-from typing import List, Union
+from typing import List, Optional, Union
 from pydantic import AnyHttpUrl, field_validator, model_validator
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
@@ -26,12 +26,15 @@ class Settings(BaseSettings):
     # Server Host & Port
     API_HOST: str = "0.0.0.0"
     API_PORT: int = 8000
+    PORT: Optional[int] = None  # PaaS environments (e.g. Render) inject dynamic PORT
 
-    # Security & Tokens (Placeholders for Phase 3 Auth)
+    # Security & Tokens (Phase 3 Auth)
     SECRET_KEY: str = "insecure-default-change-in-production-secret-key-32-chars-min"
     JWT_ALGORITHM: str = "HS256"
     ACCESS_TOKEN_EXPIRE_MINUTES: int = 60
     REFRESH_TOKEN_EXPIRE_DAYS: int = 7
+    COOKIE_SAMESITE: str = "lax"  # "lax" (same-domain/proxy) or "none" (cross-origin)
+    COOKIE_SECURE: Optional[bool] = None  # None -> auto-set to True in staging/production
 
     # CORS Configuration
     CORS_ORIGINS: Union[List[str], str] = [
@@ -52,6 +55,18 @@ class Settings(BaseSettings):
     DATABASE_URL: str = (
         "postgresql+asyncpg://coachpath_user:coachpath_password@localhost:5432/coachpath_db"
     )
+
+    @field_validator("DATABASE_URL", mode="before")
+    @classmethod
+    def assemble_database_url(cls, v: str) -> str:
+        if not v:
+            return v
+        # Normalize standard postgresql:// or postgres:// to postgresql+asyncpg://
+        if v.startswith("postgres://"):
+            return "postgresql+asyncpg://" + v[len("postgres://"):]
+        if v.startswith("postgresql://") and not v.startswith("postgresql+asyncpg://"):
+            return "postgresql+asyncpg://" + v[len("postgresql://"):]
+        return v
     DB_POOL_SIZE: int = 10
     DB_MAX_OVERFLOW: int = 20
     DB_POOL_TIMEOUT: int = 30
@@ -76,10 +91,16 @@ class Settings(BaseSettings):
     AI_MAX_RETRIES: int = 2
     ONBOARDING_MAX_TURNS: int = 20
 
-    # Resume Storage & Parsing Configuration (Phase 5A)
+    # Resume Storage & Parsing Configuration (Phase 5A & Staging Durable Storage)
+    STORAGE_PROVIDER: str = "local"  # "local" | "s3" | "r2"
     UPLOAD_DIR: str = "uploads"
     MAX_RESUME_SIZE_BYTES: int = 10 * 1024 * 1024  # 10 MB
     RESUME_EXTRACTION_TIMEOUT: int = 45
+    S3_ENDPOINT_URL: Optional[str] = None  # e.g. https://<account_id>.r2.cloudflarestorage.com
+    S3_ACCESS_KEY_ID: str = ""
+    S3_SECRET_ACCESS_KEY: str = ""
+    S3_BUCKET_NAME: str = "coachpath-resumes-staging"
+    S3_REGION_NAME: str = "auto"
 
     # Job Ingestion & Market Intelligence Configuration (Phase 8A)
     JOB_INGESTION_ENABLED: bool = True
@@ -93,6 +114,16 @@ class Settings(BaseSettings):
 
     @model_validator(mode="after")
     def validate_production_environment(self) -> "Settings":
+        if self.PORT is not None:
+            object.__setattr__(self, "API_PORT", self.PORT)
+
+        is_deployed = self.ENVIRONMENT in ("production", "staging")
+        if self.COOKIE_SECURE is None:
+            object.__setattr__(self, "COOKIE_SECURE", is_deployed)
+        if self.COOKIE_SAMESITE.lower() == "none":
+            # Cross-origin cookies strictly require Secure=True
+            object.__setattr__(self, "COOKIE_SECURE", True)
+
         if self.ENVIRONMENT == "production":
             if self.DEBUG:
                 object.__setattr__(self, "DEBUG", False)

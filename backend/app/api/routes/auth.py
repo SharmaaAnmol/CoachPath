@@ -39,14 +39,19 @@ def set_auth_cookies(
     refresh_token: str,
 ) -> None:
     """Sets secure HttpOnly cookies for access and refresh tokens."""
-    is_prod = settings.ENVIRONMENT == "production"
+    is_secure = (
+        settings.COOKIE_SECURE
+        if settings.COOKIE_SECURE is not None
+        else (settings.ENVIRONMENT in ("production", "staging"))
+    )
+    samesite = settings.COOKIE_SAMESITE.lower()
 
     response.set_cookie(
         key="access_token",
         value=access_token,
         httponly=True,
-        secure=is_prod,
-        samesite="lax",
+        secure=is_secure,
+        samesite=samesite,
         max_age=settings.ACCESS_TOKEN_EXPIRE_MINUTES * 60,
         path="/",
     )
@@ -54,8 +59,8 @@ def set_auth_cookies(
         key="refresh_token",
         value=refresh_token,
         httponly=True,
-        secure=is_prod,
-        samesite="lax",
+        secure=is_secure,
+        samesite=samesite,
         max_age=settings.REFRESH_TOKEN_EXPIRE_DAYS * 86400,
         path="/",
     )
@@ -63,8 +68,14 @@ def set_auth_cookies(
 
 def clear_auth_cookies(response: Response) -> None:
     """Clears authentication cookies upon user sign-out or session invalidation."""
-    response.delete_cookie(key="access_token", path="/")
-    response.delete_cookie(key="refresh_token", path="/")
+    is_secure = (
+        settings.COOKIE_SECURE
+        if settings.COOKIE_SECURE is not None
+        else (settings.ENVIRONMENT in ("production", "staging"))
+    )
+    samesite = settings.COOKIE_SAMESITE.lower()
+    response.delete_cookie(key="access_token", path="/", secure=is_secure, samesite=samesite)
+    response.delete_cookie(key="refresh_token", path="/", secure=is_secure, samesite=samesite)
 
 
 @router.get("", summary="Auth Module Status", include_in_schema=False)
