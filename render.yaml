@@ -9,8 +9,6 @@ services:
     startCommand: "sh scripts/start.sh"
     healthCheckPath: /api/v1/health
     envVars:
-      - key: PYTHON_VERSION
-        value: 3.13.0
       - key: ENVIRONMENT
         value: staging
       - key: DEBUG
