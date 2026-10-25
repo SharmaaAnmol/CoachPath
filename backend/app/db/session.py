@@ -34,6 +34,7 @@ def create_engine_instance(database_url: str) -> AsyncEngine:
                 "pool_timeout": settings.DB_POOL_TIMEOUT,
                 "pool_recycle": settings.DB_POOL_RECYCLE,
                 "pool_pre_ping": True,
+                "connect_args": {"timeout": 10},
             }
         )
 

@@ -44,6 +44,10 @@ def test_database_url_normalization():
     s4 = Settings(DATABASE_URL="sqlite+aiosqlite:///:memory:")
     assert s4.DATABASE_URL == "sqlite+aiosqlite:///:memory:"
 
+    # 5. Neon connection string with sslmode=require normalized to ssl=require
+    s5 = Settings(DATABASE_URL="postgresql://user:pass@ep-neon.tech:5432/neondb?sslmode=require")
+    assert s5.DATABASE_URL == "postgresql+asyncpg://user:pass@ep-neon.tech:5432/neondb?ssl=require"
+
 
 def test_dynamic_port_injection():
     """Validates that PORT environment variable overrides API_PORT for PaaS runtimes."""

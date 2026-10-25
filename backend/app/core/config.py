@@ -65,7 +65,9 @@ class Settings(BaseSettings):
         if v.startswith("postgres://"):
             return "postgresql+asyncpg://" + v[len("postgres://"):]
         if v.startswith("postgresql://") and not v.startswith("postgresql+asyncpg://"):
-            return "postgresql+asyncpg://" + v[len("postgresql://"):]
+            v = "postgresql+asyncpg://" + v[len("postgresql://"):]
+        if "sslmode=" in v:
+            v = v.replace("sslmode=", "ssl=")
         return v
     DB_POOL_SIZE: int = 10
     DB_MAX_OVERFLOW: int = 20
