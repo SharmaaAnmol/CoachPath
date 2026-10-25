@@ -6,8 +6,7 @@ services:
     plan: free
     region: oregon
     buildCommand: "pip install --upgrade pip && pip install -r requirements.txt"
-    preDeployCommand: "alembic upgrade head"
-    startCommand: "uvicorn app.main:app --host 0.0.0.0 --port $PORT"
+    startCommand: "sh scripts/start.sh"
     healthCheckPath: /api/v1/health
     envVars:
       - key: PYTHON_VERSION
