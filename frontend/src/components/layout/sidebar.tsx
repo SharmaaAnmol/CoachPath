@@ -22,7 +22,6 @@ import {
   Sparkles,
   X,
 } from 'lucide-react';
-import { mockReadinessData } from '@/lib/mock/data';
 import { useAuth } from '@/hooks/use-auth';
 
 interface NavItem {
@@ -45,24 +44,24 @@ const navGroups: NavGroup[] = [
       { title: 'AI Onboarding', href: '/onboarding', icon: Sparkles },
       { title: 'Career Profile', href: '/career-profile', icon: User },
       { title: 'Skill Gap Analysis', href: '/skills', icon: Cpu },
-      { title: 'Assessments', href: '/assessments', icon: ClipboardCheck, badge: 'New' },
+      { title: 'Assessments', href: '/assessments', icon: ClipboardCheck },
     ],
   },
   {
     groupName: 'Execution & Growth',
     items: [
       { title: 'Milestone Roadmap', href: '/roadmap', icon: Compass },
-      { title: 'Job Matching', href: '/jobs', icon: Briefcase, badge: '4' },
+      { title: 'Job Matching', href: '/jobs', icon: Briefcase },
       { title: 'Resume Optimizer', href: '/resume', icon: FileText },
-      { title: 'Applications', href: '/applications', icon: Kanban, badge: '4' },
+      { title: 'Applications', href: '/applications', icon: Kanban },
     ],
   },
   {
     groupName: 'Outreach & Readiness',
     items: [
       { title: 'Recruiters', href: '/recruiters', icon: Users },
-      { title: 'Interview Prep', href: '/interviews', icon: MessageSquareCode, badge: '1' },
-      { title: 'Career Readiness', href: '/career-readiness', icon: Gauge, badge: `${mockReadinessData.overallScore}%` },
+      { title: 'Interview Prep', href: '/interviews', icon: MessageSquareCode },
+      { title: 'Career Readiness', href: '/career-readiness', icon: Gauge },
     ],
   },
   {
@@ -98,11 +97,11 @@ export function Sidebar({ isMobileOpen = false, onMobileClose }: SidebarProps) {
   };
 
   const navContent = (
-    <div className="flex flex-col h-full bg-slate-900 text-slate-300 border-r border-slate-800 select-none">
+    <div className="flex flex-col h-full bg-slate-950 text-slate-300 border-r border-slate-800/80 select-none">
       {/* Platform Logo */}
       <div className="flex items-center justify-between px-5 h-16 border-b border-slate-800/80">
         <Link href="/dashboard" className="flex items-center gap-2.5">
-          <div className="h-9 w-9 rounded-xl bg-gradient-to-tr from-brand-600 to-purple-500 flex items-center justify-center text-white shadow-md">
+          <div className="h-9 w-9 rounded-xl bg-gradient-to-tr from-brand-600 to-purple-500 flex items-center justify-center text-white shadow-glow">
             <Sparkles className="h-5 w-5" />
           </div>
           {!isCollapsed && (
@@ -119,7 +118,8 @@ export function Sidebar({ isMobileOpen = false, onMobileClose }: SidebarProps) {
         {onMobileClose && (
           <button
             onClick={onMobileClose}
-            className="md:hidden text-slate-400 hover:text-white p-1 rounded-lg"
+            className="md:hidden text-slate-400 hover:text-white p-1.5 rounded-lg hover:bg-slate-800 transition-colors"
+            aria-label="Close menu"
           >
             <X className="w-5 h-5" />
           </button>
@@ -131,7 +131,7 @@ export function Sidebar({ isMobileOpen = false, onMobileClose }: SidebarProps) {
         {navGroups.map((group) => (
           <div key={group.groupName} className="space-y-1">
             {!isCollapsed && (
-              <h4 className="px-3 text-[10px] font-bold uppercase tracking-wider text-slate-400">
+              <h4 className="px-3 text-[10px] font-bold uppercase tracking-wider text-slate-500">
                 {group.groupName}
               </h4>
             )}
@@ -144,16 +144,16 @@ export function Sidebar({ isMobileOpen = false, onMobileClose }: SidebarProps) {
                   href={item.href}
                   onClick={onMobileClose}
                   className={cn(
-                    'group flex items-center gap-3 rounded-xl px-3 py-2 text-xs font-medium transition-all',
+                    'group flex items-center gap-3 rounded-xl px-3 py-2 text-xs font-medium transition-all duration-150',
                     active
-                      ? 'bg-brand-600 text-white shadow-sm'
-                      : 'text-slate-400 hover:bg-slate-800/80 hover:text-slate-100'
+                      ? 'bg-gradient-to-r from-brand-600 to-indigo-600 text-white shadow-glow'
+                      : 'text-slate-400 hover:bg-slate-900 hover:text-slate-100'
                   )}
                   title={isCollapsed ? item.title : undefined}
                 >
                   <Icon
                     className={cn(
-                      'h-4 w-4 shrink-0 transition-transform group-hover:scale-110',
+                      'h-4 w-4 shrink-0 transition-transform duration-150 group-hover:scale-110',
                       active ? 'text-white' : 'text-slate-400 group-hover:text-slate-200'
                     )}
                   />
@@ -182,12 +182,12 @@ export function Sidebar({ isMobileOpen = false, onMobileClose }: SidebarProps) {
       </div>
 
       {/* Candidate Profile Widget at Bottom */}
-      <div className="p-3 border-t border-slate-800/80 bg-slate-950/40">
+      <div className="p-3 border-t border-slate-800/80 bg-slate-950/80">
         <Link
           href="/career-profile"
-          className="flex items-center gap-3 p-2 rounded-xl hover:bg-slate-800/60 transition-colors"
+          className="flex items-center gap-3 p-2 rounded-xl hover:bg-slate-900 transition-colors"
         >
-          <div className="h-9 w-9 rounded-full bg-brand-500/20 border border-brand-500/40 flex items-center justify-center text-white font-bold text-xs shrink-0">
+          <div className="h-9 w-9 rounded-full bg-brand-600/30 border border-brand-500/50 flex items-center justify-center text-white font-bold text-xs shrink-0">
             {initials}
           </div>
           {!isCollapsed && (
@@ -202,8 +202,9 @@ export function Sidebar({ isMobileOpen = false, onMobileClose }: SidebarProps) {
         <div className="hidden md:flex justify-end pt-2">
           <button
             onClick={() => setIsCollapsed(!isCollapsed)}
-            className="p-1 rounded-md text-slate-500 hover:text-slate-300 hover:bg-slate-800"
+            className="p-1.5 rounded-lg text-slate-500 hover:text-slate-300 hover:bg-slate-900 transition-colors"
             title={isCollapsed ? 'Expand sidebar' : 'Collapse sidebar'}
+            aria-label={isCollapsed ? 'Expand sidebar' : 'Collapse sidebar'}
           >
             {isCollapsed ? <ChevronRight className="w-4 h-4" /> : <ChevronLeft className="w-4 h-4" />}
           </button>
@@ -230,7 +231,7 @@ export function Sidebar({ isMobileOpen = false, onMobileClose }: SidebarProps) {
       {isMobileOpen && (
         <div className="fixed inset-0 z-50 md:hidden">
           <div
-            className="fixed inset-0 bg-slate-900/70 backdrop-blur-sm"
+            className="fixed inset-0 bg-slate-950/80 backdrop-blur-sm"
             onClick={onMobileClose}
           />
           <div className="fixed top-0 bottom-0 left-0 w-72 z-50 animate-in slide-in-from-left duration-200">

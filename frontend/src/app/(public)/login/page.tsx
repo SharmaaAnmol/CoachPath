@@ -3,6 +3,7 @@
 import * as React from 'react';
 import Link from 'next/link';
 import { useRouter, useSearchParams } from 'next/navigation';
+import { motion } from 'framer-motion';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Card } from '@/components/ui/card';
@@ -10,6 +11,7 @@ import { Alert } from '@/components/ui/alert';
 import { Sparkles, ArrowRight, ShieldCheck } from 'lucide-react';
 import { useAuth } from '@/hooks/use-auth';
 import { ApiClientError } from '@/lib/api-client';
+import { slideUp } from '@/lib/motion';
 
 function LoginForm() {
   const router = useRouter();
@@ -84,11 +86,19 @@ function LoginForm() {
   };
 
   return (
-    <div className="min-h-[80vh] flex items-center justify-center px-4 py-12">
-      <div className="w-full max-w-md space-y-6">
+    <div className="min-h-[85vh] flex items-center justify-center px-4 py-12 relative overflow-hidden bg-grid-subtle">
+      {/* Ambient background glow */}
+      <div className="absolute top-1/4 left-1/2 -translate-x-1/2 -translate-y-1/2 w-96 h-96 rounded-full bg-brand-500/10 blur-3xl pointer-events-none" />
+
+      <motion.div
+        initial="hidden"
+        animate="visible"
+        variants={slideUp}
+        className="w-full max-w-md space-y-6 relative z-10"
+      >
         {/* Brand Header */}
         <div className="text-center space-y-2">
-          <div className="inline-flex h-12 w-12 rounded-2xl bg-gradient-to-tr from-brand-600 to-purple-500 items-center justify-center text-white shadow-md mx-auto mb-2">
+          <div className="inline-flex h-12 w-12 rounded-2xl bg-gradient-to-tr from-brand-600 to-purple-500 items-center justify-center text-white shadow-glow mx-auto mb-2">
             <Sparkles className="h-6 w-6" />
           </div>
           <h2 className="text-2xl font-bold tracking-tight text-slate-900 dark:text-white">
@@ -100,7 +110,7 @@ function LoginForm() {
         </div>
 
         {/* Login Form Card */}
-        <Card className="p-6 sm:p-8 space-y-5 border-slate-200/90 shadow-elevated">
+        <Card className="p-6 sm:p-8 space-y-5 border-slate-200/90 shadow-elevated rounded-2xl">
           {/* Registration Success Banner */}
           {successMessage && (
             <Alert variant="success" title="Account Ready">
@@ -116,7 +126,7 @@ function LoginForm() {
           )}
 
           {/* Demo Helper Banner */}
-          <div className="p-3 rounded-xl bg-purple-50 dark:bg-purple-950/40 border border-purple-200 dark:border-purple-800 flex items-center justify-between text-xs">
+          <div className="p-3 rounded-xl bg-purple-50/70 dark:bg-purple-950/40 border border-purple-200 dark:border-purple-800 flex items-center justify-between text-xs">
             <div className="flex items-center gap-2 text-purple-900 dark:text-purple-300">
               <ShieldCheck className="w-4 h-4 text-purple-600 shrink-0" />
               <span>Explore as Demo Candidate</span>
@@ -171,7 +181,7 @@ function LoginForm() {
                   if (errorMessage) setErrorMessage(null);
                 }}
                 autoComplete="current-password"
-                className="flex h-10 w-full rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm text-slate-900 focus:border-brand-500 focus:outline-none focus:ring-2 focus:ring-brand-500/20 disabled:bg-slate-100 disabled:opacity-60 dark:border-slate-700 dark:bg-slate-900 dark:text-slate-100 dark:disabled:bg-slate-800"
+                className="flex h-10 w-full rounded-xl border border-slate-300 bg-white px-3 py-2 text-sm text-slate-900 focus:border-brand-500 focus:outline-none focus:ring-2 focus:ring-brand-500/20 disabled:bg-slate-100 disabled:opacity-60 dark:border-slate-700 dark:bg-slate-900 dark:text-slate-100 dark:disabled:bg-slate-800 transition-colors"
               />
             </div>
 
@@ -204,7 +214,7 @@ function LoginForm() {
             </Link>
           </div>
         </Card>
-      </div>
+      </motion.div>
     </div>
   );
 }

@@ -99,6 +99,23 @@ const config: Config = {
         'card': '0 1px 3px 0 rgba(0, 0, 0, 0.07), 0 1px 2px 0 rgba(0, 0, 0, 0.04)',
         'elevated': '0 4px 6px -1px rgba(0, 0, 0, 0.08), 0 2px 4px -1px rgba(0, 0, 0, 0.04)',
         'modal': '0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04)',
+        'glow': '0 0 25px -5px rgba(99, 102, 241, 0.25)',
+        'glow-purple': '0 0 25px -5px rgba(139, 92, 246, 0.25)',
+        'glow-emerald': '0 0 25px -5px rgba(16, 185, 129, 0.2)',
+      },
+      animation: {
+        'shimmer': 'shimmer 2.5s linear infinite',
+        'pulse-subtle': 'pulseSubtle 3s ease-in-out infinite',
+      },
+      keyframes: {
+        shimmer: {
+          '0%': { backgroundPosition: '-200% 0' },
+          '100%': { backgroundPosition: '200% 0' },
+        },
+        pulseSubtle: {
+          '0%, 100%': { opacity: '1' },
+          '50%': { opacity: '0.6' },
+        },
       },
     },
   },

@@ -3,6 +3,7 @@
 import * as React from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
+import { motion } from 'framer-motion';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Card } from '@/components/ui/card';
@@ -11,6 +12,7 @@ import { Sparkles, ArrowRight, ShieldCheck, Check, AlertCircle } from 'lucide-re
 import { TargetRole } from '@/types';
 import { useAuth } from '@/hooks/use-auth';
 import { ApiClientError } from '@/lib/api-client';
+import { slideUp } from '@/lib/motion';
 
 export default function SignupPage() {
   const router = useRouter();
@@ -123,23 +125,31 @@ export default function SignupPage() {
   };
 
   return (
-    <div className="min-h-[85vh] flex items-center justify-center px-4 py-12">
-      <div className="w-full max-w-lg space-y-6">
+    <div className="min-h-[85vh] flex items-center justify-center px-4 py-12 relative overflow-hidden bg-grid-subtle">
+      {/* Ambient background glow */}
+      <div className="absolute top-1/4 left-1/2 -translate-x-1/2 -translate-y-1/2 w-96 h-96 rounded-full bg-brand-500/10 blur-3xl pointer-events-none" />
+
+      <motion.div
+        initial="hidden"
+        animate="visible"
+        variants={slideUp}
+        className="w-full max-w-lg space-y-6 relative z-10"
+      >
         {/* Brand Header */}
         <div className="text-center space-y-2">
-          <div className="inline-flex h-12 w-12 rounded-2xl bg-gradient-to-tr from-brand-600 to-purple-500 items-center justify-center text-white shadow-md mx-auto mb-2">
+          <div className="inline-flex h-12 w-12 rounded-2xl bg-gradient-to-tr from-brand-600 to-purple-500 items-center justify-center text-white shadow-glow mx-auto mb-2">
             <Sparkles className="h-6 w-6" />
           </div>
           <h2 className="text-2xl font-bold tracking-tight text-slate-900 dark:text-white">
             Create Your Career Intelligence Profile
           </h2>
           <p className="text-xs text-slate-500 dark:text-slate-400">
-            Join CoachPath to validate your skills, discover missing gaps, and match with top tech roles.
+            Validate your engineering skills, eliminate missing gaps, and match with tech roles.
           </p>
         </div>
 
         {/* Signup Form Card */}
-        <Card className="p-6 sm:p-8 space-y-5 border-slate-200/90 shadow-elevated">
+        <Card className="p-6 sm:p-8 space-y-5 border-slate-200/90 shadow-elevated rounded-2xl">
           {errorMessage && (
             <Alert variant="destructive" title="Registration Error">
               {errorMessage}
@@ -171,7 +181,7 @@ export default function SignupPage() {
                 setEmail(e.target.value);
                 if (errorMessage) setErrorMessage(null);
               }}
-              placeholder="you@university.edu or you@work.com"
+              placeholder="you@domain.com"
               autoComplete="email"
             />
 
@@ -190,12 +200,12 @@ export default function SignupPage() {
                 }}
                 placeholder="At least 8 characters"
                 autoComplete="new-password"
-                className="flex h-10 w-full rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm text-slate-900 focus:border-brand-500 focus:outline-none focus:ring-2 focus:ring-brand-500/20 disabled:bg-slate-100 disabled:opacity-60 dark:border-slate-700 dark:bg-slate-900 dark:text-slate-100 dark:disabled:bg-slate-800"
+                className="flex h-10 w-full rounded-xl border border-slate-300 bg-white px-3 py-2 text-sm text-slate-900 focus:border-brand-500 focus:outline-none focus:ring-2 focus:ring-brand-500/20 disabled:bg-slate-100 disabled:opacity-60 dark:border-slate-700 dark:bg-slate-900 dark:text-slate-100 dark:disabled:bg-slate-800 transition-colors"
               />
 
               {/* Password Complexity Checklist */}
               {password.length > 0 && (
-                <div className="p-3 bg-slate-50 dark:bg-slate-900/50 rounded-lg border border-slate-200 dark:border-slate-800 space-y-1 text-[11px]">
+                <div className="p-3 bg-slate-50 dark:bg-slate-900/50 rounded-xl border border-slate-200 dark:border-slate-800 space-y-1 text-[11px]">
                   <p className="font-semibold text-slate-600 dark:text-slate-400">Password requirements:</p>
                   <div className="grid grid-cols-2 gap-1 text-slate-500">
                     <span className={passwordChecks.length ? 'text-emerald-600 font-medium' : ''}>
@@ -228,9 +238,9 @@ export default function SignupPage() {
                   type="button"
                   disabled={isSubmitting}
                   onClick={() => setPersona('student')}
-                  className={`p-2.5 rounded-lg border text-center transition-all ${
+                  className={`p-2.5 rounded-xl border text-center transition-all ${
                     persona === 'student'
-                      ? 'border-brand-600 bg-brand-50 text-brand-700 font-semibold dark:bg-brand-950 dark:text-brand-300'
+                      ? 'border-brand-600 bg-brand-50 text-brand-700 font-semibold dark:bg-brand-950 dark:text-brand-300 shadow-sm'
                       : 'border-slate-200 text-slate-600 hover:bg-slate-50 dark:border-slate-700 dark:text-slate-300'
                   }`}
                 >
@@ -240,9 +250,9 @@ export default function SignupPage() {
                   type="button"
                   disabled={isSubmitting}
                   onClick={() => setPersona('grad')}
-                  className={`p-2.5 rounded-lg border text-center transition-all ${
+                  className={`p-2.5 rounded-xl border text-center transition-all ${
                     persona === 'grad'
-                      ? 'border-brand-600 bg-brand-50 text-brand-700 font-semibold dark:bg-brand-950 dark:text-brand-300'
+                      ? 'border-brand-600 bg-brand-50 text-brand-700 font-semibold dark:bg-brand-950 dark:text-brand-300 shadow-sm'
                       : 'border-slate-200 text-slate-600 hover:bg-slate-50 dark:border-slate-700 dark:text-slate-300'
                   }`}
                 >
@@ -252,9 +262,9 @@ export default function SignupPage() {
                   type="button"
                   disabled={isSubmitting}
                   onClick={() => setPersona('early_pro')}
-                  className={`p-2.5 rounded-lg border text-center transition-all ${
+                  className={`p-2.5 rounded-xl border text-center transition-all ${
                     persona === 'early_pro'
-                      ? 'border-brand-600 bg-brand-50 text-brand-700 font-semibold dark:bg-brand-950 dark:text-brand-300'
+                      ? 'border-brand-600 bg-brand-50 text-brand-700 font-semibold dark:bg-brand-950 dark:text-brand-300 shadow-sm'
                       : 'border-slate-200 text-slate-600 hover:bg-slate-50 dark:border-slate-700 dark:text-slate-300'
                   }`}
                 >
@@ -272,7 +282,7 @@ export default function SignupPage() {
                 value={targetRole}
                 disabled={isSubmitting}
                 onChange={(e) => setTargetRole(e.target.value as TargetRole)}
-                className="flex h-10 w-full rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm text-slate-900 focus:border-brand-500 focus:outline-none focus:ring-2 focus:ring-brand-500/20 disabled:bg-slate-100 disabled:opacity-60 dark:border-slate-700 dark:bg-slate-900 dark:text-slate-100 dark:disabled:bg-slate-800"
+                className="flex h-10 w-full rounded-xl border border-slate-300 bg-white px-3 py-2 text-sm text-slate-900 focus:border-brand-500 focus:outline-none focus:ring-2 focus:ring-brand-500/20 disabled:bg-slate-100 disabled:opacity-60 dark:border-slate-700 dark:bg-slate-900 dark:text-slate-100 dark:disabled:bg-slate-800 transition-colors"
               >
                 {roles.map((role) => (
                   <option key={role} value={role}>
@@ -307,7 +317,7 @@ export default function SignupPage() {
             </Link>
           </div>
         </Card>
-      </div>
+      </motion.div>
     </div>
   );
 }

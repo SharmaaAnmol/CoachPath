@@ -34,18 +34,18 @@ export function StatCard({
   };
 
   return (
-    <Card className={cn('p-5 flex flex-col justify-between hover:shadow-elevated transition-shadow', className)}>
+    <Card hoverable className={cn('p-5 flex flex-col justify-between transition-all duration-200', className)}>
       <div className="flex items-start justify-between">
         <div className="space-y-1">
           <p className="text-xs font-semibold uppercase tracking-wider text-slate-500 dark:text-slate-400">
             {title}
           </p>
-          <div className="text-2xl font-bold tracking-tight text-slate-900 dark:text-white">
+          <div className="text-2xl sm:text-3xl font-extrabold tracking-tight text-slate-900 dark:text-white">
             {value}
           </div>
         </div>
         {icon && (
-          <div className={cn('p-3 rounded-xl flex items-center justify-center shrink-0', iconBg[iconColor])}>
+          <div className={cn('p-2.5 rounded-xl flex items-center justify-center shrink-0 shadow-sm', iconBg[iconColor])}>
             {icon}
           </div>
         )}
