@@ -44,9 +44,15 @@ def do_run_migrations(connection: Connection) -> None:
 
 async def run_async_migrations() -> None:
     """Run migrations in async online mode."""
+    connect_args = {}
+    if not settings.DATABASE_URL.startswith("sqlite"):
+        connect_args["statement_cache_size"] = 0
+        connect_args["timeout"] = 15
+
     connectable = create_async_engine(
         settings.DATABASE_URL,
         poolclass=pool.NullPool,
+        connect_args=connect_args,
     )
 
     async with connectable.connect() as connection:

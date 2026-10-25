@@ -48,6 +48,10 @@ def test_database_url_normalization():
     s5 = Settings(DATABASE_URL="postgresql://user:pass@ep-neon.tech:5432/neondb?sslmode=require")
     assert s5.DATABASE_URL == "postgresql+asyncpg://user:pass@ep-neon.tech:5432/neondb?ssl=require"
 
+    # 6. Neon pooled connection string with channel_binding=require stripped
+    s6 = Settings(DATABASE_URL="postgresql://user:pass@ep-neon.tech:5432/neondb?sslmode=require&channel_binding=require")
+    assert s6.DATABASE_URL == "postgresql+asyncpg://user:pass@ep-neon.tech:5432/neondb?ssl=require"
+
 
 def test_dynamic_port_injection():
     """Validates that PORT environment variable overrides API_PORT for PaaS runtimes."""

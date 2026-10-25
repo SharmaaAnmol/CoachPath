@@ -61,14 +61,34 @@ class Settings(BaseSettings):
     def assemble_database_url(cls, v: str) -> str:
         if not v:
             return v
+        from urllib.parse import parse_qsl, urlencode, urlsplit, urlunsplit
+
         # Normalize standard postgresql:// or postgres:// to postgresql+asyncpg://
         if v.startswith("postgres://"):
-            return "postgresql+asyncpg://" + v[len("postgres://"):]
-        if v.startswith("postgresql://") and not v.startswith("postgresql+asyncpg://"):
+            v = "postgresql+asyncpg://" + v[len("postgres://"):]
+        elif v.startswith("postgresql://") and not v.startswith("postgresql+asyncpg://"):
             v = "postgresql+asyncpg://" + v[len("postgresql://"):]
-        if "sslmode=" in v:
-            v = v.replace("sslmode=", "ssl=")
-        return v
+
+        parts = urlsplit(v)
+        if not parts.query:
+            return v
+
+        query_params = parse_qsl(parts.query)
+        cleaned_params = []
+        for k, val in query_params:
+            k_lower = k.lower()
+            if k_lower == "sslmode":
+                cleaned_params.append(("ssl", val))
+            elif k_lower == "ssl":
+                cleaned_params.append(("ssl", val))
+            elif k_lower in ("channel_binding", "gssencmode", "endpoint"):
+                # Strip libpq-specific parameters unsupported by asyncpg
+                continue
+            else:
+                cleaned_params.append((k, val))
+
+        new_query = urlencode(cleaned_params)
+        return urlunsplit((parts.scheme, parts.netloc, parts.path, new_query, parts.fragment))
     DB_POOL_SIZE: int = 10
     DB_MAX_OVERFLOW: int = 20
     DB_POOL_TIMEOUT: int = 30
