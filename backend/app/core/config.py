@@ -46,9 +46,9 @@ class Settings(BaseSettings):
     @classmethod
     def assemble_cors_origins(cls, v: Union[str, List[str]]) -> List[str]:
         if isinstance(v, str):
-            return [i.strip() for i in v.split(",") if i.strip()]
+            return [i.strip().rstrip("/") for i in v.split(",") if i.strip()]
         elif isinstance(v, list):
-            return v
+            return [i.strip().rstrip("/") for i in v if isinstance(i, str) and i.strip()]
         return ["http://localhost:3000"]
 
     # Database Configuration (PostgreSQL with asyncpg)
