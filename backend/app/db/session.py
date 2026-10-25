@@ -83,6 +83,28 @@ async def check_db_connectivity() -> bool:
         return False
 
 
+async def get_db_health_details() -> dict:
+    """Returns database connection target metadata and sanitized error details if unreachable."""
+    import re
+    target_info = {
+        "dialect": engine.url.drivername,
+        "host": engine.url.host,
+        "port": engine.url.port,
+        "database": engine.url.database,
+    }
+    try:
+        async with AsyncSessionLocal() as session:
+            result = await session.execute(text("SELECT 1"))
+            if result.scalar() == 1:
+                return {"connected": True, "target": target_info, "error": None}
+            return {"connected": False, "target": target_info, "error": "Query returned unexpected result"}
+    except Exception as exc:
+        err_msg = f"{type(exc).__name__}: {str(exc)}"
+        if "@" in err_msg and ":" in err_msg:
+            err_msg = re.sub(r':([^@]+)@', ':***@', err_msg)
+        return {"connected": False, "target": target_info, "error": err_msg}
+
+
 async def close_db_connection() -> None:
     """Gracefully closes all connection pools on application shutdown."""
     logger.info("Closing database connection pool...")

@@ -6,7 +6,7 @@ Used by container orchestrators, monitoring agents, and integration smoke tests.
 from typing import Any, Dict
 from fastapi import APIRouter, Response, status
 from app.core.config import settings
-from app.db.session import check_db_connectivity
+from app.db.session import check_db_connectivity, get_db_health_details
 
 router = APIRouter(tags=["System Health & Diagnostics"])
 
@@ -44,11 +44,13 @@ async def readiness_check(response: Response) -> Dict[str, Any]:
             "database": "connected",
         }
 
+    details = await get_db_health_details()
     response.status_code = status.HTTP_503_SERVICE_UNAVAILABLE
     return {
         "status": "unhealthy",
         "service": settings.PROJECT_NAME,
         "version": settings.VERSION,
         "database": "disconnected",
-        "detail": "Database connectivity check failed.",
+        "db_target": details.get("target"),
+        "detail": details.get("error") or "Database connectivity check failed.",
     }
