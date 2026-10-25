@@ -42,16 +42,8 @@ services:
         value: gemini-3.5-flash-lite
       - key: STORAGE_PROVIDER
         value: local
-      - key: S3_ENDPOINT_URL
-        sync: false
-      - key: S3_ACCESS_KEY_ID
-        sync: false
-      - key: S3_SECRET_ACCESS_KEY
-        sync: false
-      - key: S3_BUCKET_NAME
-        value: coachpath-resumes-staging
-      - key: S3_REGION_NAME
-        value: auto
+      - key: UPLOAD_DIR
+        value: uploads
       - key: JOB_INGESTION_ENABLED
         value: "true"
       - key: JOB_API_PROVIDER
