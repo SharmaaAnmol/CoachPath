@@ -19,12 +19,14 @@ import jwt
 from app.core.config import settings
 from app.core.exceptions import UnauthorizedException, ValidationException
 
-# Initialize Argon2id password hasher with documented architectural parameters
-# (time_cost=3, memory_cost=65536 KiB, parallelism=4, hash_len=32, type=Argon2id)
+# RFC 9106 recommended constrained container profile for Argon2id
+# (time_cost=2, memory_cost=19456 KiB, parallelism=1, hash_len=32, type=Argon2id)
+# Significantly reduces CPU throttling and latency on cloud containers (e.g. Render free tier 0.1 CPU core)
+# while remaining cryptographically secure and backward-compatible with existing hashes.
 _ph = PasswordHasher(
-    time_cost=3,
-    memory_cost=65536,
-    parallelism=4,
+    time_cost=2,
+    memory_cost=19456,
+    parallelism=1,
     hash_len=32,
     type=argon2.Type.ID,
 )

@@ -31,16 +31,22 @@ async def lifespan(app: FastAPI) -> AsyncGenerator[None, None]:
         f"Starting {settings.PROJECT_NAME} v{settings.VERSION} "
         f"[{settings.ENVIRONMENT}]..."
     )
-    # Ensure diagnostic assessments, skills taxonomy, and roles are seeded
-    try:
-        from app.db.session import AsyncSessionLocal
-        from app.db.seeds.assessment_seeder import seed_diagnostic_assessments
-        from app.db.seeds.gap_analysis_seeder import seed_skill_taxonomy_and_roles
-        async with AsyncSessionLocal() as db_session:
-            await seed_skill_taxonomy_and_roles(db_session)
-            await seed_diagnostic_assessments(db_session)
-    except Exception as exc:
-        logger.warning("Database baseline auto-seeding skipped: %s", exc)
+    # Ensure diagnostic assessments, skills taxonomy, and roles are seeded in the background
+    # Non-blocking background task ensures Uvicorn binds port immediately for fast healthcheck response
+    async def _run_baseline_seeding() -> None:
+        try:
+            from app.db.session import AsyncSessionLocal
+            from app.db.seeds.assessment_seeder import seed_diagnostic_assessments
+            from app.db.seeds.gap_analysis_seeder import seed_skill_taxonomy_and_roles
+            async with AsyncSessionLocal() as db_session:
+                await seed_skill_taxonomy_and_roles(db_session)
+                await seed_diagnostic_assessments(db_session)
+            logger.info("Database baseline seed check completed.")
+        except Exception as exc:
+            logger.warning("Database baseline auto-seeding skipped: %s", exc)
+
+    import asyncio
+    asyncio.create_task(_run_baseline_seeding())
 
     yield
     logger.info(f"Shutting down {settings.PROJECT_NAME}...")

@@ -25,7 +25,8 @@ export default function SignupPage() {
   const [targetRole, setTargetRole] = React.useState<TargetRole>('Full-Stack Engineer');
 
   const [isSubmitting, setIsSubmitting] = React.useState(false);
-  const [errorMessage, setErrorMessage] = React.useState<string | null>(null);
+  const [submissionStep, setSubmissionStep] = React.useState<'idle' | 'registering' | 'signing_in'>('idle');
+  const [errorMessage, setErrorMessage] = React.useState<React.ReactNode | null>(null);
 
   const roles: TargetRole[] = [
     'Full-Stack Engineer',
@@ -82,6 +83,7 @@ export default function SignupPage() {
     }
 
     setIsSubmitting(true);
+    setSubmissionStep('registering');
     try {
       // 1. Register candidate account
       await register({
@@ -91,6 +93,7 @@ export default function SignupPage() {
       });
 
       // 2. Establish immediate authenticated session
+      setSubmissionStep('signing_in');
       try {
         await login({
           email: trimmedEmail,
@@ -104,7 +107,24 @@ export default function SignupPage() {
     } catch (err: unknown) {
       if (err instanceof ApiClientError) {
         if (err.status === 409) {
-          setErrorMessage('An account with this email address already exists. Please sign in instead.');
+          setErrorMessage(
+            <span>
+              An account with this email address already exists.{' '}
+              <Link href={`/login?email=${encodeURIComponent(trimmedEmail)}`} className="underline font-bold text-rose-700 dark:text-rose-300">
+                Sign in here &rarr;
+              </Link>
+            </span>
+          );
+        } else if (err.status === 504 || err.status === 502) {
+          setErrorMessage(
+            <span>
+              The staging server was waking up from sleep (cold start). Your account may have been created.{' '}
+              <Link href={`/login?email=${encodeURIComponent(trimmedEmail)}`} className="underline font-bold text-rose-700 dark:text-rose-300">
+                Click here to sign in
+              </Link>{' '}
+              or submit again.
+            </span>
+          );
         } else if (err.status === 422) {
           const detailMsg =
             err.details && err.details.length > 0
@@ -112,7 +132,9 @@ export default function SignupPage() {
               : err.message;
           setErrorMessage(detailMsg || 'Invalid registration details provided.');
         } else if (err.code === 'NETWORK_ERROR' || err.status === 0) {
-          setErrorMessage('Unable to connect to CoachPath backend. Please ensure the server is active.');
+          setErrorMessage(
+            'Unable to connect to CoachPath backend server. Please wait 10 seconds while the cloud instance spins up and try again.'
+          );
         } else {
           setErrorMessage(err.message || 'Registration could not be completed. Please try again.');
         }
@@ -121,6 +143,7 @@ export default function SignupPage() {
       }
     } finally {
       setIsSubmitting(false);
+      setSubmissionStep('idle');
     }
   };
 
@@ -306,7 +329,12 @@ export default function SignupPage() {
               isLoading={isSubmitting}
               disabled={isSubmitting}
             >
-              Initialize Profile Graph <ArrowRight className="w-4 h-4 ml-1.5" />
+              {submissionStep === 'registering'
+                ? 'Creating Account & Graph...'
+                : submissionStep === 'signing_in'
+                ? 'Authenticating Session...'
+                : 'Initialize Profile Graph'}
+              {submissionStep === 'idle' && <ArrowRight className="w-4 h-4 ml-1.5" />}
             </Button>
           </form>
 
