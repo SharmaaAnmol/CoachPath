@@ -33,9 +33,9 @@ function LoginForm() {
   // If already authenticated, redirect to workspace
   React.useEffect(() => {
     if (!isAuthLoading && isAuthenticated) {
-      router.replace(redirectUrl);
+      window.location.href = redirectUrl;
     }
-  }, [isAuthenticated, isAuthLoading, router, redirectUrl]);
+  }, [isAuthenticated, isAuthLoading, redirectUrl]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -57,17 +57,21 @@ function LoginForm() {
         email: trimmedEmail,
         password,
       });
-      router.push(redirectUrl);
+      // Use window.location.href to perform a clean, reliable full document navigation.
+      // This ensures HttpOnly session cookies are fully synchronized with Next.js Edge Middleware route guards.
+      window.location.href = redirectUrl;
     } catch (err: unknown) {
       if (err instanceof ApiClientError) {
         if (err.status === 401) {
-          setErrorMessage('Invalid email or password. Please verify your credentials.');
+          setErrorMessage('Invalid email or password. Please verify your credentials or click Auto-Fill.');
         } else if (err.status === 429) {
           setErrorMessage('Too many failed login attempts. Please wait 15 minutes before trying again.');
         } else if (err.status === 403) {
           setErrorMessage('This account has been suspended. Please contact support.');
+        } else if (err.status === 504 || err.status === 502) {
+          setErrorMessage('The cloud server is waking up from sleep. Please wait 15 seconds and try signing in again.');
         } else if (err.code === 'NETWORK_ERROR' || err.status === 0) {
-          setErrorMessage('Unable to connect to CoachPath backend. Please verify the service is running.');
+          setErrorMessage('Unable to connect to CoachPath backend. The cloud server may be waking up from sleep. Please try again in 10-15 seconds.');
         } else {
           setErrorMessage(err.message || 'An unexpected error occurred. Please try again.');
         }

@@ -41,9 +41,9 @@ export default function SignupPage() {
   // If already authenticated, redirect to workspace
   React.useEffect(() => {
     if (!isAuthLoading && isAuthenticated) {
-      router.replace('/dashboard');
+      window.location.href = '/dashboard';
     }
-  }, [isAuthenticated, isAuthLoading, router]);
+  }, [isAuthenticated, isAuthLoading]);
 
   // Client-side password rules validation
   const passwordChecks = React.useMemo(() => {
@@ -99,10 +99,10 @@ export default function SignupPage() {
           email: trimmedEmail,
           password,
         });
-        router.push('/onboarding');
+        window.location.href = '/onboarding';
       } catch {
         // Fallback: If immediate login had an issue, route to login screen with success banner
-        router.push(`/login?registered=true&email=${encodeURIComponent(trimmedEmail)}`);
+        window.location.href = `/login?registered=true&email=${encodeURIComponent(trimmedEmail)}`;
       }
     } catch (err: unknown) {
       if (err instanceof ApiClientError) {

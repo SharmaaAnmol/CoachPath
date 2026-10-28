@@ -150,9 +150,9 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       setStatus('unauthenticated');
       setError(null);
       setIsLoading(false);
-      router.push('/login');
+      window.location.href = '/login';
     }
-  }, [router]);
+  }, []);
 
   const refreshUser = React.useCallback(async (): Promise<void> => {
     try {
