@@ -7,6 +7,7 @@ import { ApplicationItem, ApplicationStage } from '@/types';
 import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
+import { DemoPreviewBanner } from '@/components/ui/demo-preview-banner';
 import {
   Kanban,
   Building2,
@@ -43,6 +44,12 @@ export default function ApplicationsPage() {
 
   return (
     <div className="space-y-6">
+      {/* Demo Preview Banner */}
+      <DemoPreviewBanner
+        plannedPhase="Phase 12"
+        featureName="Live application tracking"
+      />
+
       {/* Header */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
@@ -55,8 +62,14 @@ export default function ApplicationsPage() {
         </div>
 
         <div className="flex items-center gap-2">
-          <Button size="sm" variant="primary" onClick={() => alert('New application modal')}>
-            <Plus className="w-3.5 h-3.5 mr-1" /> Add Application
+          <Button
+            size="sm"
+            variant="primary"
+            disabled
+            aria-disabled="true"
+            title="Application creation is scheduled for Phase 12"
+          >
+            <Plus className="w-3.5 h-3.5 mr-1" /> Add Application (Phase 12)
           </Button>
         </div>
       </div>

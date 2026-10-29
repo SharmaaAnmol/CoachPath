@@ -19,9 +19,12 @@ const CATEGORY_SUGGESTIONS: Record<string, string[]> = {
     'Backend Developer',
     'Full-Stack Engineer',
     'Frontend Developer',
+    'Data Engineer',
+    'Mobile Engineer',
     'Data Scientist',
     'DevOps / Cloud Engineer',
     'Machine Learning Engineer',
+    'AI Engineer',
   ],
   career_stage: [
     'Current Computer Science student',

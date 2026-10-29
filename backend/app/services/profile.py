@@ -29,6 +29,7 @@ from app.models.career import (
     Role,
 )
 from app.models.skills import UserSkill
+from app.services.role_resolution import validate_and_resolve_role_id
 from app.schemas.profile import (
     CareerGoalsResponse,
     CareerGoalsUpdate,
@@ -289,22 +290,31 @@ class ProfileService:
         self, db: AsyncSession, user: User, payload: CareerGoalsUpdate
     ) -> CareerGoalsResponse:
         """Updates target roles, stage, and location preferences."""
-        # 1. Validate primary role
-        primary_role = await db.scalar(select(Role).where(Role.id == payload.primary_role_id))
+        # 1. Validate primary role strictly against canonical catalog and aliases
+        normalized_primary_id = validate_and_resolve_role_id(
+            payload.primary_role_id, field_name="primary_role_id"
+        )
+        primary_role = await db.scalar(select(Role).where(Role.id == normalized_primary_id))
         if primary_role is None:
-            raise ValidationException(f"Invalid primary role '{payload.primary_role_id}'.")
+            raise ValidationException(f"Primary role '{payload.primary_role_id}' is not registered in the benchmark catalog.")
 
         # 2. Validate secondary role if provided
+        normalized_secondary_id: Optional[str] = None
         if payload.secondary_role_id:
+            normalized_secondary_id = validate_and_resolve_role_id(
+                payload.secondary_role_id, field_name="secondary_role_id"
+            )
             secondary_role = await db.scalar(
-                select(Role).where(Role.id == payload.secondary_role_id)
+                select(Role).where(Role.id == normalized_secondary_id)
             )
             if secondary_role is None:
-                raise ValidationException(f"Invalid secondary role '{payload.secondary_role_id}'.")
+                raise ValidationException(f"Secondary role '{payload.secondary_role_id}' is not registered in the benchmark catalog.")
 
         career_profile = await self.get_or_create_career_profile(db, user.id)
-        career_profile.primary_role_id = payload.primary_role_id
-        career_profile.secondary_role_id = payload.secondary_role_id
+        career_profile.primary_role = primary_role
+        career_profile.primary_role_id = normalized_primary_id
+        career_profile.secondary_role = secondary_role if normalized_secondary_id else None
+        career_profile.secondary_role_id = normalized_secondary_id
         career_profile.career_stage = payload.career_stage
         career_profile.work_preference = payload.work_preference
         career_profile.target_locations = payload.target_locations

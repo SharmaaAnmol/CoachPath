@@ -102,7 +102,7 @@ export default function CareerProfilePage() {
   // Form states
   const [personalForm, setPersonalForm] = React.useState<UserProfileUpdatePayload>({});
   const [goalsForm, setGoalsForm] = React.useState<CareerGoalsUpdatePayload>({
-    primary_role_id: 'backend-developer',
+    primary_role_id: '',
     secondary_role_id: '',
     career_stage: 'student',
     work_preference: 'hybrid',
@@ -231,7 +231,7 @@ export default function CareerProfilePage() {
   const openGoalsModal = () => {
     if (!profile) return;
     setGoalsForm({
-      primary_role_id: profile.primary_role?.id || 'backend-developer',
+      primary_role_id: profile.primary_role?.id || supportedRoles[0]?.id || '',
       secondary_role_id: profile.secondary_role?.id || '',
       career_stage: profile.career_stage || 'student',
       work_preference: profile.work_preference || 'hybrid',
@@ -695,7 +695,7 @@ export default function CareerProfilePage() {
               <div className="flex flex-wrap items-center gap-2 pt-1 text-xs text-slate-500 dark:text-slate-400">
                 <span>Target Role:</span>
                 <span className="font-bold text-purple-700 dark:text-purple-300 bg-purple-50 dark:bg-purple-950/40 px-2 py-0.5 rounded border border-purple-200 dark:border-purple-800">
-                  {profile.primary_role?.title || 'Backend Developer'}
+                  {profile.primary_role?.title || 'Target Role Not Set'}
                 </span>
                 <span>• {profile.years_of_experience} YOE</span>
                 <span>• Stage: {profile.career_stage.replace('_', ' ')}</span>
@@ -820,11 +820,11 @@ export default function CareerProfilePage() {
                     Primary Target Benchmark
                   </span>
                   <p className="text-sm font-bold text-slate-900 dark:text-white">
-                    {profile.primary_role?.title || 'Backend Developer'}
+                    {profile.primary_role?.title || 'Target Role Not Set'}
                   </p>
                   <p className="text-xs text-slate-600 dark:text-slate-400">
                     {profile.primary_role?.description ||
-                      'Server-side application architecture and database systems.'}
+                      'Configure your target career goal in Career Goals to personalize your roadmap.'}
                   </p>
                 </div>
 

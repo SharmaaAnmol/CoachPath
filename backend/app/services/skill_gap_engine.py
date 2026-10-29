@@ -44,6 +44,11 @@ from app.services.assessment_skill_mapper import (
     get_assessment_id_for_skill,
     get_recommended_assessment_for_skill,
 )
+from app.services.role_resolution import (
+    CANONICAL_ROLE_IDS,
+    normalize_role_identifier,
+    validate_and_resolve_role_id,
+)
 
 logger = logging.getLogger(__name__)
 
@@ -118,16 +123,17 @@ class SkillGapEngine:
 
     async def get_role(self, role_id: str, db: AsyncSession) -> RoleDetailResponse:
         """Returns a single role with its full requirement specifications."""
+        resolved_id = normalize_role_identifier(role_id) or role_id
         stmt = (
             select(Role)
             .options(
                 selectinload(Role.requirements).selectinload(RoleRequirement.skill)
             )
-            .where(Role.id == role_id)
+            .where(Role.id == resolved_id)
         )
         role = await db.scalar(stmt)
         if not role:
-            raise NotFoundException("Role")
+            raise NotFoundException("Role", role_id)
 
         reqs = [
             RoleRequirementResponse(
@@ -189,11 +195,20 @@ class SkillGapEngine:
         )
         profile = await db.scalar(profile_stmt)
 
-        # 2. Resolve Target Role
-        target_role_id = role_id or (profile.primary_role_id if profile else "backend-developer")
+        # 2. Resolve Target Role strictly without silent defaults
+        target_role_id: Optional[str] = None
+        if role_id:
+            target_role_id = normalize_role_identifier(role_id) or role_id
+        elif profile and profile.primary_role_id:
+            target_role_id = profile.primary_role_id
+        else:
+            from app.services.profile import profile_service
+            profile = await profile_service.get_or_create_career_profile(db, user.id)
+            target_role_id = profile.primary_role_id
+
         if not target_role_id:
             raise ValidationException(
-                "No target role selected. Please specify a role_id or set a primary target role in your profile."
+                "No target role selected. A target role must be specified in the request or configured as your primary career goal in your profile."
             )
 
         role_stmt = (
@@ -205,10 +220,17 @@ class SkillGapEngine:
         )
         role = await db.scalar(role_stmt)
         if not role:
-            raise NotFoundException("Role")
+            supported = ", ".join(sorted(CANONICAL_ROLE_IDS))
+            raise NotFoundException(
+                "Role",
+                role_id or target_role_id,
+                message=f"The role '{role_id or target_role_id}' is not supported. Supported roles: {supported}.",
+            )
 
         if not role.is_complete or not role.requirements:
-            raise ValidationException(f"Target role '{role.title}' is an incomplete profile and has insufficient benchmark requirements defined.")
+            raise ValidationException(
+                f"Target role '{role.title}' is an incomplete profile and has insufficient benchmark requirements defined."
+            )
 
         if not profile:
             profile = CareerProfile(
@@ -430,16 +452,30 @@ class SkillGapEngine:
         role_id: Optional[str] = None,
     ) -> SkillGapAnalysisResponse:
         """Retrieves the active gap analysis snapshot for the user (optionally filtered by role_id)."""
+        resolved_role_id: Optional[str] = None
+        if role_id:
+            resolved_role_id = validate_and_resolve_role_id(role_id, field_name="role_id")
+
         profile_stmt = select(CareerProfile).where(CareerProfile.user_id == user.id)
         profile = await db.scalar(profile_stmt)
         if not profile:
-            return await self.calculate_gap_analysis(user, db, role_id=role_id)
+            if not resolved_role_id:
+                from app.services.profile import profile_service
+                profile = await profile_service.get_or_create_career_profile(db, user.id)
+            else:
+                return await self.calculate_gap_analysis(user, db, role_id=resolved_role_id)
+
+        target_role = resolved_role_id or profile.primary_role_id
+        if not target_role:
+            raise ValidationException(
+                "No target role selected. A target role must be specified or configured in your profile."
+            )
 
         conditions = [
             SkillGapAnalysis.career_profile_id == profile.id,
         ]
-        if role_id:
-            conditions.append(SkillGapAnalysis.role_id == role_id)
+        if resolved_role_id:
+            conditions.append(SkillGapAnalysis.role_id == resolved_role_id)
         else:
             conditions.append(SkillGapAnalysis.is_current == True)
 
@@ -452,7 +488,7 @@ class SkillGapEngine:
         record = await db.scalar(stmt)
         if not record:
             # Trigger calculation if none exists
-            return await self.calculate_gap_analysis(user, db, role_id=role_id)
+            return await self.calculate_gap_analysis(user, db, role_id=resolved_role_id)
 
         # Reconstruct typed skill details
         typed_details: Dict[str, SkillCompetencyDetail] = {}

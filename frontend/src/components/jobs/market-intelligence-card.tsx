@@ -30,6 +30,8 @@ const CANONICAL_ROLES = [
   { id: 'backend-developer', label: 'Backend Developer' },
   { id: 'frontend-developer', label: 'Frontend Developer' },
   { id: 'fullstack-developer', label: 'Fullstack Developer' },
+  { id: 'data-engineer', label: 'Data Engineer' },
+  { id: 'mobile-engineer', label: 'Mobile Engineer' },
   { id: 'data-scientist', label: 'Data Scientist' },
   { id: 'machine-learning-engineer', label: 'ML Engineer' },
   { id: 'ai-engineer', label: 'AI Engineer' },

@@ -4,8 +4,12 @@ export type TargetRole =
   | 'Backend Engineer'
   | 'DevOps / Platform Engineer'
   | 'Data Engineer'
+  | 'Data Scientist'
+  | 'Data Analyst'
   | 'Machine Learning Engineer'
-  | 'Mobile Engineer';
+  | 'AI Engineer'
+  | 'Mobile Engineer'
+  | 'Software Engineer';
 
 export type SkillStatus = 'verified' | 'developing' | 'missing';
 

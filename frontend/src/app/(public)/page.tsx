@@ -31,16 +31,16 @@ import { slideUp, staggerContainer, staggerItem } from '@/lib/motion';
 
 export default function LandingPage() {
   const steps = [
-    { num: '01', title: 'Central Profile', desc: 'Centralizes education, experience, verified code repositories, and career goals.', icon: Target },
+    { num: '01', title: 'Central Profile', desc: 'Centralizes education, experience, portfolio project links, and career goals.', icon: Target },
     { num: '02', title: 'Diagnostic Tests', desc: 'Evaluates real proficiency through deterministic coding and architectural questions.', icon: Terminal },
     { num: '03', title: 'Skill Gap Matrix', desc: 'Transparently separates verified strengths from developing skills and missing market gaps.', icon: Cpu },
     { num: '04', title: 'Dynamic Roadmap', desc: 'Generates step-by-step milestones with vetted resources and verifiable deliverables.', icon: Compass },
-    { num: '05', title: 'Job Vector Search', desc: 'Ingests real opportunities and ranks them using semantic embeddings across 7 engineering roles.', icon: Briefcase },
-    { num: '06', title: 'Explainable Match', desc: 'Breaks down job fit by skills, experience, domain, and role similarity without black boxes.', icon: Layers },
-    { num: '07', title: 'Truthful Resume Diff', desc: 'Two-pass AI optimizer tailors resumes using only verified evidence—strictly zero hallucinations.', icon: FileText },
-    { num: '08', title: 'Pipeline Kanban', desc: 'Tracks applications from saved to offer stage with automatic next-step reminders.', icon: CheckCircle2 },
-    { num: '09', title: 'Recruiter Gate', desc: 'Generates high-context outreach drafts requiring manual human review and copy confirmation.', icon: Users },
-    { num: '10', title: 'Readiness Index', desc: 'Calibrates a composite 0-100% readiness score across 4 objective pillars.', icon: Sparkles },
+    { num: '05', title: 'Job Market Matching', desc: 'Ingests real opportunities and evaluates alignment using a multi-dimensional weighted matching algorithm across 11 canonical engineering roles.', icon: Briefcase },
+    { num: '06', title: 'Explainable Match', desc: 'Breaks down job fit by skills, experience, domain, and role seniority without black boxes.', icon: Layers },
+    { num: '07', title: 'Truthful Resume Diff', desc: 'Grounded anti-fabrication guardrails tailor resumes using verified evidence with human-in-the-loop review.', icon: FileText },
+    { num: '08', title: 'Pipeline Kanban (Preview)', desc: 'Tracks applications from saved to offer stage with structured next-step planning (Phase 12 Preview).', icon: CheckCircle2 },
+    { num: '09', title: 'Recruiter Gate (Preview)', desc: 'Generates high-context outreach drafts requiring manual human review and confirmation (Phase 13 Preview).', icon: Users },
+    { num: '10', title: 'Readiness Index (Preview)', desc: 'Calibrates composite readiness across 4 objective pillars, currently anchored by diagnostic skill gaps (Phase 15 Preview).', icon: Sparkles },
   ];
 
   const personas = [
@@ -95,7 +95,7 @@ export default function LandingPage() {
           {/* Trust Banner */}
           <motion.div variants={slideUp} className="inline-flex items-center gap-2 rounded-full px-4 py-1.5 text-xs font-semibold bg-purple-50 dark:bg-purple-950/50 border border-purple-200 dark:border-purple-800 text-purple-700 dark:text-purple-300 shadow-subtle">
             <ShieldCheck className="w-4 h-4 text-purple-600" />
-            <span>Two-Pass Anti-Hallucination AI • Human-in-the-Loop • Calibrated Skills</span>
+            <span>Grounded Anti-Fabrication Guardrails • Human-in-the-Loop • Calibrated Skills</span>
           </motion.div>
 
           {/* Headline */}
@@ -156,12 +156,12 @@ export default function LandingPage() {
               <FileText className="w-6 h-6" />
             </div>
             <div className="space-y-2">
-              <Badge variant="verified" size="sm">Strict Anti-Hallucination</Badge>
+              <Badge variant="verified" size="sm">Evidence-Grounded Safeguards</Badge>
               <h3 className="text-xl font-bold text-slate-900 dark:text-white">
                 Two-Pass Resume Optimization & Truthful Diff
               </h3>
               <p className="text-xs text-slate-600 dark:text-slate-300 leading-relaxed">
-                Pass 1 tailors technical bullet points strictly using skills and project metrics recorded in your verified career graph. Pass 2 executes an independent audit: any bullet claiming unverified technologies is rejected with an inline warning.
+                Pass 1 tailors technical bullet points strictly using skills and project metrics recorded in your verified career graph. Pass 2 executes an independent audit: any bullet claiming unverified technologies is flagged with an inline warning for candidate review.
               </p>
             </div>
             <div className="pt-2">
@@ -200,12 +200,12 @@ export default function LandingPage() {
               <Briefcase className="w-6 h-6" />
             </div>
             <div className="space-y-2">
-              <Badge variant="brand" size="sm">pgvector Embeddings</Badge>
+              <Badge variant="brand" size="sm">Multi-Dimensional Match</Badge>
               <h3 className="text-lg font-bold text-slate-900 dark:text-white">
                 Explainable Multi-Factor Job Matching
               </h3>
               <p className="text-xs text-slate-600 dark:text-slate-300 leading-relaxed">
-                Matches candidate profiles against live opportunities across 7 engineering tracks using cosine similarity and skill-overlap breakdown—never a black-box score.
+                Matches candidate profiles against live opportunities across 11 canonical engineering tracks using a multi-dimensional weighted algorithm (skills, experience, seniority, domain, preferences)—never an unexplainable black-box score.
               </p>
             </div>
             <div className="pt-2">
@@ -288,7 +288,7 @@ export default function LandingPage() {
             <ul className="space-y-3 text-sm text-slate-700 dark:text-slate-200">
               <li className="flex items-start gap-2.5">
                 <CheckCircle2 className="w-4 h-4 text-emerald-600 shrink-0 mt-0.5" />
-                <span><strong>Calibrated Evidence:</strong> Skill confidence backed by code tests and repository audits.</span>
+                <span><strong>Calibrated Evidence:</strong> Skill confidence backed by diagnostic code tests and project deliverables.</span>
               </li>
               <li className="flex items-start gap-2.5">
                 <CheckCircle2 className="w-4 h-4 text-emerald-600 shrink-0 mt-0.5" />
@@ -296,11 +296,11 @@ export default function LandingPage() {
               </li>
               <li className="flex items-start gap-2.5">
                 <CheckCircle2 className="w-4 h-4 text-emerald-600 shrink-0 mt-0.5" />
-                <span><strong>Two-Pass Anti-Hallucination:</strong> Resume changes only cite verified candidate achievements.</span>
+                <span><strong>Evidence-Grounded Safeguards:</strong> Resume changes only cite verified candidate achievements with candidate review.</span>
               </li>
               <li className="flex items-start gap-2.5">
                 <CheckCircle2 className="w-4 h-4 text-emerald-600 shrink-0 mt-0.5" />
-                <span><strong>Complete Lifecycle:</strong> From diagnostic assessment to recruiter outreach and STAR prep.</span>
+                <span><strong>Connected Lifecycle:</strong> From diagnostic assessment and roadmap sprints to interview prep and job discovery.</span>
               </li>
             </ul>
           </Card>
@@ -417,7 +417,7 @@ export default function LandingPage() {
             <div className="p-4 rounded-xl bg-slate-800/60 border border-slate-700/60 space-y-2">
               <h4 className="font-bold text-emerald-400 text-sm">Two-Pass Grounding Audit</h4>
               <p className="text-slate-300 leading-relaxed">
-                Every generated resume bullet is inspected against your verified project and assessment database. Claims lacking evidence are rejected automatically.
+                Every generated resume bullet is inspected against your verified project deliverables and assessment database. Claims lacking evidence are flagged or removed before candidate review.
               </p>
             </div>
             <div className="p-4 rounded-xl bg-slate-800/60 border border-slate-700/60 space-y-2">
@@ -427,9 +427,9 @@ export default function LandingPage() {
               </p>
             </div>
             <div className="p-4 rounded-xl bg-slate-800/60 border border-slate-700/60 space-y-2">
-              <h4 className="font-bold text-amber-400 text-sm">Right to Erasure & Export</h4>
+              <h4 className="font-bold text-amber-400 text-sm">Data Privacy & User Ownership</h4>
               <p className="text-slate-300 leading-relaxed">
-                Your career data belongs to you. Export your complete data graph in JSON format anytime or purge your account and resumes with a single click.
+                Your career data belongs to you. Aligned with our Phase 16 compliance roadmap, we uphold strict data minimization, store zero unencrypted credentials, and support admin-assisted account erasure upon request.
               </p>
             </div>
           </div>

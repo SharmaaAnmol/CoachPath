@@ -7,6 +7,7 @@ import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Alert } from '@/components/ui/alert';
+import { DemoPreviewBanner } from '@/components/ui/demo-preview-banner';
 import {
   Users,
   Copy,
@@ -34,6 +35,12 @@ export default function RecruitersPage() {
 
   return (
     <div className="space-y-6">
+      {/* Demo Preview Banner */}
+      <DemoPreviewBanner
+        plannedPhase="Phase 13"
+        featureName="Recruiter discovery & outreach"
+      />
+
       {/* Header */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>

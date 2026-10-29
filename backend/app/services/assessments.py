@@ -209,7 +209,7 @@ class AssessmentService:
         if existing_attempt and existing_attempt.question_ids:
             return await self._build_attempt_session(existing_attempt, assessment, db)
 
-        # 2. Select 20 questions with strict difficulty distribution
+        # 2. Select 20 questions with difficulty distribution and retake diversity
         q_stmt = (
             select(AssessmentQuestion)
             .where(AssessmentQuestion.assessment_id == assessment.id)
@@ -222,32 +222,43 @@ class AssessmentService:
                 f"minimum {TARGET_ATTEMPT_COUNT} required to start diagnostic attempt."
             )
 
-        basic_pool = [q for q in all_questions if q.difficulty == "basic"]
-        inter_pool = [q for q in all_questions if q.difficulty == "intermediate"]
-        adv_pool = [q for q in all_questions if q.difficulty == "advanced"]
-
-        if len(basic_pool) < TARGET_BASIC_COUNT or len(inter_pool) < TARGET_INTERMEDIATE_COUNT or len(adv_pool) < TARGET_ADVANCED_COUNT:
-            raise ValidationException(
-                f"Insufficient difficulty distribution in question bank: "
-                f"{len(basic_pool)} basic, {len(inter_pool)} intermediate, {len(adv_pool)} advanced."
+        # Query prior attempts to inform question exposure diversity
+        history_stmt = (
+            select(AssessmentAttempt)
+            .where(
+                AssessmentAttempt.user_id == user.id,
+                AssessmentAttempt.assessment_id == assessment.id,
+                AssessmentAttempt.status.in_(["completed", "timed_out", "in_progress"]),
             )
+            .order_by(desc(AssessmentAttempt.started_at))
+        )
+        prior_attempts = (await db.scalars(history_stmt)).all()
 
-        # Seeded pseudo-random selection to ensure varied retakes while respecting difficulty
-        rng = random.Random(f"{user.id}_{assessment.id}_{int(datetime.now().timestamp() * 1000)}")
-        selected_basic = rng.sample(basic_pool, TARGET_BASIC_COUNT)
-        selected_inter = rng.sample(inter_pool, TARGET_INTERMEDIATE_COUNT)
-        selected_adv = rng.sample(adv_pool, TARGET_ADVANCED_COUNT)
-
-        # Sequence questions cleanly: basic foundation -> intermediate scenarios -> advanced architecture
-        ordered_questions = selected_basic + selected_inter + selected_adv
+        rng = random.Random(f"{user.id}_{assessment.id}_{int(datetime.now().timestamp() * 1000)}_{uuid.uuid4().hex[:8]}")
+        ordered_questions = self._select_diverse_questions(
+            all_questions=all_questions,
+            prior_attempts=prior_attempts,
+            rng=rng,
+            assessment_title=assessment.title,
+        )
         selected_uuids = [str(q.id) for q in ordered_questions]
 
-        # 3. Create persistent AssessmentAttempt record
+        # 3. Generate attempt-scoped randomized option orders per question
+        option_orders: Dict[str, List[int]] = {}
+        for q in ordered_questions:
+            n = len(q.options)
+            if n > 1:
+                option_orders[str(q.id)] = rng.sample(range(n), n)
+            else:
+                option_orders[str(q.id)] = list(range(n))
+
+        # 4. Create persistent AssessmentAttempt record with question IDs and option orders
         new_attempt = AssessmentAttempt(
             user_id=user.id,
             assessment_id=assessment.id,
             status="in_progress",
             question_ids=selected_uuids,
+            option_orders=option_orders,
             started_at=utc_now(),
         )
         db.add(new_attempt)
@@ -321,7 +332,14 @@ class AssessmentService:
                 f"Selected option index {request.selected_option_index} out of range (0-{len(question.options) - 1})."
             )
 
-        is_correct = (request.selected_option_index == question.correct_option_index)
+        # Map displayed option index back to canonical index using persisted option_orders
+        canonical_option_index = request.selected_option_index
+        if attempt.option_orders and q_id_str in attempt.option_orders:
+            order = attempt.option_orders[q_id_str]
+            if 0 <= request.selected_option_index < len(order):
+                canonical_option_index = order[request.selected_option_index]
+
+        is_correct = (canonical_option_index == question.correct_option_index)
 
         # Upsert answer record
         ans_stmt = (
@@ -411,57 +429,12 @@ class AssessmentService:
         ans_map = {a.question_id: a for a in attempt.answers}
 
         total_questions = len(question_uuids)
-        correct_count = 0
-
-        topic_stats: Dict[str, Dict[str, int]] = {}
-        diff_stats: Dict[str, Dict[str, int]] = {
-            "basic": {"total": 0, "correct": 0},
-            "intermediate": {"total": 0, "correct": 0},
-            "advanced": {"total": 0, "correct": 0},
-        }
-        graded_questions: List[GradedQuestionResult] = []
-
-        for idx, q_id in enumerate(question_uuids, 1):
-            q = questions_map.get(q_id)
-            if not q:
-                continue
-
-            ans = ans_map.get(q_id)
-            is_correct = bool(ans and ans.is_correct)
-            selected_idx = ans.selected_option_index if ans else None
-
-            if is_correct:
-                correct_count += 1
-
-            # Track difficulty stats
-            if q.difficulty in diff_stats:
-                diff_stats[q.difficulty]["total"] += 1
-                if is_correct:
-                    diff_stats[q.difficulty]["correct"] += 1
-
-            # Track topic stats
-            topic = q.topic or "General Concepts"
-            if topic not in topic_stats:
-                topic_stats[topic] = {"total": 0, "correct": 0}
-            topic_stats[topic]["total"] += 1
-            if is_correct:
-                topic_stats[topic]["correct"] += 1
-
-            graded_questions.append(
-                GradedQuestionResult(
-                    id=q.id,
-                    index=idx,
-                    prompt_text=q.prompt_text,
-                    code_snippet=q.code_snippet,
-                    options=q.options,
-                    selected_option_index=selected_idx,
-                    correct_option_index=q.correct_option_index,
-                    is_correct=is_correct,
-                    explanation=q.explanation,
-                    difficulty=q.difficulty,
-                    topic=topic,
-                )
-            )
+        graded_questions, correct_count, topic_stats, diff_stats = self._grade_attempt_questions(
+            attempt=attempt,
+            question_uuids=question_uuids,
+            questions_map=questions_map,
+            ans_map=ans_map,
+        )
 
         # Calculate calibrated percentage score (0.0 to 100.0)
         score_float = round((correct_count / total_questions) * 100.0, 1)
@@ -627,32 +600,12 @@ class AssessmentService:
         questions_map = {q.id: q for q in (await db.scalars(q_stmt)).all()}
         ans_map = {a.question_id: a for a in attempt.answers}
 
-        correct_count = 0
-        graded_questions: List[GradedQuestionResult] = []
-
-        for idx, q_id in enumerate(question_uuids, 1):
-            q = questions_map.get(q_id)
-            if not q:
-                continue
-            ans = ans_map.get(q_id)
-            is_correct = bool(ans and ans.is_correct)
-            if is_correct:
-                correct_count += 1
-            graded_questions.append(
-                GradedQuestionResult(
-                    id=q.id,
-                    index=idx,
-                    prompt_text=q.prompt_text,
-                    code_snippet=q.code_snippet,
-                    options=q.options,
-                    selected_option_index=ans.selected_option_index if ans else None,
-                    correct_option_index=q.correct_option_index,
-                    is_correct=is_correct,
-                    explanation=q.explanation,
-                    difficulty=q.difficulty,
-                    topic=q.topic,
-                )
-            )
+        graded_questions, correct_count, _, _ = self._grade_attempt_questions(
+            attempt=attempt,
+            question_uuids=question_uuids,
+            questions_map=questions_map,
+            ans_map=ans_map,
+        )
 
         score_float = float(attempt.score_percentage) if attempt.score_percentage is not None else 0.0
         if score_float >= 85.0:
@@ -729,6 +682,218 @@ class AssessmentService:
 
     # ─── Internal Helper Methods ─────────────────────────────────────────
 
+    def _select_diverse_questions(
+        self,
+        all_questions: List[AssessmentQuestion],
+        prior_attempts: List[AssessmentAttempt],
+        rng: random.Random,
+        assessment_title: str = "",
+        target_count: int = TARGET_ATTEMPT_COUNT,
+        target_basic: int = TARGET_BASIC_COUNT,
+        target_inter: int = TARGET_INTERMEDIATE_COUNT,
+        target_adv: int = TARGET_ADVANCED_COUNT,
+    ) -> List[AssessmentQuestion]:
+        """
+        Selects target_count questions adhering to difficulty distribution while maximizing
+        exposure diversity across successive attempts via a least-recently-seen (LRS) algorithm.
+        """
+        if len(all_questions) < target_count:
+            raise ValidationException(
+                f"Question bank for '{assessment_title}' contains only {len(all_questions)} questions; "
+                f"minimum {target_count} required to start diagnostic attempt."
+            )
+
+        # 1. Map exposure history from prior attempts (most recent first)
+        valid_priors = [a for a in prior_attempts if a.question_ids and len(a.question_ids) > 0]
+
+        times_seen_map: Dict[str, int] = {}
+        last_seen_idx_map: Dict[str, int] = {}  # 0 = immediately preceding attempt, 1 = 2 attempts ago, etc.
+
+        for attempt_idx, att in enumerate(valid_priors):
+            for q_id_str in (att.question_ids or []):
+                times_seen_map[q_id_str] = times_seen_map.get(q_id_str, 0) + 1
+                if q_id_str not in last_seen_idx_map:
+                    last_seen_idx_map[q_id_str] = attempt_idx
+
+        # 2. Partition question bank into difficulty pools
+        basic_pool = [q for q in all_questions if (q.difficulty or "").lower() == "basic"]
+        inter_pool = [q for q in all_questions if (q.difficulty or "").lower() == "intermediate"]
+        adv_pool = [q for q in all_questions if (q.difficulty or "").lower() == "advanced"]
+
+        # Validate difficulty distribution availability
+        if len(basic_pool) < target_basic or len(inter_pool) < target_inter or len(adv_pool) < target_adv:
+            available_total = len(basic_pool) + len(inter_pool) + len(adv_pool)
+            if available_total < target_count:
+                raise ValidationException(
+                    f"Insufficient difficulty distribution in question bank: "
+                    f"{len(basic_pool)} basic, {len(inter_pool)} intermediate, {len(adv_pool)} advanced."
+                )
+
+        # 3. Helper to rank questions within a pool by diversity
+        def rank_pool_by_diversity(pool: List[AssessmentQuestion]) -> List[AssessmentQuestion]:
+            # Tier 1: Questions never encountered in any prior attempt
+            tier1 = [q for q in pool if times_seen_map.get(str(q.id), 0) == 0]
+            rng.shuffle(tier1)
+
+            # Tier 2: Questions not seen in immediately preceding attempt (last_seen_idx > 0)
+            tier2 = [
+                q for q in pool
+                if str(q.id) in last_seen_idx_map and last_seen_idx_map[str(q.id)] > 0
+            ]
+            # Seen longest ago first (-last_seen_idx), then least frequently seen (times_seen ASC)
+            tier2_scored = [
+                (-last_seen_idx_map[str(q.id)], times_seen_map.get(str(q.id), 0), rng.random(), q)
+                for q in tier2
+            ]
+            tier2_scored.sort(key=lambda x: (x[0], x[1], x[2]))
+            tier2_sorted = [x[3] for x in tier2_scored]
+
+            # Tier 3: Questions seen in immediately preceding attempt (last_seen_idx == 0)
+            tier3 = [
+                q for q in pool
+                if str(q.id) in last_seen_idx_map and last_seen_idx_map[str(q.id)] == 0
+            ]
+            tier3_scored = [
+                (times_seen_map.get(str(q.id), 0), rng.random(), q)
+                for q in tier3
+            ]
+            tier3_scored.sort(key=lambda x: (x[0], x[1]))
+            tier3_sorted = [x[2] for x in tier3_scored]
+
+            return tier1 + tier2_sorted + tier3_sorted
+
+        # Rank each tier
+        ranked_basic = rank_pool_by_diversity(basic_pool)
+        ranked_inter = rank_pool_by_diversity(inter_pool)
+        ranked_adv = rank_pool_by_diversity(adv_pool)
+
+        actual_basic_count = min(len(ranked_basic), target_basic)
+        actual_inter_count = min(len(ranked_inter), target_inter)
+        actual_adv_count = min(len(ranked_adv), target_adv)
+
+        selected_basic = ranked_basic[:actual_basic_count]
+        selected_inter = ranked_inter[:actual_inter_count]
+        selected_adv = ranked_adv[:actual_adv_count]
+
+        # Graceful shortfall handling if a tier has fewer questions than target
+        selected_ids = {q.id for q in (selected_basic + selected_inter + selected_adv)}
+        if len(selected_ids) < target_count:
+            surplus_candidates = (
+                [q for q in ranked_inter if q.id not in selected_ids]
+                + [q for q in ranked_basic if q.id not in selected_ids]
+                + [q for q in ranked_adv if q.id not in selected_ids]
+            )
+            for q in surplus_candidates:
+                if len(selected_ids) >= target_count:
+                    break
+                selected_ids.add(q.id)
+                if (q.difficulty or "").lower() == "basic":
+                    selected_basic.append(q)
+                elif (q.difficulty or "").lower() == "intermediate":
+                    selected_inter.append(q)
+                else:
+                    selected_adv.append(q)
+
+        # Maintain difficulty progression: basic -> intermediate -> advanced
+        ordered_selection = selected_basic + selected_inter + selected_adv
+
+        # Validate invariants: exact target count, zero duplicates
+        if len(ordered_selection) != target_count:
+            raise ValidationException(
+                f"Selected {len(ordered_selection)} questions, expected {target_count}."
+            )
+        if len(set(q.id for q in ordered_selection)) != len(ordered_selection):
+            raise ValidationException("Question selection contained duplicate items.")
+
+        return ordered_selection
+
+    def _grade_attempt_questions(
+        self,
+        attempt: AssessmentAttempt,
+        question_uuids: List[uuid.UUID],
+        questions_map: Dict[uuid.UUID, AssessmentQuestion],
+        ans_map: Dict[uuid.UUID, AssessmentAnswer],
+    ) -> Tuple[List[GradedQuestionResult], int, Dict[str, Dict[str, int]], Dict[str, Dict[str, int]]]:
+        """
+        Autogrades attempt questions, securely mapping displayed shuffled options back
+        to canonical answers and calculating statistics.
+        """
+        correct_count = 0
+        topic_stats: Dict[str, Dict[str, int]] = {}
+        diff_stats: Dict[str, Dict[str, int]] = {
+            "basic": {"total": 0, "correct": 0},
+            "intermediate": {"total": 0, "correct": 0},
+            "advanced": {"total": 0, "correct": 0},
+        }
+        graded_questions: List[GradedQuestionResult] = []
+
+        for idx, q_id in enumerate(question_uuids, 1):
+            q = questions_map.get(q_id)
+            if not q:
+                continue
+
+            ans = ans_map.get(q_id)
+            q_id_str = str(q.id)
+
+            # Determine displayed options and displayed correct option index
+            displayed_options = list(q.options)
+            displayed_correct_idx = q.correct_option_index
+
+            if attempt.option_orders and q_id_str in attempt.option_orders:
+                order = attempt.option_orders[q_id_str]
+                if len(order) == len(q.options):
+                    displayed_options = [q.options[i] for i in order]
+                    if q.correct_option_index in order:
+                        displayed_correct_idx = order.index(q.correct_option_index)
+
+            # Re-verify is_correct safely from canonical mapping
+            selected_idx = ans.selected_option_index if ans else None
+            if ans and attempt.option_orders and q_id_str in attempt.option_orders:
+                order = attempt.option_orders[q_id_str]
+                if 0 <= ans.selected_option_index < len(order):
+                    canonical_selected = order[ans.selected_option_index]
+                    is_correct = (canonical_selected == q.correct_option_index)
+                else:
+                    is_correct = False
+            else:
+                is_correct = bool(ans and ans.is_correct)
+
+            if is_correct:
+                correct_count += 1
+
+            # Track difficulty stats
+            diff_key = (q.difficulty or "").lower()
+            if diff_key in diff_stats:
+                diff_stats[diff_key]["total"] += 1
+                if is_correct:
+                    diff_stats[diff_key]["correct"] += 1
+
+            # Track topic stats
+            topic = q.topic or "General Concepts"
+            if topic not in topic_stats:
+                topic_stats[topic] = {"total": 0, "correct": 0}
+            topic_stats[topic]["total"] += 1
+            if is_correct:
+                topic_stats[topic]["correct"] += 1
+
+            graded_questions.append(
+                GradedQuestionResult(
+                    id=q.id,
+                    index=idx,
+                    prompt_text=q.prompt_text,
+                    code_snippet=q.code_snippet,
+                    options=displayed_options,
+                    selected_option_index=selected_idx,
+                    correct_option_index=displayed_correct_idx,
+                    is_correct=is_correct,
+                    explanation=q.explanation,
+                    difficulty=q.difficulty,
+                    topic=topic,
+                )
+            )
+
+        return graded_questions, correct_count, topic_stats, diff_stats
+
     async def _resolve_assessment(
         self,
         identifier: str,
@@ -774,18 +939,25 @@ class AssessmentService:
         answers = (await db.scalars(ans_stmt)).all()
         current_answers = {str(a.question_id): a.selected_option_index for a in answers}
 
-        # Build ordered public question list
+        # Build ordered public question list with attempt-scoped option ordering
         public_questions: List[AttemptQuestionPublic] = []
         for idx, q_id in enumerate(q_uuids, 1):
             q = questions_map.get(q_id)
             if q:
+                displayed_options = list(q.options)
+                q_id_str = str(q.id)
+                if attempt.option_orders and q_id_str in attempt.option_orders:
+                    order = attempt.option_orders[q_id_str]
+                    if len(order) == len(q.options):
+                        displayed_options = [q.options[i] for i in order]
+
                 public_questions.append(
                     AttemptQuestionPublic(
                         id=q.id,
                         index=idx,
                         prompt_text=q.prompt_text,
                         code_snippet=q.code_snippet,
-                        options=q.options,
+                        options=displayed_options,
                         difficulty=q.difficulty,
                         topic=q.topic,
                     )

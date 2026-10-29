@@ -40,6 +40,7 @@ from app.core.exceptions import (
 )
 from app.models.auth import User
 from app.models.career import CareerProfile, Role
+from app.services.role_resolution import normalize_role_identifier
 from app.models.onboarding import OnboardingSession, OnboardingTurn
 from app.schemas.onboarding import (
     ConfirmSummaryRequest,
@@ -618,25 +619,32 @@ class OnboardingService:
         )
         profile = await db.scalar(stmt)
         if not profile:
-            # Ensure fallback default role exists in database
-            default_role_id = "backend-developer"
-            role = await db.scalar(select(Role).where(Role.id == default_role_id))
+            # Resolve initial role from confirmed summary if provided, avoiding hardcoded default
+            initial_role_id = normalize_role_identifier(summary.target_role) if summary.target_role else None
+            role = None
+            if initial_role_id:
+                role = await db.scalar(select(Role).where(Role.id == initial_role_id))
             if role is None:
-                role = await db.scalar(select(Role))
+                default_role_id = "software-engineer"
+                role = await db.scalar(select(Role).where(Role.id == default_role_id))
                 if role is None:
-                    role = Role(
-                        id="backend-developer",
-                        title="Backend Developer",
-                        description="Server-side web applications and scalable APIs.",
-                        category="engineering",
-                    )
-                    db.add(role)
-                    await db.flush()
-                default_role_id = role.id
+                    role = await db.scalar(select(Role))
+                    if role is None:
+                        role = Role(
+                            id="software-engineer",
+                            title="Software Engineer",
+                            description="Designs, implements, and maintains robust software systems.",
+                            category="engineering",
+                        )
+                        db.add(role)
+                        await db.flush()
+                initial_role_id = role.id
+            else:
+                initial_role_id = role.id
 
             profile = CareerProfile(
                 user_id=user.id,
-                primary_role_id=default_role_id,
+                primary_role_id=initial_role_id,
                 career_stage="student",
                 work_preference="hybrid",
                 target_locations=["Remote"],
@@ -684,18 +692,24 @@ class OnboardingService:
         if summary.years_of_experience is not None and summary.years_of_experience >= 0.0:
             profile.years_of_experience = decimal.Decimal(str(round(summary.years_of_experience, 1)))
 
-        # 5. Target primary role matching
+        # 5. Target primary role matching with canonical alias normalization
         if summary.target_role:
-            role_query = summary.target_role.strip().lower()
-            role_stmt = select(Role).where(
-                sa.or_(
-                    sa.func.lower(Role.title) == role_query,
-                    sa.func.lower(Role.id) == role_query,
-                    sa.func.lower(Role.title).contains(role_query),
+            canonical_role_id = normalize_role_identifier(summary.target_role)
+            if canonical_role_id:
+                matched_role = await db.scalar(select(Role).where(Role.id == canonical_role_id))
+                if matched_role:
+                    profile.primary_role_id = matched_role.id
+            else:
+                role_query = summary.target_role.strip().lower()
+                role_stmt = select(Role).where(
+                    sa.or_(
+                        sa.func.lower(Role.title) == role_query,
+                        sa.func.lower(Role.id) == role_query,
+                        sa.func.lower(Role.title).contains(role_query),
+                    )
                 )
-            )
-            matched_role = await db.scalar(role_stmt)
-            if matched_role:
-                profile.primary_role_id = matched_role.id
+                matched_role = await db.scalar(role_stmt)
+                if matched_role:
+                    profile.primary_role_id = matched_role.id
 
         await db.flush()

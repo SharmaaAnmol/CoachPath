@@ -5,7 +5,6 @@ import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Badge } from '@/components/ui/badge';
-import { Modal } from '@/components/ui/modal';
 import {
   Settings,
   Shield,
@@ -26,7 +25,6 @@ export default function SettingsPage() {
   const [savedSuccess, setSavedSuccess] = React.useState(false);
   const [humanApprovalGate, setHumanApprovalGate] = React.useState(true);
   const [emailAlerts, setEmailAlerts] = React.useState(true);
-  const [isDeleteModalOpen, setIsDeleteModalOpen] = React.useState(false);
 
   React.useEffect(() => {
     if (user?.full_name) {
@@ -163,82 +161,82 @@ export default function SettingsPage() {
 
       {/* Data Ownership & Export */}
       <Card className="p-6 space-y-4">
-        <div className="flex items-center gap-2">
-          <Download className="w-5 h-5 text-indigo-600" />
-          <h3 className="text-base font-bold text-slate-900 dark:text-white">
-            Data Portability & Export (GDPR Art. 20)
-          </h3>
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
+          <div className="flex items-center gap-2">
+            <Download className="w-5 h-5 text-indigo-600" />
+            <h3 className="text-base font-bold text-slate-900 dark:text-white">
+              Data Portability & Export
+            </h3>
+          </div>
+          <Badge variant="outline" size="sm" className="text-amber-700 bg-amber-50 border-amber-200 dark:bg-amber-950/40 dark:border-amber-800 dark:text-amber-300 w-fit">
+            Scheduled for Phase 16
+          </Badge>
         </div>
         <p className="text-xs text-slate-500 dark:text-slate-400 leading-relaxed">
-          Download a complete, structured JSON export of your career graph, skill diagnostics, roadmap logs, and resume versions.
+          Self-service structured data export is currently in development. Once implemented in Phase 16, candidates will be able to download a verified JSON archive of their career profile, diagnostic test records, roadmap logs, and resume versions.
         </p>
 
-        <div className="flex flex-wrap items-center gap-3 pt-2">
+        <div className="p-3.5 rounded-xl bg-slate-50 dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700 text-xs text-slate-600 dark:text-slate-400 leading-relaxed">
+          <p>
+            <strong className="text-slate-800 dark:text-slate-200">Current Status:</strong> Automated export endpoints are not yet connected in this preview release. If you need a full export of your personal profile data before Phase 16 activation, please submit a request to the platform administrator.
+          </p>
+        </div>
+
+        <div className="flex flex-wrap items-center gap-3 pt-1">
           <Button
             size="sm"
             variant="outline"
-            onClick={() => alert('Exporting full user career graph JSON...')}
+            disabled
+            aria-disabled="true"
+            title="Automated export is scheduled for Phase 16"
           >
-            <Download className="w-3.5 h-3.5 mr-1.5" /> Export Career Graph (JSON)
+            <Download className="w-3.5 h-3.5 mr-1.5" /> Export Career Graph (Unavailable)
           </Button>
           <Button
             size="sm"
             variant="outline"
-            onClick={() => alert('Exporting all resume versions Markdown...')}
+            disabled
+            aria-disabled="true"
+            title="Automated export is scheduled for Phase 16"
           >
-            <Download className="w-3.5 h-3.5 mr-1.5" /> Export Resumes (Markdown)
+            <Download className="w-3.5 h-3.5 mr-1.5" /> Export Resumes (Unavailable)
           </Button>
         </div>
       </Card>
 
       {/* Danger Zone: Account Deletion */}
-      <Card className="p-6 border-rose-200 dark:border-rose-900/50 bg-rose-50/20 dark:bg-rose-950/10 space-y-4">
-        <div className="flex items-center gap-2 text-rose-600 font-bold">
-          <AlertTriangle className="w-5 h-5" />
-          <h3 className="text-base">Danger Zone: Permanent Account Deletion</h3>
+      <Card className="p-6 border-slate-200 dark:border-slate-800 bg-slate-50/40 dark:bg-slate-900/20 space-y-4">
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
+          <div className="flex items-center gap-2 text-slate-800 dark:text-slate-200 font-bold">
+            <AlertTriangle className="w-5 h-5 text-amber-600" />
+            <h3 className="text-base">Danger Zone: Permanent Account Deletion</h3>
+          </div>
+          <Badge variant="outline" size="sm" className="text-amber-700 bg-amber-50 border-amber-200 dark:bg-amber-950/40 dark:border-amber-800 dark:text-amber-300 w-fit">
+            Scheduled for Phase 16
+          </Badge>
         </div>
-        <p className="text-xs text-slate-600 dark:text-slate-300 leading-relaxed">
-          In compliance with the Right to Erasure, permanently delete your account, stored resumes, assessment attempts, and activity history. This action cannot be reversed.
+        <p className="text-xs text-slate-600 dark:text-slate-400 leading-relaxed">
+          Self-service account deletion is currently unavailable in this preview release. A safe and irreversible purge requires an orchestrated backend workflow across 37 relational tables, file storage repositories, vector index registries, and active session caches.
         </p>
+
+        <div className="p-3.5 rounded-xl bg-amber-50/70 dark:bg-amber-950/30 border border-amber-200 dark:border-amber-800/60 text-xs text-amber-900 dark:text-amber-200 leading-relaxed">
+          <p>
+            <strong className="text-amber-950 dark:text-amber-100">Action Unavailable:</strong> Automated self-service deletion will be activated in Phase 16 with password re-authentication and multi-tier verification. If you require immediate account and data removal, please contact the administrative team.
+          </p>
+        </div>
+
         <div>
           <Button
             size="sm"
             variant="destructive"
-            onClick={() => setIsDeleteModalOpen(true)}
+            disabled
+            aria-disabled="true"
+            title="Self-service account deletion is scheduled for Phase 16"
           >
-            <Trash2 className="w-3.5 h-3.5 mr-1.5" /> Delete Account & Purge Data
+            <Trash2 className="w-3.5 h-3.5 mr-1.5" /> Delete Account & Purge Data (Unavailable)
           </Button>
         </div>
       </Card>
-
-      {/* Delete Confirmation Modal */}
-      <Modal
-        isOpen={isDeleteModalOpen}
-        onClose={() => setIsDeleteModalOpen(false)}
-        title="Confirm Account & Data Deletion"
-        description="Are you absolutely sure you want to permanently delete your CoachPath account?"
-        footer={
-          <div className="flex justify-end gap-2">
-            <Button size="sm" variant="outline" onClick={() => setIsDeleteModalOpen(false)}>
-              Cancel
-            </Button>
-            <Button
-              size="sm"
-              variant="destructive"
-              onClick={() => {
-                alert('Account and data purged permanently.');
-                setIsDeleteModalOpen(false);
-              }}
-            >
-              Permanently Delete
-            </Button>
-          </div>
-        }
-      >
-        <p className="text-xs text-slate-600 dark:text-slate-300">
-          This will permanently purge your profile, test records, and resume diffs from our databases. This action is irreversible.
-        </p>
-      </Modal>
     </div>
   );
 }

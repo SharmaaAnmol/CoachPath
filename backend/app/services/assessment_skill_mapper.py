@@ -128,6 +128,62 @@ SKILL_TO_ASSESSMENT_MAP: Dict[str, Dict[str, Any]] = {
         "estimated_minutes": 45,
         "question_count": 30,
     },
+    # ─── Data Engineering Skills ───────────────────────────────────────
+    "etl-pipelines": {
+        "assessment_skill_id": "sql-databases",
+        "title": "SQL & Relational Databases Diagnostic",
+        "estimated_minutes": 40,
+        "question_count": 30,
+    },
+    "data-warehousing": {
+        "assessment_skill_id": "sql-databases",
+        "title": "SQL & Relational Databases Diagnostic",
+        "estimated_minutes": 40,
+        "question_count": 30,
+    },
+    "data-orchestration": {
+        "assessment_skill_id": "python",
+        "title": "Python Programming Diagnostic",
+        "estimated_minutes": 40,
+        "question_count": 30,
+    },
+    "stream-processing": {
+        "assessment_skill_id": "python",
+        "title": "Python Programming Diagnostic",
+        "estimated_minutes": 40,
+        "question_count": 30,
+    },
+    # ─── Mobile Engineering Skills ─────────────────────────────────────
+    "mobile-architecture": {
+        "assessment_skill_id": "web-development",
+        "title": "Full-Stack Web Development Diagnostic",
+        "estimated_minutes": 40,
+        "question_count": 30,
+    },
+    "kotlin": {
+        "assessment_skill_id": "java",
+        "title": "Java Programming Diagnostic",
+        "estimated_minutes": 40,
+        "question_count": 30,
+    },
+    "swift": {
+        "assessment_skill_id": "c-cpp",
+        "title": "C & C++ Systems Programming Diagnostic",
+        "estimated_minutes": 40,
+        "question_count": 30,
+    },
+    "react-native": {
+        "assessment_skill_id": "javascript-typescript",
+        "title": "JavaScript & TypeScript Diagnostic",
+        "estimated_minutes": 40,
+        "question_count": 30,
+    },
+    "flutter": {
+        "assessment_skill_id": "javascript-typescript",
+        "title": "JavaScript & TypeScript Diagnostic",
+        "estimated_minutes": 40,
+        "question_count": 30,
+    },
 }
 
 

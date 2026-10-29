@@ -254,6 +254,13 @@ class AssessmentAttempt(Base, UUIDMixin):
         server_default=sa.text("'[]'"),
         doc="Ordered list of question UUID strings selected for this attempt",
     )
+    option_orders: Mapped[Optional[Dict[str, List[int]]]] = mapped_column(
+        JsonB(),
+        nullable=True,
+        default=dict,
+        server_default=sa.text("'{}'"),
+        doc="Per-question mapping of displayed option index to canonical index (JSON object)",
+    )
 
     # Relationships
     user: Mapped[User] = relationship("User", back_populates="assessment_attempts")

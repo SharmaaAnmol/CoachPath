@@ -40,6 +40,7 @@ from app.services.roadmap_catalog import (
     SKILL_PREREQUISITES,
     get_task_templates_for_skill,
 )
+from app.services.role_resolution import validate_and_resolve_role_id
 from app.services.skill_gap_engine import SkillGapEngine
 
 logger = logging.getLogger(__name__)
@@ -76,12 +77,13 @@ class RoadmapEngine:
         )
         profile = await db.scalar(profile_stmt)
 
-        # 2. Determine and validate Target Role
-        role_id = request.role_id if (request and request.role_id) else (profile.primary_role_id if profile else None)
-        if not role_id:
+        # 2. Determine and validate Target Role strictly without silent defaults
+        raw_role_id = request.role_id if (request and request.role_id) else (profile.primary_role_id if profile else None)
+        if not raw_role_id:
             raise ValidationException(
-                "A target role must be selected to generate a learning roadmap."
+                "A target role must be selected to generate a learning roadmap. Please specify a role_id or set a target role in your profile."
             )
+        role_id = validate_and_resolve_role_id(raw_role_id, field_name="role_id")
 
         role_stmt = (
             select(Role)
@@ -530,7 +532,8 @@ class RoadmapEngine:
             Roadmap.is_active == True,
         ]
         if role_id:
-            conditions.append(Roadmap.target_role_id == role_id)
+            resolved_role_id = validate_and_resolve_role_id(role_id, field_name="role_id")
+            conditions.append(Roadmap.target_role_id == resolved_role_id)
 
         stmt = (
             select(Roadmap)

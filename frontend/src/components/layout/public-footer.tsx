@@ -19,7 +19,7 @@ export function PublicFooter() {
             </p>
             <div className="flex items-center gap-2 text-emerald-400 font-medium text-[11px] pt-1">
               <Shield className="w-3.5 h-3.5" />
-              <span>Zero-hallucination guarantee &bull; Human-in-the-loop</span>
+              <span>Evidence-grounded safeguards &bull; Human-in-the-loop</span>
             </div>
           </div>
 
@@ -44,7 +44,7 @@ export function PublicFooter() {
               </li>
               <li>
                 <Link href="/career-readiness" className="hover:text-white transition-colors">
-                  Career Readiness Index
+                  Career Readiness Index (Preview)
                 </Link>
               </li>
               <li>
@@ -80,8 +80,8 @@ export function PublicFooter() {
                   <HeartHandshake className="w-3.5 h-3.5 text-emerald-400" /> Our Mission & Vision
                 </Link>
               </li>
-              <li className="text-slate-400">GDPR & CCPA Compliant</li>
-              <li className="text-slate-400">Strict Data Export & Right to Delete</li>
+              <li className="text-slate-400">Designed for Privacy & Minimization</li>
+              <li className="text-slate-400">User Data Ownership & Admin-Assisted Deletion</li>
             </ul>
           </div>
         </div>

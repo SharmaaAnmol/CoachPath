@@ -766,4 +766,72 @@ Build natural language processing models and enterprise embedding architectures 
 - Research experience in computational linguistics or natural language understanding.
         """.strip(),
     },
+    {
+        "external_id": "seed-job-023",
+        "title": "Data Platform Engineer",
+        "company_name": "Databricks",
+        "location": "San Francisco, CA",
+        "remote_type": "hybrid",
+        "role_id": "data-engineer",
+        "experience_level": "junior",
+        "min_salary": 125000,
+        "max_salary": 150000,
+        "currency": "USD",
+        "application_url": "https://databricks.com/careers/data-platform-engineer",
+        "source_url": "https://databricks.com/careers/data-platform-engineer",
+        "description_text": """
+## About the Role
+As a Data Platform Engineer at Databricks, you will help design, build, and optimize scalable data ingestion pipelines, Lakehouse data modeling, and orchestration workflows.
+
+## Responsibilities
+- Design and maintain reliable batch and streaming ETL pipelines using Python and Apache Spark.
+- Model dimensional schemas, data vault tables, and optimized SQL queries in cloud data warehouses.
+- Build automated DAG orchestration workflows using Airflow and dbt.
+- Ensure high data quality, schema validation, and pipeline observability.
+
+## Requirements
+- Demonstrated proficiency in Python and SQL (complex analytical queries, window functions).
+- Strong data modeling fundamentals: star/snowflake schemas, dimensional design.
+- Hands-on experience with ETL/ELT pipeline design and workflow orchestration.
+- Solid understanding of data structures, algorithms, and Git version control.
+
+## Preferred Qualifications
+- Experience with Apache Spark, Kafka, or distributed streaming systems.
+- Familiarity with cloud platforms (AWS, GCP) and containerization with Docker.
+        """.strip(),
+    },
+    {
+        "external_id": "seed-job-024",
+        "title": "Mobile Software Engineer (iOS & Android)",
+        "company_name": "DoorDash",
+        "location": "Sunnyvale, CA",
+        "remote_type": "remote",
+        "role_id": "mobile-engineer",
+        "experience_level": "junior",
+        "min_salary": 120000,
+        "max_salary": 145000,
+        "currency": "USD",
+        "application_url": "https://doordash.com/careers/mobile-engineer",
+        "source_url": "https://doordash.com/careers/mobile-engineer",
+        "description_text": """
+## About the Role
+Join our consumer engineering team to build world-class, responsive, and accessible mobile experiences across iOS and Android platforms.
+
+## Responsibilities
+- Architect, build, and maintain native and cross-platform mobile features using modern declarative frameworks (SwiftUI/Jetpack Compose or React Native).
+- Integrate backend RESTful and streaming APIs with robust token authentication, offline data sync, and optimistic UI updates.
+- Optimize app launch times, frame rates, memory footprints, and battery consumption.
+- Write unit, integration, and UI automation tests to preserve mobile app reliability.
+
+## Requirements
+- Strong understanding of mobile application architecture (MVVM, Clean Architecture, state management, and lifecycle events).
+- Proficiency in either Kotlin (Android) or Swift (iOS), or cross-platform mobile development (React Native / Flutter).
+- Solid grasp of asynchronous networking, RESTful APIs, and offline caching.
+- Good knowledge of data structures, algorithmic efficiency, and Git version control.
+
+## Preferred Qualifications
+- Experience with mobile CI/CD pipelines (Fastlane, GitHub Actions) and code signing.
+- Understanding of mobile security best practices (Keychain/KeyStore, certificate pinning).
+        """.strip(),
+    },
 ]

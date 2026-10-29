@@ -42,6 +42,16 @@ CANONICAL_ROLE_KEYWORDS = {
         "devops", "cloud engineer", "site reliability", "sre", "infrastructure engineer",
         "kubernetes", "aws engineer", "terraform", "platform engineer",
     ],
+    "data-engineer": [
+        "data engineer", "data engineering", "etl engineer", "data pipeline",
+        "data warehouse", "analytics engineer", "spark engineer", "databricks",
+        "bigquery", "snowflake engineer",
+    ],
+    "mobile-engineer": [
+        "mobile engineer", "mobile developer", "android engineer", "android developer",
+        "ios engineer", "ios developer", "swift developer", "kotlin developer",
+        "react native", "flutter developer",
+    ],
     "software-engineer": [
         "software engineer", "swe", "software developer", "programmer", "systems engineer",
     ],

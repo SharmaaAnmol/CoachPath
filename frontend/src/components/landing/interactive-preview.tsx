@@ -32,7 +32,7 @@ export function InteractivePlatformPreview() {
           <div className="w-3 h-3 rounded-full bg-amber-500/80" />
           <div className="w-3 h-3 rounded-full bg-emerald-500/80" />
           <span className="ml-2 font-mono text-[11px] text-slate-400">
-            CoachPath Intelligence Engine &bull; Candidate: Aarav Mehta (Target: Full-Stack Engineer)
+            CoachPath Intelligence Engine &bull; Illustrative Demo Candidate: Aarav Mehta (Target: Full-Stack Engineer)
           </span>
         </div>
         <div className="hidden sm:flex items-center gap-2 text-[11px] text-emerald-400 font-mono">
@@ -53,7 +53,7 @@ export function InteractivePlatformPreview() {
           )}
         >
           <Gauge className="w-4 h-4 text-purple-400" />
-          <span>Readiness Score (78%)</span>
+          <span>Readiness Preview (78%)</span>
         </button>
 
         <button
@@ -92,7 +92,7 @@ export function InteractivePlatformPreview() {
           )}
         >
           <FileText className="w-4 h-4 text-brand-400" />
-          <span>Anti-Hallucination Diff</span>
+          <span>Anti-Fabrication Diff</span>
         </button>
       </div>
 
@@ -115,7 +115,7 @@ export function InteractivePlatformPreview() {
                     </span>
                   </h4>
                   <p className="text-xs text-slate-400 mt-1 max-w-lg">
-                    Weighted across validated diagnostic code tests, GitHub project artifacts, semantic role requirements, and interview STAR fluency.
+                    Weighted across validated diagnostic code tests, portfolio project deliverables, role requirements, and interview STAR fluency.
                   </p>
                 </div>
               </div>
@@ -136,7 +136,7 @@ export function InteractivePlatformPreview() {
               <div className="p-3.5 rounded-xl bg-slate-800/40 border border-slate-700/50">
                 <div className="text-[11px] text-slate-400">Project Evidence (25%)</div>
                 <div className="text-lg font-bold text-indigo-400 mt-1">75%</div>
-                <div className="text-[10px] text-slate-400 mt-1">2 verified GitHub repos</div>
+                <div className="text-[10px] text-slate-400 mt-1">2 verified portfolio projects</div>
               </div>
               <div className="p-3.5 rounded-xl bg-slate-800/40 border border-slate-700/50">
                 <div className="text-[11px] text-slate-400">Market Relevance (25%)</div>
@@ -273,7 +273,7 @@ export function InteractivePlatformPreview() {
           </div>
         )}
 
-        {/* Tab 4: Anti-Hallucination Diff */}
+        {/* Tab 4: Anti-Fabrication Diff */}
         {activeTab === 'diff' && (
           <div className="space-y-4 animate-in fade-in duration-200">
             <div className="flex items-center justify-between text-xs pb-1 border-b border-slate-800">

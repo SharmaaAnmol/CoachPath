@@ -38,7 +38,7 @@ import {
 
 export default function SkillsPage() {
   const [roles, setRoles] = React.useState<TargetRoleDetail[]>([]);
-  const [selectedRoleId, setSelectedRoleId] = React.useState<string>('backend-developer');
+  const [selectedRoleId, setSelectedRoleId] = React.useState<string>('');
   const [profileRoleId, setProfileRoleId] = React.useState<string | null>(null);
   const [analysis, setAnalysis] = React.useState<SkillGapAnalysisData | null>(null);
 
@@ -63,7 +63,7 @@ export default function SkillsPage() {
       setRoles(rolesRes.roles);
 
       // 2. Fetch profile career goals to preselect role if available
-      let candidateTargetRoleId = 'backend-developer';
+      let candidateTargetRoleId = rolesRes.roles[0]?.id || '';
       try {
         const goals = await profileClient.getCareerGoals();
         if (goals.primary_role?.id) {

@@ -52,17 +52,17 @@ export default function HowItWorksPage() {
       icon: Compass,
       tag: 'Step 4: Action Plan',
       description:
-        'Rather than vague advice, CoachPath generates an actionable 3-phase milestone plan. Each task includes verified educational resources, estimated hours, and verifiable deliverables (e.g. GitHub pull requests, benchmark test suites).',
+        'Rather than vague advice, CoachPath generates an actionable 3-phase milestone plan. Each task includes vetted educational resources, estimated hours, and verifiable project deliverables (e.g. repository links, system design write-ups, or demo applications).',
       outputs: ['Phased Weekly Sprints', 'Vetted Documentation Links', 'Verifiable Project Artifacts'],
     },
     {
       num: '05',
-      title: 'Semantic Job Ingestion & pgvector Search',
+      title: 'Deterministic Multi-Dimensional Job Matching',
       icon: Briefcase,
-      tag: 'Step 5: Discovery',
+      tag: 'Step 5: Job Alignment',
       description:
-        'CoachPath continuously ingests software engineering roles from leading technology employers. Descriptions are converted into 1536-dimensional vector embeddings, allowing high-fidelity cosine similarity matching against your profile graph.',
-      outputs: ['Normalized Job Postings', 'Salary Transparency Ranges', 'Vector Distance Indexing'],
+        'CoachPath ingests software engineering roles across 11 canonical tracks. Opportunities are evaluated across five objective dimensions—skills overlap, experience level, seniority match, location preferences, and role alignment—delivering clear, explainable match scores.',
+      outputs: ['Curated Job Ingestion', 'Salary Transparency Ranges', '5-Factor Alignment Matrix'],
     },
     {
       num: '06',
@@ -70,30 +70,30 @@ export default function HowItWorksPage() {
       icon: Layers,
       tag: 'Step 6: Match Transparency',
       description:
-        'No mysterious percentages. Every job match score (e.g. 94%) is broken down into its four constituent factors: Skill Match (40%), Experience Alignment (25%), Domain Relevance (20%), and Role Seniority (15%).',
+        'No mysterious percentages. Every job match score (e.g. 94%) is broken down into its five constituent factors: Skill Match (40%), Experience Alignment (20%), Seniority Match (15%), Location Alignment (15%), and Domain Preference (10%).',
       outputs: ['Composite Match Index', 'Matched vs Missing Skills Breakdown', 'Salary Expectations Check'],
     },
     {
       num: '07',
-      title: 'Truthful Resume Optimization & Diff Review',
+      title: 'Truthful Resume Tailoring & Diff Review',
       icon: FileText,
       tag: 'Step 7: ATS Tailoring',
       description:
-        'Our two-pass anti-hallucination auditor rewrites resume bullets to align with target job keywords, strictly restricting claims to your verified project repositories and passed diagnostic assessments. You accept or reject each diff.',
-      outputs: ['Side-by-Side Diff Comparison', 'Anti-Hallucination Audit Log', 'Tailored PDF & Markdown Export'],
+        'Our two-pass evidence-grounded auditor rewrites resume bullets to align with target job requirements, strictly restricting claims to your verified candidate achievements and diagnostic assessment history. Candidates retain full agency to inspect, accept, or reject every suggestion before use.',
+      outputs: ['Side-by-Side Diff Comparison', 'Anti-Fabrication Audit Log', 'Structured Markdown Diff Preview'],
     },
     {
       num: '08',
-      title: 'Application Pipeline & Kanban Tracker',
+      title: 'Application Pipeline & Kanban Tracker (Phase 12 Preview)',
       icon: Kanban,
       tag: 'Step 8: Execution',
       description:
         'Manage your active job hunt through a structured Kanban board: Saved, Applied, Interviewing, and Offered. Maintain historical logs, deadlines, recruiter contacts, and personal interview notes in one cohesive workspace.',
-      outputs: ['Visual Pipeline Status', 'Next Action Reminders', 'Historical Transition Logs'],
+      outputs: ['Visual Pipeline Status', 'Next Action Reminders', 'Interactive Preview Sandbox'],
     },
     {
       num: '09',
-      title: 'Recruiter Discovery & Copy-Confirmation Gate',
+      title: 'Recruiter Discovery & Copy-Confirmation Gate (Phase 13 Preview)',
       icon: Users,
       tag: 'Step 9: Outreach',
       description:
@@ -102,12 +102,12 @@ export default function HowItWorksPage() {
     },
     {
       num: '10',
-      title: 'Interview Preparation & Career Readiness Index',
+      title: 'Interview Preparation & Career Readiness Index (Phase 14 & 15 Preview)',
       icon: Gauge,
       tag: 'Step 10: Conversion',
       description:
-        'Prepare for upcoming rounds with role-specific STAR question banks and talking points. CoachPath computes an ongoing composite Readiness Index (0-100%) so you walk into technical screens with calm confidence.',
-      outputs: ['STAR Story Architect', 'System Design Talking Points', '4-Pillar Readiness Calibration'],
+        'Prepare for upcoming rounds with role-specific STAR question banks and talking points. CoachPath provides early calibration via diagnostic skill-gap scores, with a comprehensive 4-pillar composite Readiness Index coming in Phase 15.',
+      outputs: ['STAR Story Architect (Preview)', 'System Design Talking Points', 'Calibrated Skill Gap Alignment'],
     },
   ];
 

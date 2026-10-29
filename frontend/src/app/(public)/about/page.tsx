@@ -29,7 +29,7 @@ export default function AboutPage() {
             The software job market underwent a drastic distortion over the past few years. Job boards became overcrowded with generic resumes, automated scrapers flooded recruiters with low-quality applications, and generative AI was weaponized to hallucinate technologies that candidates had never used.
           </p>
           <p>
-            The result? Employers raised barriers higher, introducing grueling multi-stage screens, while capable software engineers—from motivated computer science students to early-career developers like our benchmark persona Aarav Mehta—found themselves lost in a cycle of silent rejections.
+            The result? Employers raised barriers higher, introducing grueling multi-stage screens, while capable software engineers—from motivated computer science students to early-career developers like our illustrative benchmark candidate Aarav Mehta—found themselves lost in a cycle of silent rejections.
           </p>
           <p>
             CoachPath was founded to build a different path: one where candidates receive objective diagnostic truth regarding their skill gaps, a structured milestone roadmap to close those gaps through demonstrable deliverables, and the tools to present their truthful achievements with pride.
@@ -44,7 +44,7 @@ export default function AboutPage() {
             </div>
             <h3 className="text-base font-bold text-slate-900 dark:text-white">Truth Over Hype</h3>
             <p className="text-xs text-slate-500 dark:text-slate-400 leading-relaxed">
-              We never fabricate bullet points. Every optimization is verified against real code tests or project repositories before you accept it.
+              We never fabricate bullet points. Every optimization is verified against real diagnostic tests or project deliverables before you accept it.
             </p>
           </div>
 

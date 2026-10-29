@@ -22,10 +22,10 @@ export default function PrivacyPage() {
         <Card className="p-6 md:p-8 space-y-4">
           <div className="flex items-center gap-2 text-base font-bold text-slate-900 dark:text-white">
             <ShieldCheck className="w-5 h-5 text-emerald-600" />
-            <h3>1. The Zero-Hallucination & Anti-Fabrication Guarantee</h3>
+            <h3>1. Grounded Anti-Fabrication & Evidence Safeguards</h3>
           </div>
           <p>
-            CoachPath utilizes a specialized two-pass audit pipeline for all resume tailoring. Our system strictly prohibits fabricating credentials, fake project statistics, or technology claims that lack grounded evidence in your profile records or diagnostic test logs. If an LLM suggests a phrase unsupported by evidence, our auditor flags and rejects it before it is presented to you.
+            CoachPath utilizes a specialized two-pass audit pipeline for resume tailoring. Our system is designed to prevent fabricating credentials, fake project statistics, or technology claims that lack grounded evidence in your profile records or diagnostic test logs. If an LLM suggests a phrase unsupported by evidence, our server-side validator flags unverified skills before presentation, reinforcing human-in-the-loop candidate review.
           </p>
         </Card>
 
@@ -33,10 +33,10 @@ export default function PrivacyPage() {
         <Card className="p-6 md:p-8 space-y-4">
           <div className="flex items-center gap-2 text-base font-bold text-slate-900 dark:text-white">
             <Lock className="w-5 h-5 text-purple-600" />
-            <h3>2. Strict Data Ownership & Zero Foundation Model Training</h3>
+            <h3>2. Strict Data Ownership & Evidence-Bounded AI</h3>
           </div>
           <p>
-            Your career profile, resumes, project links, and assessment scores are strictly your intellectual property. CoachPath explicitly does NOT sell candidate data to third-party data brokers, nor do we permit public AI providers to train their foundational models on your private documents. All LLM calls are executed via enterprise zero-data-retention APIs.
+            Your career profile, resumes, project links, and assessment scores are strictly your intellectual property. CoachPath does not sell candidate data to third-party data brokers, nor do we permit public AI providers to train public models on your private documents. All AI interactions utilize prompt minimization and evidence bounding, sending only the context necessary to evaluate skills or tailor documents.
           </p>
         </Card>
 
@@ -55,14 +55,14 @@ export default function PrivacyPage() {
         <Card className="p-6 md:p-8 space-y-4">
           <div className="flex items-center gap-2 text-base font-bold text-slate-900 dark:text-white">
             <CheckCircle2 className="w-5 h-5 text-amber-600" />
-            <h3>4. Right to Data Portability & Complete Erasure</h3>
+            <h3>4. Data Portability & Account Erasure</h3>
           </div>
           <p>
-            In compliance with GDPR and CCPA standards, you have the right to:
+            CoachPath is designed around principles of data minimization and user ownership aligned with our Phase 16 compliance roadmap:
           </p>
           <ul className="list-disc list-inside space-y-2 pl-2 text-slate-600 dark:text-slate-400">
-            <li><strong>Export Your Career Data:</strong> Download your complete profile, assessment logs, and roadmaps in structured JSON and Markdown formats at any time.</li>
-            <li><strong>Hard Delete Your Account:</strong> Trigger an immediate purge of your user account, stored resumes, assessment attempts, and activity logs from our databases and cloud storage with no lingering backups.</li>
+            <li><strong>Career Data Portability:</strong> Self-service JSON export tools are currently in development for Phase 16. In the interim, candidates can request a manual export of their profile and assessment history by contacting support.</li>
+            <li><strong>Account Erasure:</strong> Candidates retain the right to delete their data. While self-service automated deletion workflows are scheduled for Phase 16, candidates can request permanent account and resume file erasure via admin support, which removes records from Neon Cloud PostgreSQL and file storage.</li>
           </ul>
         </Card>
       </div>

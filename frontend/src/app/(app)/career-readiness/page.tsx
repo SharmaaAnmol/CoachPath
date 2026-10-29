@@ -7,6 +7,7 @@ import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { ProgressBar } from '@/components/ui/progress-bar';
+import { DemoPreviewBanner } from '@/components/ui/demo-preview-banner';
 import {
   Gauge,
   ShieldCheck,
@@ -56,6 +57,12 @@ export default function CareerReadinessPage() {
 
   return (
     <div className="space-y-6">
+      {/* Demo Preview Banner */}
+      <DemoPreviewBanner
+        plannedPhase="Phase 15"
+        featureName="Real-time career readiness calculation"
+      />
+
       {/* Header */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>

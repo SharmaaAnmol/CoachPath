@@ -356,6 +356,71 @@ SKILL_TAXONOMY: List[Dict[str, Any]] = [
         "description": "Authentication (OAuth2/JWT), RBAC, encryption at rest/in transit, OWASP Top 10 mitigation, and input validation.",
         "synonyms": ["security", "appsec", "owasp", "cybersecurity"],
     },
+    # ─── Data Engineering & Pipelines ──────────────────────────────────
+    {
+        "id": "etl-pipelines",
+        "name": "ETL & Data Pipelines",
+        "category": "architecture",
+        "description": "Design, implementation, and automation of robust, idempotent, and backfillable ETL/ELT data pipelines.",
+        "synonyms": ["etl", "elt", "data pipeline", "data pipelines", "data-pipeline", "pipeline engineering"],
+    },
+    {
+        "id": "data-warehousing",
+        "name": "Data Warehousing & Data Lakes",
+        "category": "architecture",
+        "description": "Modern cloud data warehousing, star/snowflake schemas, columnar storage, and lakehouse architectures (Snowflake, BigQuery, Redshift).",
+        "synonyms": ["data warehouse", "data lake", "data lakes", "data warehousing", "snowflake", "bigquery", "redshift", "lakehouse"],
+    },
+    {
+        "id": "data-orchestration",
+        "name": "Workflow Orchestration",
+        "category": "tool",
+        "description": "Automating, scheduling, and monitoring complex DAG workflows using tools like Apache Airflow, Prefect, or Dagster.",
+        "synonyms": ["airflow", "apache airflow", "prefect", "dagster", "workflow orchestration", "dag scheduling"],
+    },
+    {
+        "id": "stream-processing",
+        "name": "Batch & Stream Processing",
+        "category": "concept",
+        "description": "Distributed batch and real-time streaming architectures using technologies like Apache Spark, Kafka, or Flink.",
+        "synonyms": ["apache spark", "spark", "apache kafka", "kafka", "flink", "streaming", "batch processing"],
+    },
+    # ─── Mobile Engineering ────────────────────────────────────────────
+    {
+        "id": "mobile-architecture",
+        "name": "Mobile Application Architecture",
+        "category": "architecture",
+        "description": "Mobile architectural patterns including MVVM, Clean Architecture, state encapsulation, offline caching, and navigation lifecycles.",
+        "synonyms": ["mobile architecture", "mvvm", "mvi", "viper", "clean architecture", "mobile design patterns"],
+    },
+    {
+        "id": "kotlin",
+        "name": "Kotlin & Android Development",
+        "category": "language",
+        "description": "Modern Android application development with Kotlin, Android SDK, Jetpack Compose, Coroutines, and platform lifecycles.",
+        "synonyms": ["android", "android sdk", "jetpack compose", "coroutines", "android development"],
+    },
+    {
+        "id": "swift",
+        "name": "Swift & iOS Development",
+        "category": "language",
+        "description": "Modern iOS development using Swift, UIKit, SwiftUI, Combine, Apple HIG, and iOS memory management (ARC).",
+        "synonyms": ["ios", "swiftui", "uikit", "apple ios", "ios development", "cocoa"],
+    },
+    {
+        "id": "react-native",
+        "name": "React Native",
+        "category": "framework",
+        "description": "Cross-platform mobile UI development using React Native, native module bridges, and mobile performance optimization.",
+        "synonyms": ["reactnative", "rn", "react native"],
+    },
+    {
+        "id": "flutter",
+        "name": "Flutter & Dart",
+        "category": "framework",
+        "description": "Cross-platform mobile engineering using Google Flutter, Dart language, widget tree rendering, and platform channels.",
+        "synonyms": ["dart", "flutter sdk", "flutter framework"],
+    },
 ]
 
 # Normalized synonym lookup map (alias -> canonical skill_id)
