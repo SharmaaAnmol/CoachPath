@@ -11,8 +11,15 @@ import {
   ResumeConfirmationResponse,
   ResumeDetailResponse,
   ResumeListResponse,
+  ResumeTailorRequest,
   ResumeUploadResponse,
   RetryParsingResponse,
+  TailoredResumeAnalysisResponse,
+  TailoredResumeApprovalRequest,
+  TailoredResumeDiffResponse,
+  TailoredResumeListResponse,
+  TailoredResumeResponse,
+  TailoredResumeUpdateRequest,
 } from '@/types';
 
 export class ResumeClient {
@@ -93,6 +100,87 @@ export class ResumeClient {
     payload: ResumeConfirmationPayload
   ): Promise<ResumeConfirmationResponse> {
     return apiClient.post<ResumeConfirmationResponse>(`/resume/${resumeId}/confirm`, payload);
+  }
+
+  // ─── Phase 10A/10B: Resume Tailoring & Optimization Endpoints ───────
+
+  /**
+   * Generates an evidence-grounded tailored resume draft aligned with the target job posting.
+   * Method: POST /api/v1/resume/{resume_id}/tailor
+   */
+  public async tailorResume(
+    resumeId: string,
+    request: ResumeTailorRequest
+  ): Promise<TailoredResumeResponse> {
+    return apiClient.post<TailoredResumeResponse>(`/resume/${resumeId}/tailor`, request);
+  }
+
+  /**
+   * Returns all tailored resume versions belonging to the authenticated candidate.
+   * Method: GET /api/v1/resume/versions
+   */
+  public async listTailoredVersions(params?: {
+    resume_id?: string;
+    job_id?: string;
+    status?: string;
+    page?: number;
+    page_size?: number;
+  }): Promise<TailoredResumeListResponse> {
+    return apiClient.get<TailoredResumeListResponse>('/resume/versions', { params });
+  }
+
+  /**
+   * Retrieves a specific tailored resume draft or approved version by UUID.
+   * Method: GET /api/v1/resume/versions/{version_id}
+   */
+  public async getTailoredVersion(versionId: string): Promise<TailoredResumeResponse> {
+    return apiClient.get<TailoredResumeResponse>(`/resume/versions/${versionId}`);
+  }
+
+  /**
+   * Updates user-modified content or notes on a tailored version (draft status only).
+   * Method: PUT /api/v1/resume/versions/{version_id}
+   */
+  public async updateTailoredVersion(
+    versionId: string,
+    request: TailoredResumeUpdateRequest
+  ): Promise<TailoredResumeResponse> {
+    return apiClient.put<TailoredResumeResponse>(`/resume/versions/${versionId}`, request);
+  }
+
+  /**
+   * Explicit human approval gate: certifies the tailored draft as candidate-approved.
+   * Method: POST /api/v1/resume/versions/{version_id}/approve
+   */
+  public async approveTailoredVersion(
+    versionId: string,
+    request: TailoredResumeApprovalRequest
+  ): Promise<TailoredResumeResponse> {
+    return apiClient.post<TailoredResumeResponse>(`/resume/versions/${versionId}/approve`, request);
+  }
+
+  /**
+   * Retrieves structured before-and-after change list for visual review.
+   * Method: GET /api/v1/resume/versions/{version_id}/diff
+   */
+  public async getTailoredDiff(versionId: string): Promise<TailoredResumeDiffResponse> {
+    return apiClient.get<TailoredResumeDiffResponse>(`/resume/versions/${versionId}/diff`);
+  }
+
+  /**
+   * Retrieves quantitative optimization analysis, keyword coverage, and evidence gaps.
+   * Method: GET /api/v1/resume/versions/{version_id}/analysis
+   */
+  public async getTailoredAnalysis(versionId: string): Promise<TailoredResumeAnalysisResponse> {
+    return apiClient.get<TailoredResumeAnalysisResponse>(`/resume/versions/${versionId}/analysis`);
+  }
+
+  /**
+   * Permanently deletes a tailored resume version under strict ownership check.
+   * Method: DELETE /api/v1/resume/versions/{version_id}
+   */
+  public async deleteTailoredVersion(versionId: string): Promise<void> {
+    return apiClient.delete<void>(`/resume/versions/${versionId}`);
   }
 }
 

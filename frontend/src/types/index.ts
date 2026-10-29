@@ -1110,6 +1110,127 @@ export interface ResumeConfirmationResponse {
 }
 
 // ===========================================================================
+// Phase 10A/10B: Tailored Resume & Optimization Types
+// ===========================================================================
+
+export type TailoredResumeStatus = 'draft' | 'approved' | 'archived';
+export type TailoredChangeType = 'addition' | 'rephrasing' | 'emphasis' | 'reordering' | 'omission';
+
+export interface StructuredChangeItem {
+  id: string;
+  section: string;
+  change_type: TailoredChangeType;
+  original_text?: string | null;
+  proposed_text: string;
+  rationale: string;
+  target_job_requirement?: string | null;
+  supporting_evidence?: string | null;
+  needs_clarification: boolean;
+}
+
+export interface OptimizationAnalysis {
+  keyword_coverage: number;
+  matched_keywords: string[];
+  missing_keywords: string[];
+  supported_skills: string[];
+  missing_requirements: string[];
+  readability_score?: number | null;
+  formatting_recommendations: string[];
+  actionable_suggestions: string[];
+}
+
+export interface DiffSummarySchema {
+  changes: StructuredChangeItem[];
+  additions_count: number;
+  rephrasings_count: number;
+  deletions_count: number;
+  optimization_analysis?: OptimizationAnalysis | null;
+  unsupported_claims: string[];
+  model_metadata: Record<string, any>;
+  candidate_notes?: string | null;
+  accepted_sections: string[];
+}
+
+export interface ResumeTailorRequest {
+  job_id?: string | null;
+  job_description_text?: string | null;
+  job_title?: string | null;
+  company_name?: string | null;
+  target_emphasis?: string[];
+  user_notes?: string | null;
+}
+
+export interface TailoredResumeResponse {
+  id: string;
+  resume_id: string;
+  target_job_id: string;
+  version_number: number;
+  status: TailoredResumeStatus;
+  anti_hallucination_verified: boolean;
+  tailored_content: ParsedResumePreview;
+  diff_summary: DiffSummarySchema;
+  approved_at?: string | null;
+  created_at: string;
+  updated_at: string;
+}
+
+export interface TailoredResumeListItem {
+  id: string;
+  resume_id: string;
+  target_job_id: string;
+  job_title?: string | null;
+  company_name?: string | null;
+  version_number: number;
+  status: TailoredResumeStatus;
+  anti_hallucination_verified: boolean;
+  keyword_coverage?: number | null;
+  changes_count: number;
+  approved_at?: string | null;
+  created_at: string;
+  updated_at: string;
+}
+
+export interface TailoredResumeListResponse {
+  items: TailoredResumeListItem[];
+  total: number;
+  page: number;
+  page_size: number;
+  total_pages: number;
+}
+
+export interface TailoredResumeUpdateRequest {
+  tailored_content?: ParsedResumePreview;
+  user_notes?: string | null;
+}
+
+export interface TailoredResumeApprovalRequest {
+  accepted_sections: string[];
+  user_confirmation: boolean;
+}
+
+export interface TailoredResumeDiffResponse {
+  version_id: string;
+  resume_id: string;
+  target_job_id: string;
+  status: string;
+  changes: StructuredChangeItem[];
+  additions_count: number;
+  rephrasings_count: number;
+  deletions_count: number;
+  unsupported_claims: string[];
+}
+
+export interface TailoredResumeAnalysisResponse {
+  version_id: string;
+  target_job_id: string;
+  job_title?: string | null;
+  company_name?: string | null;
+  optimization_analysis: OptimizationAnalysis;
+  anti_hallucination_verified: boolean;
+  unsupported_claims: string[];
+}
+
+// ===========================================================================
 // Phase 6A/6B: Skill Gap Analysis Engine & Dashboard Types
 // ===========================================================================
 

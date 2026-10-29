@@ -200,7 +200,7 @@ class ResumeVersion(Base, UUIDMixin):
         default=False,
         server_default=sa.text("FALSE"),
         nullable=False,
-        doc="True if zero-hallucination verification checks passed against profile facts",
+        doc="True if server-side grounding verification checks passed against profile facts",
     )
     approved_at: Mapped[Optional[datetime]] = mapped_column(
         DateTime(timezone=True),
