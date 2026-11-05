@@ -20,12 +20,12 @@ GROQ_BASE_URL = "https://api.groq.com/openai/v1"
 
 
 class GroqProviderAdapter(LLMProvider):
-    """Groq async provider adapter (supporting models like llama-3.3-70b-versatile, llama-3.1-8b-instant)."""
+    """Groq async provider adapter (e.g. openai/gpt-oss-120b, openai/gpt-oss-20b)."""
 
     def __init__(
         self,
         api_key: str,
-        model: str = "llama-3.3-70b-versatile",
+        model: str = "openai/gpt-oss-120b",
         timeout: int = 30,
         max_retries: int = 2,
     ) -> None:

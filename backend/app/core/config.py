@@ -106,9 +106,10 @@ class Settings(BaseSettings):
     OPENAI_MODEL: str = "gpt-4o-mini"
     OPENAI_REASONING_MODEL: str = "gpt-4o"
     ANTHROPIC_API_KEY: str = ""
-    ANTHROPIC_MODEL: str = "claude-3-haiku-20240307"
+    ANTHROPIC_MODEL: str = "claude-opus-5-5"
+    ANTHROPIC_EFFORT: str = "low"  # "low" | "medium" | "high" — lower is faster and cheaper
     GROQ_API_KEY: str = ""
-    GROQ_MODEL: str = "llama-3.3-70b-versatile"
+    GROQ_MODEL: str = "openai/gpt-oss-120b"
     AI_REQUEST_TIMEOUT: int = 30
     AI_MAX_RETRIES: int = 2
     ONBOARDING_MAX_TURNS: int = 20

@@ -1,14 +1,14 @@
 """
 Anthropic Claude LLM Provider Adapter for CoachPath.
-Implements the LLMProvider protocol using the AsyncAnthropic client.
+Implements the LLMProvider protocol using the AsyncAnthropic client with
+native structured outputs (validated against the caller's Pydantic schema).
 """
 
 from __future__ import annotations
 
-import json
 import logging
-from typing import Type, TypeVar
-from pydantic import BaseModel, ValidationError
+from typing import Any, Dict, Type, TypeVar
+from pydantic import BaseModel
 
 from app.ai.base import LLMProvider
 from app.core.exceptions import ServiceUnavailableException
@@ -16,19 +16,27 @@ from app.core.exceptions import ServiceUnavailableException
 logger = logging.getLogger(__name__)
 T = TypeVar("T", bound=BaseModel)
 
+# Thinking tokens count against max_tokens on current Claude models, so callers' small
+# budgets (1-2k) would truncate output; this floor leaves room for thinking + the answer.
+_MIN_MAX_TOKENS = 16000
+# Server-side refusal fallback: the API re-runs a declined request on a suitable model.
+_FALLBACK_BETA = "server-side-fallback-2026-07-01"
+
 
 class AnthropicProviderAdapter(LLMProvider):
-    """Anthropic Claude async provider adapter (supporting models like claude-3-haiku, claude-3-5-sonnet)."""
+    """Anthropic Claude async provider adapter."""
 
     def __init__(
         self,
         api_key: str,
-        model: str = "claude-3-haiku-20240307",
+        model: str = "claude-opus-5-5",
         timeout: int = 30,
+        max_retries: int = 2,
+        effort: str = "low",
     ) -> None:
         self._api_key = api_key.strip() if api_key else ""
         self._model = model
-        self._timeout = timeout
+        self._effort = effort
         self._client = None
 
         if self._api_key:
@@ -36,7 +44,8 @@ class AnthropicProviderAdapter(LLMProvider):
                 import anthropic
                 self._client = anthropic.AsyncAnthropic(
                     api_key=self._api_key,
-                    timeout=timeout,
+                    timeout=float(timeout),
+                    max_retries=max_retries,
                 )
             except ImportError:
                 logger.warning("anthropic package not installed. Anthropic adapter unavailable.")
@@ -49,6 +58,33 @@ class AnthropicProviderAdapter(LLMProvider):
     def is_available(self) -> bool:
         return self._client is not None and bool(self._api_key)
 
+    def _require_available(self) -> None:
+        if not self.is_available:
+            raise ServiceUnavailableException(
+                "Anthropic",
+                "Anthropic provider is not configured. Set ANTHROPIC_API_KEY in your .env file.",
+            )
+
+    def _request_kwargs(self, prompt: str, system_prompt: str, max_tokens: int) -> Dict[str, Any]:
+        # temperature is intentionally not sent: current Claude models reject sampling params.
+        return {
+            "model": self._model,
+            "max_tokens": max(max_tokens, _MIN_MAX_TOKENS),
+            "system": system_prompt or "You are a helpful assistant.",
+            "messages": [{"role": "user", "content": prompt}],
+            "output_config": {"effort": self._effort},
+            "betas": [_FALLBACK_BETA],
+            "fallbacks": "default",
+        }
+
+    @staticmethod
+    def _check_stop_reason(message: Any) -> None:
+        if message.stop_reason == "refusal":
+            category = getattr(message.stop_details, "category", None) if message.stop_details else None
+            raise ServiceUnavailableException("Anthropic", f"Model declined the request (category: {category}).")
+        if message.stop_reason == "max_tokens":
+            raise ServiceUnavailableException("Anthropic", "Model output was truncated (max_tokens reached).")
+
     async def generate_structured(
         self,
         prompt: str,
@@ -57,47 +93,27 @@ class AnthropicProviderAdapter(LLMProvider):
         temperature: float = 0.3,
         max_tokens: int = 2048,
     ) -> T:
-        if not self.is_available:
-            raise ServiceUnavailableException(
-                "Anthropic",
-                "Anthropic provider is not configured. Set ANTHROPIC_API_KEY in your .env file.",
-            )
-
-        schema_json = json.dumps(schema.model_json_schema())
-        full_system = (
-            f"{system_prompt}\n\nYou must respond exclusively with a valid JSON object matching this schema:\n{schema_json}"
-            if system_prompt
-            else f"You are a helpful assistant. Respond exclusively with a valid JSON object matching this schema:\n{schema_json}"
-        )
+        self._require_available()
+        import anthropic
 
         try:
-            message = await self._client.messages.create(
-                model=self._model,
-                max_tokens=max_tokens,
-                temperature=temperature,
-                system=full_system,
-                messages=[{"role": "user", "content": prompt}],
+            message = await self._client.beta.messages.parse(
+                **self._request_kwargs(prompt, system_prompt, max_tokens),
+                output_format=schema,
             )
-            raw_text = message.content[0].text
-            # Extract JSON block if wrapped in markdown
-            start = raw_text.find("{")
-            end = raw_text.rfind("}") + 1
-            if start >= 0 and end > start:
-                raw_json = raw_text[start:end]
-            else:
-                raw_json = raw_text
-
-            parsed = json.loads(raw_json)
-            return schema.model_validate(parsed)
-        except (json.JSONDecodeError, ValidationError) as parse_err:
-            logger.error("Anthropic response failed schema validation: %s", parse_err)
-            raise ServiceUnavailableException(
-                "Anthropic",
-                f"Model generated output that does not match expected schema: {parse_err}",
-            ) from parse_err
-        except Exception as exc:
+        except anthropic.APIError as exc:
             logger.error("Anthropic generation error: %s", exc)
             raise ServiceUnavailableException("Anthropic", f"Inference failure: {exc}") from exc
+        except Exception as exc:  # SDK raises on output that fails client-side schema validation
+            logger.error("Anthropic response failed schema validation: %s", exc)
+            raise ServiceUnavailableException(
+                "Anthropic", f"Model generated output that does not match expected schema: {exc}"
+            ) from exc
+
+        self._check_stop_reason(message)
+        if message.parsed_output is None:
+            raise ServiceUnavailableException("Anthropic", "Model returned no structured output.")
+        return message.parsed_output
 
     async def generate_text(
         self,
@@ -106,21 +122,16 @@ class AnthropicProviderAdapter(LLMProvider):
         temperature: float = 0.5,
         max_tokens: int = 1024,
     ) -> str:
-        if not self.is_available:
-            raise ServiceUnavailableException(
-                "Anthropic",
-                "Anthropic provider is not configured. Set ANTHROPIC_API_KEY in your .env file.",
-            )
+        self._require_available()
+        import anthropic
 
         try:
-            message = await self._client.messages.create(
-                model=self._model,
-                max_tokens=max_tokens,
-                temperature=temperature,
-                system=system_prompt or "You are a helpful assistant.",
-                messages=[{"role": "user", "content": prompt}],
+            message = await self._client.beta.messages.create(
+                **self._request_kwargs(prompt, system_prompt, max_tokens),
             )
-            return message.content[0].text
-        except Exception as exc:
+        except anthropic.APIError as exc:
             logger.error("Anthropic text generation error: %s", exc)
             raise ServiceUnavailableException("Anthropic", f"Inference failure: {exc}") from exc
+
+        self._check_stop_reason(message)
+        return "".join(b.text for b in message.content if b.type == "text")
