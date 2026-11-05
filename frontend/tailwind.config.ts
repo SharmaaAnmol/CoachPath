@@ -72,6 +72,35 @@ const config: Config = {
           800: '#9F1239',
           900: '#881337',
         },
+        // Redesign (Look D): black ground, lavender-violet lead, lime = done/verified, crimson = removed/next step
+        ink: {
+          DEFAULT: '#000000',
+          900: '#0A0910',
+          800: '#100E18',
+          700: '#17141F',
+          line: 'rgba(255,255,255,0.08)',
+          'line-2': 'rgba(255,255,255,0.14)',
+          fg: '#F5F3FA',
+          muted: '#A9A3BC',
+          dim: '#8E88A3',
+        },
+        lav: {
+          DEFAULT: '#C4B5FD',
+          light: '#DDD3FF',
+          ink: '#140A26',
+          violet: '#7C3AED',
+          deep: '#5B21B6',
+        },
+        lime: {
+          DEFAULT: '#C6F432',
+          ink: '#141A02',
+          soft: '#E4FB9E',
+        },
+        crimson: {
+          DEFAULT: '#E11D48',
+          soft: '#FB7190',
+          tint: '#FDA4B8',
+        },
         brand: {
           50: '#EEF2FF',
           100: '#E0E7FF',
@@ -85,13 +114,18 @@ const config: Config = {
           900: '#312E81',
         },
       },
+      transitionTimingFunction: {
+        'out-expo': 'cubic-bezier(0.16, 1, 0.3, 1)',
+      },
       borderRadius: {
+        glass: '1.75rem',
         lg: 'var(--radius)',
         md: 'calc(var(--radius) - 2px)',
         sm: 'calc(var(--radius) - 4px)',
       },
       fontFamily: {
-        sans: ['Inter', 'system-ui', '-apple-system', 'BlinkMacSystemFont', 'Segoe UI', 'Roboto', 'sans-serif'],
+        sans: ['"Funnel Sans"', 'system-ui', '-apple-system', 'BlinkMacSystemFont', 'Segoe UI', 'Roboto', 'sans-serif'],
+        display: ['"Funnel Display"', '"Funnel Sans"', 'system-ui', 'sans-serif'],
         mono: ['JetBrains Mono', 'Fira Code', 'monospace'],
       },
       boxShadow: {
@@ -102,15 +136,27 @@ const config: Config = {
         'glow': '0 0 25px -5px rgba(99, 102, 241, 0.25)',
         'glow-purple': '0 0 25px -5px rgba(139, 92, 246, 0.25)',
         'glow-emerald': '0 0 25px -5px rgba(16, 185, 129, 0.2)',
+        'glass': 'inset 0 1px 0 rgba(255,255,255,0.16), inset 0 -1px 0 rgba(255,255,255,0.03), 0 24px 60px -24px rgba(0,0,0,0.9)',
+        'lift': 'inset 0 1px 0 rgba(255,255,255,0.7), 0 10px 24px -12px rgba(0,0,0,0.9)',
       },
       animation: {
         'shimmer': 'shimmer 2.5s linear infinite',
         'pulse-subtle': 'pulseSubtle 3s ease-in-out infinite',
+        'think-dot': 'thinkDot 1.2s ease-in-out infinite',
+        'think-line': 'thinkLine 1.6s cubic-bezier(0.16, 1, 0.3, 1) infinite',
       },
       keyframes: {
         shimmer: {
           '0%': { backgroundPosition: '-200% 0' },
           '100%': { backgroundPosition: '200% 0' },
+        },
+        thinkDot: {
+          '0%, 80%, 100%': { opacity: '0.3', transform: 'translateY(0)' },
+          '40%': { opacity: '1', transform: 'translateY(-3px)' },
+        },
+        thinkLine: {
+          '0%': { transform: 'translateX(-100%)' },
+          '100%': { transform: 'translateX(250%)' },
         },
         pulseSubtle: {
           '0%, 100%': { opacity: '1' },

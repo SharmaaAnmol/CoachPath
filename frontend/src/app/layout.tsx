@@ -23,6 +23,15 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en" className="h-full">
+      <head>
+        {/* Funnel fonts are not in next/font's list for Next 14.2, so they load from Google Fonts. */}
+        <link rel="preconnect" href="https://fonts.googleapis.com" />
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
+        <link
+          rel="stylesheet"
+          href="https://fonts.googleapis.com/css2?family=Funnel+Display:wght@500;600;700&family=Funnel+Sans:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap"
+        />
+      </head>
       <body className="h-full flex flex-col font-sans text-slate-900 bg-slate-50 antialiased selection:bg-purple-100 selection:text-purple-900">
         <QueryProvider>
           <AuthProvider>{children}</AuthProvider>
