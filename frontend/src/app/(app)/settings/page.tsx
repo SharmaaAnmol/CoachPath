@@ -51,17 +51,17 @@ export default function SettingsPage() {
     <div className="space-y-6 max-w-4xl">
       {/* Header */}
       <div>
-        <h2 className="text-2xl font-bold text-slate-900 dark:text-white">
+        <h1 className="font-display text-3xl font-semibold tracking-[-0.035em] text-slate-900 dark:text-ink-fg [text-wrap:balance] md:text-4xl">
           Settings & Privacy Controls
-        </h2>
-        <p className="text-xs text-slate-500 dark:text-slate-400 mt-1">
+        </h1>
+        <p className="text-xs text-slate-500 dark:text-ink-muted mt-1">
           Manage your account credentials, AI guardrails, notifications, and data ownership rights.
         </p>
       </div>
 
       {/* Account Profile Card */}
       <Card className="p-6 space-y-4">
-        <h3 className="text-base font-bold text-slate-900 dark:text-white">
+        <h3 className="text-base font-bold dark:font-display dark:font-semibold dark:tracking-[-0.02em] text-slate-900 dark:text-white">
           Account Information
         </h3>
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 text-xs">
@@ -80,7 +80,7 @@ export default function SettingsPage() {
         </div>
         <div className="pt-2 flex items-center justify-between">
           {savedSuccess ? (
-            <span className="text-xs text-emerald-600 font-semibold flex items-center gap-1">
+            <span className="text-xs text-emerald-600 font-semibold flex items-center gap-1 dark:text-lime">
               <CheckCircle2 className="w-3.5 h-3.5" /> Details saved successfully!
             </span>
           ) : (
@@ -100,20 +100,20 @@ export default function SettingsPage() {
       {/* Responsible AI & Human Guardrails */}
       <Card className="p-6 space-y-5">
         <div className="flex items-center gap-2">
-          <Shield className="w-5 h-5 text-purple-600" />
-          <h3 className="text-base font-bold text-slate-900 dark:text-white">
+          <Shield className="w-5 h-5 text-purple-600 dark:text-lav" />
+          <h3 className="text-base font-bold dark:font-display dark:font-semibold dark:tracking-[-0.02em] text-slate-900 dark:text-white">
             AI Guardrails & Human-in-the-Loop Policies
           </h3>
         </div>
 
         <div className="space-y-4 text-xs">
           {/* Toggle 1 */}
-          <div className="flex items-center justify-between p-3.5 rounded-xl bg-slate-50 dark:bg-slate-800/60 border border-slate-200/80 dark:border-slate-700/60">
+          <div className="flex items-center justify-between p-3.5 rounded-xl bg-slate-50 dark:bg-white/[0.07] border border-slate-200/80 dark:border-white/15">
             <div className="space-y-0.5 max-w-lg">
               <div className="font-bold text-slate-900 dark:text-white">
                 Enforce Human Copy-Confirmation on Recruiter Messages
               </div>
-              <p className="text-slate-500 dark:text-slate-400">
+              <p className="text-slate-500 dark:text-ink-muted">
                 Requires manual copy-to-clipboard before sending outreach drafts. Completely prevents bot spam.
               </p>
             </div>
@@ -121,31 +121,31 @@ export default function SettingsPage() {
               type="checkbox"
               checked={humanApprovalGate}
               onChange={(e) => setHumanApprovalGate(e.target.checked)}
-              className="h-5 w-5 rounded border-slate-300 text-brand-600 focus:ring-brand-500 cursor-pointer"
+              className="h-5 w-5 rounded border-slate-300 text-brand-600 focus:ring-brand-500 cursor-pointer dark:text-lav"
             />
           </div>
 
           {/* Toggle 2 */}
-          <div className="flex items-center justify-between p-3.5 rounded-xl bg-slate-50 dark:bg-slate-800/60 border border-slate-200/80 dark:border-slate-700/60">
+          <div className="flex items-center justify-between p-3.5 rounded-xl bg-slate-50 dark:bg-white/[0.07] border border-slate-200/80 dark:border-white/15">
             <div className="space-y-0.5 max-w-lg">
               <div className="flex items-center gap-2 font-bold text-slate-900 dark:text-white">
                 Two-Pass Anti-Hallucination Resume Auditor
                 <Badge variant="verified" size="sm">Mandatory</Badge>
               </div>
-              <p className="text-slate-500 dark:text-slate-400">
+              <p className="text-slate-500 dark:text-ink-muted">
                 Audits all generated resume diffs against verified profile and test evidence. Cannot be disabled.
               </p>
             </div>
-            <span className="font-mono text-emerald-600 font-bold text-xs">Locked ON</span>
+            <span className="font-mono text-emerald-600 font-bold text-xs dark:text-lime">Locked ON</span>
           </div>
 
           {/* Toggle 3 */}
-          <div className="flex items-center justify-between p-3.5 rounded-xl bg-slate-50 dark:bg-slate-800/60 border border-slate-200/80 dark:border-slate-700/60">
+          <div className="flex items-center justify-between p-3.5 rounded-xl bg-slate-50 dark:bg-white/[0.07] border border-slate-200/80 dark:border-white/15">
             <div className="space-y-0.5 max-w-lg">
               <div className="font-bold text-slate-900 dark:text-white">
                 Interview Prep & Milestone Email Alerts
               </div>
-              <p className="text-slate-500 dark:text-slate-400">
+              <p className="text-slate-500 dark:text-ink-muted">
                 Receive notifications 24 hours prior to scheduled interview rounds.
               </p>
             </div>
@@ -153,7 +153,7 @@ export default function SettingsPage() {
               type="checkbox"
               checked={emailAlerts}
               onChange={(e) => setEmailAlerts(e.target.checked)}
-              className="h-5 w-5 rounded border-slate-300 text-brand-600 focus:ring-brand-500 cursor-pointer"
+              className="h-5 w-5 rounded border-slate-300 text-brand-600 focus:ring-brand-500 cursor-pointer dark:text-lav"
             />
           </div>
         </div>
@@ -163,8 +163,8 @@ export default function SettingsPage() {
       <Card className="p-6 space-y-4">
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
           <div className="flex items-center gap-2">
-            <Download className="w-5 h-5 text-indigo-600" />
-            <h3 className="text-base font-bold text-slate-900 dark:text-white">
+            <Download className="w-5 h-5 text-indigo-600 dark:text-lav" />
+            <h3 className="text-base font-bold dark:font-display dark:font-semibold dark:tracking-[-0.02em] text-slate-900 dark:text-white">
               Data Portability & Export
             </h3>
           </div>
@@ -172,13 +172,13 @@ export default function SettingsPage() {
             Scheduled for Phase 16
           </Badge>
         </div>
-        <p className="text-xs text-slate-500 dark:text-slate-400 leading-relaxed">
+        <p className="text-xs text-slate-500 dark:text-ink-muted leading-relaxed">
           Self-service structured data export is currently in development. Once implemented in Phase 16, candidates will be able to download a verified JSON archive of their career profile, diagnostic test records, roadmap logs, and resume versions.
         </p>
 
-        <div className="p-3.5 rounded-xl bg-slate-50 dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700 text-xs text-slate-600 dark:text-slate-400 leading-relaxed">
+        <div className="p-3.5 rounded-xl bg-slate-50 dark:bg-white/[0.07] border border-slate-200 dark:border-white/15 text-xs text-slate-600 dark:text-ink-muted leading-relaxed">
           <p>
-            <strong className="text-slate-800 dark:text-slate-200">Current Status:</strong> Automated export endpoints are not yet connected in this preview release. If you need a full export of your personal profile data before Phase 16 activation, please submit a request to the platform administrator.
+            <strong className="text-slate-800 dark:text-ink-fg">Current Status:</strong> Automated export endpoints are not yet connected in this preview release. If you need a full export of your personal profile data before Phase 16 activation, please submit a request to the platform administrator.
           </p>
         </div>
 
@@ -205,9 +205,9 @@ export default function SettingsPage() {
       </Card>
 
       {/* Danger Zone: Account Deletion */}
-      <Card className="p-6 border-slate-200 dark:border-slate-800 bg-slate-50/40 dark:bg-slate-900/20 space-y-4">
+      <Card className="p-6 border-slate-200 dark:border-white/10 bg-slate-50/40 dark:bg-white/[0.04] space-y-4">
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
-          <div className="flex items-center gap-2 text-slate-800 dark:text-slate-200 font-bold">
+          <div className="flex items-center gap-2 text-slate-800 dark:text-ink-fg font-bold">
             <AlertTriangle className="w-5 h-5 text-amber-600" />
             <h3 className="text-base">Danger Zone: Permanent Account Deletion</h3>
           </div>
@@ -215,7 +215,7 @@ export default function SettingsPage() {
             Scheduled for Phase 16
           </Badge>
         </div>
-        <p className="text-xs text-slate-600 dark:text-slate-400 leading-relaxed">
+        <p className="text-xs text-slate-600 dark:text-ink-muted leading-relaxed">
           Self-service account deletion is currently unavailable in this preview release. A safe and irreversible purge requires an orchestrated backend workflow across 37 relational tables, file storage repositories, vector index registries, and active session caches.
         </p>
 
