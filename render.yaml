@@ -32,11 +32,13 @@ services:
       - key: DATABASE_URL
         sync: false
       - key: AI_PROVIDER
-        value: gemini
-      - key: GEMINI_API_KEY
+        value: groq
+      - key: GROQ_API_KEY
         sync: false
-      - key: GEMINI_MODEL
-        value: gemini-3.5-flash-lite
+      - key: GROQ_MODEL
+        value: openai/gpt-oss-120b
+      - key: AI_REQUEST_TIMEOUT
+        value: "60"
       - key: STORAGE_PROVIDER
         value: local
       - key: UPLOAD_DIR

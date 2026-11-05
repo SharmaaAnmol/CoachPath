@@ -76,6 +76,8 @@ def create_llm_provider(provider_override: Optional[str] = None) -> LLMProvider:
             api_key=settings.ANTHROPIC_API_KEY,
             model=settings.ANTHROPIC_MODEL,
             timeout=settings.AI_REQUEST_TIMEOUT,
+            max_retries=settings.AI_MAX_RETRIES,
+            effort=settings.ANTHROPIC_EFFORT,
         )
         if not adapter.is_available:
             logger.info(

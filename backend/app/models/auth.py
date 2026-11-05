@@ -15,7 +15,7 @@ from sqlalchemy.orm import Mapped, mapped_column, relationship
 from app.models.base import Base, Inet, TimestampMixin, UUIDMixin, utc_now
 
 if TYPE_CHECKING:
-    from app.models.applications import Application
+    from app.models.applications import Application, ApplicationPackage, RecruiterOutreachDraft
     from app.models.assessments import AssessmentAttempt
     from app.models.audit import ActivityLog, AuditLog
     from app.models.career import CareerProfile
@@ -122,6 +122,16 @@ class User(Base, UUIDMixin, TimestampMixin):
     )
     applications: Mapped[List[Application]] = relationship(
         "Application",
+        back_populates="user",
+        cascade="all, delete-orphan",
+    )
+    application_packages: Mapped[List[ApplicationPackage]] = relationship(
+        "ApplicationPackage",
+        back_populates="user",
+        cascade="all, delete-orphan",
+    )
+    recruiter_outreach_drafts: Mapped[List[RecruiterOutreachDraft]] = relationship(
+        "RecruiterOutreachDraft",
         back_populates="user",
         cascade="all, delete-orphan",
     )

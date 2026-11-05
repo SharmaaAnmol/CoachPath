@@ -35,7 +35,7 @@ from app.models.base import (
 )
 
 if TYPE_CHECKING:
-    from app.models.applications import Application
+    from app.models.applications import Application, ApplicationPackage, RecruiterOutreachDraft
     from app.models.career import CareerProfile, Role
     from app.models.resume import ResumeVersion
     from app.models.skills import Skill
@@ -402,6 +402,16 @@ class Job(Base, UUIDMixin):
     applications: Mapped[List[Application]] = relationship(
         "Application",
         back_populates="job",
+    )
+    application_packages: Mapped[List[ApplicationPackage]] = relationship(
+        "ApplicationPackage",
+        back_populates="job",
+        cascade="all, delete-orphan",
+    )
+    recruiter_outreach_drafts: Mapped[List[RecruiterOutreachDraft]] = relationship(
+        "RecruiterOutreachDraft",
+        back_populates="job",
+        cascade="all, delete-orphan",
     )
     tailored_resume_versions: Mapped[List[ResumeVersion]] = relationship(
         "ResumeVersion",

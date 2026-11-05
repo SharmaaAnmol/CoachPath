@@ -6,6 +6,7 @@ and complete Alembic metadata discovery.
 
 from app.models.applications import (
     Application,
+    ApplicationPackage,
     ApplicationStatusHistory,
     Interview,
     InterviewPreparation,
@@ -13,6 +14,7 @@ from app.models.applications import (
     Recruiter,
     RecruiterContact,
     RecruiterMessage,
+    RecruiterOutreachDraft,
 )
 from app.models.assessments import (
     Assessment,
@@ -104,10 +106,12 @@ __all__ = [
     "ResumeVersion",
     # Applications Domain
     "Application",
+    "ApplicationPackage",
     "ApplicationStatusHistory",
     "Recruiter",
     "RecruiterContact",
     "RecruiterMessage",
+    "RecruiterOutreachDraft",
     "Interview",
     "InterviewQuestion",
     "InterviewPreparation",

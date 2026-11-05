@@ -24,7 +24,7 @@ from sqlalchemy.orm import Mapped, mapped_column, relationship
 from app.models.base import Base, JsonB, UUIDMixin, utc_now
 
 if TYPE_CHECKING:
-    from app.models.applications import Application
+    from app.models.applications import Application, ApplicationPackage
     from app.models.auth import User
     from app.models.jobs import Job
 
@@ -231,5 +231,9 @@ class ResumeVersion(Base, UUIDMixin):
     )
     applications: Mapped[List[Application]] = relationship(
         "Application",
+        back_populates="tailored_resume_version",
+    )
+    application_packages: Mapped[List[ApplicationPackage]] = relationship(
+        "ApplicationPackage",
         back_populates="tailored_resume_version",
     )
