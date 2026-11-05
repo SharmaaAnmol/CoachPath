@@ -97,7 +97,7 @@ class OpenAIProviderAdapter(LLMProvider):
             ) from parse_err
         except Exception as exc:
             logger.error("OpenAI generation error: %s", exc)
-            raise ServiceUnavailableException("OpenAI", f"Inference failure: {exc}") from exc
+            raise ServiceUnavailableException("OpenAI", "The AI provider request failed. Please try again in a minute.") from exc
 
     async def generate_text(
         self,
@@ -127,4 +127,4 @@ class OpenAIProviderAdapter(LLMProvider):
             return response.choices[0].message.content or ""
         except Exception as exc:
             logger.error("OpenAI text generation error: %s", exc)
-            raise ServiceUnavailableException("OpenAI", f"Inference failure: {exc}") from exc
+            raise ServiceUnavailableException("OpenAI", "The AI provider request failed. Please try again in a minute.") from exc

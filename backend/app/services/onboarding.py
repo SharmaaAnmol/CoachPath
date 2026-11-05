@@ -170,8 +170,12 @@ class OnboardingService:
             collected_facts={},
             areas_covered=[],
         )
-        db.add(new_session)
-        await db.flush()
+        try:
+            async with db.begin_nested():  # savepoint: a lost race undoes only this insert
+                db.add(new_session)
+        except sa.exc.IntegrityError:
+            # A concurrent start request created this user's session first; resume it instead.
+            return await self.start_or_resume(user, db)
 
         # Create turn 1 awaiting user response
         turn_1 = OnboardingTurn(
@@ -367,9 +371,11 @@ class OnboardingService:
 
         current_turn.extracted_facts = turn_extracted
 
-        # Track areas covered
-        if current_turn.question_category not in areas_covered:
-            areas_covered.append(current_turn.question_category)
+        # Track areas covered: the asked topic plus any topic the user answered in passing
+        answered = [f for f in turn_extracted if f in ONBOARDING_AREAS]
+        for area in [current_turn.question_category, *answered]:
+            if area not in areas_covered:
+                areas_covered.append(area)
 
         # Update session state
         session.collected_facts = accumulated_facts
@@ -667,10 +673,12 @@ class OnboardingService:
                 profile.work_preference = "onsite"
 
         # 2. Map career_stage
+        # Ordered: the AI returns free text like "Recent Graduate, Job Hunting", so the first contained key wins.
         valid_stages = {
-            "student": "student",
             "recent_graduate": "recent_graduate",
             "recent graduate": "recent_graduate",
+            "student": "student",
+            "graduate": "recent_graduate",
             "early_career": "early_career",
             "early career": "early_career",
             "junior": "early_career",
@@ -678,7 +686,7 @@ class OnboardingService:
         }
         if summary.career_stage:
             norm_stage = summary.career_stage.strip().lower()
-            mapped = valid_stages.get(norm_stage)
+            mapped = next((v for k, v in valid_stages.items() if k in norm_stage), None)
             if mapped:
                 profile.career_stage = mapped
 

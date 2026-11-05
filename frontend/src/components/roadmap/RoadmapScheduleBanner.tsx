@@ -70,7 +70,7 @@ export function RoadmapScheduleBanner({ roadmap }: RoadmapScheduleBannerProps) {
 
             <span className="text-xs text-slate-400">&bull;</span>
             <span className="text-xs text-slate-500 dark:text-slate-400 font-medium">
-              Curriculum Engine: {roadmap.generation_mode === 'deterministic_ai' ? 'Deterministic + Gemini Personalization' : 'Deterministic Rule Engine'}
+              Curriculum Engine: {roadmap.generation_mode === 'deterministic_ai' ? 'Deterministic + AI Personalization' : 'Deterministic Rule Engine'}
             </span>
           </div>
 

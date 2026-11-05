@@ -151,6 +151,32 @@ async def test_start_onboarding_resumes_existing_session(client: AsyncClient):
 
 
 @pytest.mark.asyncio
+async def test_start_onboarding_concurrent_duplicate_insert_resumes(client: AsyncClient, monkeypatch):
+    """A start request that loses the create race resumes the winner's session instead of a 500."""
+    from app.services.onboarding import OnboardingService
+
+    token = await register_and_login(client, "start.race@test.com", "Ravi Kumar")
+    headers = {"Authorization": f"Bearer {token}"}
+    res1 = await client.post("/api/v1/onboarding/start", headers=headers)
+    assert res1.status_code == 200
+
+    # Simulate the race: the next lookup misses the session the concurrent request just created.
+    real_lookup = OnboardingService.get_session_for_user
+    calls = {"n": 0}
+
+    async def stale_first_lookup(self, user_id, db):
+        calls["n"] += 1
+        return None if calls["n"] == 1 else await real_lookup(self, user_id, db)
+
+    monkeypatch.setattr(OnboardingService, "get_session_for_user", stale_first_lookup)
+    res2 = await client.post("/api/v1/onboarding/start", headers=headers)
+
+    assert res2.status_code == 200
+    assert res2.json()["session_id"] == res1.json()["session_id"]
+    assert res2.json()["is_resumed"] is True
+
+
+@pytest.mark.asyncio
 async def test_start_onboarding_unauthenticated(client: AsyncClient):
     """Verifies that unauthenticated access is rejected with 401."""
     res = await client.post("/api/v1/onboarding/start")
@@ -257,6 +283,31 @@ async def test_submit_response_extracts_facts_and_advances(
     assert session_db.turn_count == 1
     assert session_db.collected_facts.get("target_role") == "Backend Developer"
     assert "target_role" in session_db.areas_covered
+
+
+@pytest.mark.asyncio
+async def test_facts_answered_in_passing_mark_their_areas_covered(
+    client: AsyncClient,
+    mock_llm_fixture: MockLLMProvider,
+    test_session: AsyncSession,
+):
+    """An answer to the target-role question that also states education covers both areas."""
+    mock_llm_fixture.set_structured_response(
+        make_ai_question_response(category="skills", extracted_field="education", extracted_val="B.Tech CS, 2024")
+    )
+    token = await register_and_login(client, "submit.passing@test.com", "Meera Iyer")
+    start_res = await client.post("/api/v1/onboarding/start", headers={"Authorization": f"Bearer {token}"})
+    session_id = uuid.UUID(start_res.json()["session_id"])
+
+    res = await client.post(
+        "/api/v1/onboarding/respond",
+        headers={"Authorization": f"Bearer {token}"},
+        json={"response_text": "Backend Developer. I finished a B.Tech in CS in 2024."},
+    )
+    assert res.status_code == 200
+
+    session_db = await test_session.scalar(select(OnboardingSession).where(OnboardingSession.id == session_id))
+    assert {"target_role", "education"} <= set(session_db.areas_covered)
 
 
 @pytest.mark.asyncio
@@ -491,6 +542,40 @@ async def test_confirm_summary_with_candidate_edits(
     assert profile is not None
     assert profile.work_preference == "hybrid"
     assert profile.career_stage == "student"
+
+
+@pytest.mark.asyncio
+@pytest.mark.parametrize(
+    "stage_text,expected",
+    [("Recent Graduate, Job Hunting", "recent_graduate"), ("Final-year student", "student"), ("Junior developer", "early_career")],
+)
+async def test_confirm_maps_free_text_career_stage(
+    client: AsyncClient,
+    mock_llm_fixture: MockLLMProvider,
+    test_session: AsyncSession,
+    stage_text: str,
+    expected: str,
+):
+    """The AI's free-text career stage maps onto the canonical stage instead of silently keeping the default."""
+    mock_llm_fixture.set_structured_factory(
+        lambda prompt, schema: (
+            make_ai_summary_response(career_stage=stage_text)
+            if schema.__name__ == "OnboardingSummarySchema"
+            else make_ai_question_response(ready=True)
+        )
+    )
+    email = f"stage.{expected}.{len(stage_text)}@test.com"
+    token = await register_and_login(client, email, "Stage Tester")
+    headers = {"Authorization": f"Bearer {token}"}
+    user_id = uuid.UUID((await client.get("/api/v1/auth/me", headers=headers)).json()["id"])
+
+    await client.post("/api/v1/onboarding/start", headers=headers)
+    await client.post("/api/v1/onboarding/respond", headers=headers, json={"response_text": "Ready to summarize"})
+    res = await client.post("/api/v1/onboarding/confirm", headers=headers, json={"confirmed": True})
+    assert res.status_code == 200
+
+    profile = await test_session.scalar(select(CareerProfile).where(CareerProfile.user_id == user_id))
+    assert profile.career_stage == expected
 
 
 @pytest.mark.asyncio

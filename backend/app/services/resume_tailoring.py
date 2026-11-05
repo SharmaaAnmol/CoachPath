@@ -76,11 +76,20 @@ def _utc_now() -> datetime:
 
 
 def _safe_json(data: Any) -> str:
-    """Serializes objects to JSON safely without crashing on complex types."""
+    """Serializes objects to compact JSON (prompt tokens are budgeted) without crashing on complex types."""
     try:
-        return json.dumps(data, default=str, indent=2, ensure_ascii=False)
+        return json.dumps(data, default=str, separators=(",", ":"), ensure_ascii=False)
     except Exception:
         return "{}"
+
+
+def _without_evidence(data: Any) -> Any:
+    """Drops per-item 'evidence' excerpts: the rewrite doesn't need them and they roughly double prompt size."""
+    if isinstance(data, dict):
+        return {k: _without_evidence(v) for k, v in data.items() if k != "evidence"}
+    if isinstance(data, list):
+        return [_without_evidence(v) for v in data]
+    return data
 
 
 class ResumeTailoringService:
@@ -157,7 +166,7 @@ class ResumeTailoringService:
         ]
 
         prompt = RESUME_TAILORING_PROMPT_TEMPLATE.format(
-            source_resume_json=_safe_json(source_resume_dict),
+            source_resume_json=_safe_json(_without_evidence(source_resume_dict)),
             career_profile_json=_safe_json(profile_evidence_dict),
             job_title=target_job.title,
             company_name=target_job.company_name,
@@ -171,20 +180,20 @@ class ResumeTailoringService:
             user_notes=request.user_notes or "None provided",
         )
 
-        # 6. Invoke Google Gemini structured generation
+        # 6. Invoke structured LLM generation
         try:
             ai_output: AITailoredResumeOutput = await llm.generate_structured(
                 prompt=prompt,
                 schema=AITailoredResumeOutput,
                 system_prompt=RESUME_TAILORING_SYSTEM_PROMPT,
                 temperature=0.2,
-                max_tokens=4096,
+                max_tokens=3072,  # prompt (~4.7k) + output must stay under Groq free tier's 8k tokens/min
             )
         except ServiceUnavailableException:
             raise
         except Exception as exc:
             logger.error("AI tailoring generation failed: %s", exc)
-            raise ServiceUnavailableException("Gemini", f"Resume tailoring generation failed: {exc}") from exc
+            raise ServiceUnavailableException("AI provider", "Resume tailoring generation failed. Please try again.") from exc
 
         # 7. Deterministic Server-Side Anti-Hallucination & Truthfulness Verification
         reconciled_tailored_content, reconciled_diff = self._reconcile_and_verify_truthfulness(
@@ -549,9 +558,9 @@ class ResumeTailoringService:
             name = us.skill.name if us.skill else us.skill_id
             verified_skills.append({
                 "skill": name,
-                "provenance": us.provenance,
-                "verified": us.verified,
-                "level": us.level,
+                "provenance": us.primary_source,
+                "verified": us.is_verified,
+                "level": us.proficiency_tier,
             })
 
         return {
@@ -560,10 +569,9 @@ class ResumeTailoringService:
             "verified_skills": verified_skills,
             "experience": [
                 {
-                    "title": exp.title,
-                    "company": exp.company,
-                    "responsibilities": exp.responsibilities or [],
-                    "achievements": exp.achievements or [],
+                    "title": exp.role_title,
+                    "company": exp.company_name,
+                    "bullet_points": exp.bullet_points or [],
                 }
                 for exp in (profile.experience or [])
             ],
@@ -578,7 +586,7 @@ class ResumeTailoringService:
             "education": [
                 {
                     "degree": edu.degree,
-                    "institution": edu.institution,
+                    "institution": edu.institution_name,
                     "field_of_study": edu.field_of_study,
                 }
                 for edu in (profile.education or [])
@@ -630,8 +638,8 @@ class ResumeTailoringService:
                 genuine_employers.add(exp["employer"].strip().lower())
         if career_profile:
             for exp in career_profile.experience or []:
-                if exp.company:
-                    genuine_employers.add(exp.company.strip().lower())
+                if exp.company_name:
+                    genuine_employers.add(exp.company_name.strip().lower())
 
         # 3. Filter tailored skills: prune any skill that is not evidenced
         filtered_skills = []

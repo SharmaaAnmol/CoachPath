@@ -765,7 +765,8 @@ async def test_confirm_resume_merges_data_into_career_profile(client: AsyncClien
     assert confirm_data["merged_summary"]["projects_added"] == 1
     assert confirm_data["merged_summary"]["certifications_added"] == 1
     assert confirm_data["merged_summary"]["skills_added"] >= 2
-    assert confirm_data["completeness_score"] >= 40.0
+    # all four evidence sections were just merged (60 pts) on top of personal details (20 pts)
+    assert confirm_data["completeness_score"] >= 80.0
 
     # 4. Verify in DB directly
     career_profile = await test_session.scalar(

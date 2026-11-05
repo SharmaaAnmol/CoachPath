@@ -648,6 +648,8 @@ class ResumeParsingService:
                 selectinload(CareerProfile.certifications),
             )
             .where(CareerProfile.id == career_profile.id)
+            # the profile is already in the identity map with stale (empty) collections; force a refresh
+            .execution_options(populate_existing=True)
         )
         loaded_career_profile = await db.scalar(profile_reload_stmt)
         completeness = calculate_profile_completeness(user_profile, loaded_career_profile)

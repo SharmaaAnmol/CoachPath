@@ -358,6 +358,48 @@ async def test_successful_tailored_draft_generation_mock(
         reset_llm_provider()
 
 
+@pytest.mark.asyncio
+async def test_tailoring_succeeds_when_profile_has_user_skills(
+    client: AsyncClient,
+    test_session: AsyncSession,
+):
+    """Regression: profile evidence serializer read non-existent model attributes and 500'd."""
+    from app.services.profile import profile_service
+
+    token, user_id = await register_and_login(client, "tailor.skills@test.com", "Alex Mercer")
+    career_profile = await profile_service.get_or_create_career_profile(test_session, user_id)
+    import datetime
+    from app.models.career import Education, Experience, Project, Certification
+    test_session.add_all([
+        UserSkill(career_profile_id=career_profile.id, skill_id="python", primary_source="extracted"),
+        Experience(career_profile_id=career_profile.id, company_name="Acme", role_title="Intern",
+                   start_date=datetime.date(2024, 1, 1), is_current=True, bullet_points=["Built APIs"]),
+        Education(career_profile_id=career_profile.id, institution_name="IIT", degree="B.Tech",
+                  field_of_study="CS", start_date=datetime.date(2021, 8, 1), is_current=False),
+        Project(career_profile_id=career_profile.id, title="ShopLite", description="E-commerce app",
+                technologies=["Python"], bullet_points=["Stripe payments"]),
+        Certification(career_profile_id=career_profile.id, name="AWS CCP", issuing_organization="AWS",
+                      issue_date=datetime.date(2024, 1, 1)),
+    ])
+    await test_session.commit()
+    test_session.expire_all()  # drop the cached empty user_skills collection so the route reloads it
+    resume = await create_parsed_test_resume(test_session, user_id)
+    job = await create_test_job(test_session)
+
+    mock = MockLLMProvider()
+    mock.set_structured_response(mock_successful_ai_tailoring())
+    override_llm_provider(mock)
+    try:
+        r = await client.post(
+            f"/api/v1/resume/{resume.id}/tailor",
+            headers={"Authorization": f"Bearer {token}"},
+            json={"job_id": str(job.id)},
+        )
+        assert r.status_code == 201, r.text
+    finally:
+        reset_llm_provider()
+
+
 # ─── 2. Real Gemini Integration / Blocked Status ──────────────────────
 
 @pytest.mark.asyncio
