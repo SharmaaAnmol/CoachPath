@@ -53,7 +53,7 @@ export function OnboardingCompletion({
   return (
     <div className="space-y-6 max-w-4xl mx-auto">
       {/* Celebration Header Card */}
-      <Card className="border-emerald-200 dark:border-emerald-900 bg-gradient-to-b from-emerald-50/50 via-white to-white dark:from-emerald-950/20 dark:via-slate-900 dark:to-slate-900 shadow-elevated">
+      <Card className="border-emerald-200 dark:border-lime/30 bg-gradient-to-b from-emerald-50/50 via-white to-white dark:from-lime/10 dark:via-white/[0.04] dark:to-white/[0.04] shadow-elevated">
         <CardContent className="p-8 sm:p-10 flex flex-col items-center text-center space-y-5">
           <div className="h-16 w-16 rounded-3xl bg-gradient-to-tr from-emerald-500 to-teal-400 text-white flex items-center justify-center shadow-lg shadow-emerald-500/20 animate-bounce-subtle">
             <CheckCircle2 className="w-9 h-9" />
@@ -66,7 +66,7 @@ export function OnboardingCompletion({
             <h2 className="text-2xl sm:text-3xl font-extrabold tracking-tight text-slate-900 dark:text-white">
               Your Career Blueprint is Established!
             </h2>
-            <p className="text-sm text-slate-600 dark:text-slate-300 leading-relaxed">
+            <p className="text-sm text-slate-600 dark:text-ink-fg/80 leading-relaxed">
               Your personalized career profile has been calibrated from your discovery interview.
               CoachPath now has the foundational baseline to power your skill assessment benchmarks, roadmap, and job matching.
             </p>
@@ -74,22 +74,22 @@ export function OnboardingCompletion({
 
           {/* Quick Metrics */}
           <div className="grid grid-cols-2 sm:grid-cols-3 gap-3 w-full max-w-lg pt-2">
-            <div className="p-3 rounded-xl bg-slate-50 dark:bg-slate-800/80 border border-slate-200/80 dark:border-slate-700/80 text-left">
-              <span className="text-[11px] text-slate-500 dark:text-slate-400 block">Target Role</span>
+            <div className="p-3 rounded-xl bg-slate-50 dark:bg-white/[0.07] border border-slate-200/80 dark:border-white/15 text-left">
+              <span className="text-[11px] text-slate-500 dark:text-ink-muted block">Target Role</span>
               <span className="text-sm font-bold text-slate-900 dark:text-white truncate block">
                 {targetRole || 'Software Engineer'}
               </span>
             </div>
 
-            <div className="p-3 rounded-xl bg-slate-50 dark:bg-slate-800/80 border border-slate-200/80 dark:border-slate-700/80 text-left">
-              <span className="text-[11px] text-slate-500 dark:text-slate-400 block">Career Stage</span>
+            <div className="p-3 rounded-xl bg-slate-50 dark:bg-white/[0.07] border border-slate-200/80 dark:border-white/15 text-left">
+              <span className="text-[11px] text-slate-500 dark:text-ink-muted block">Career Stage</span>
               <span className="text-sm font-bold text-slate-900 dark:text-white capitalize truncate block">
                 {careerStage?.replace(/_/g, ' ') || 'Calibrated'}
               </span>
             </div>
 
-            <div className="p-3 rounded-xl bg-slate-50 dark:bg-slate-800/80 border border-slate-200/80 dark:border-slate-700/80 text-left col-span-2 sm:col-span-1">
-              <span className="text-[11px] text-slate-500 dark:text-slate-400 block">Completed</span>
+            <div className="p-3 rounded-xl bg-slate-50 dark:bg-white/[0.07] border border-slate-200/80 dark:border-white/15 text-left col-span-2 sm:col-span-1">
+              <span className="text-[11px] text-slate-500 dark:text-ink-muted block">Completed</span>
               <span className="text-sm font-bold text-slate-900 dark:text-white truncate block">
                 {formattedDate}
               </span>
@@ -116,10 +116,10 @@ export function OnboardingCompletion({
       </Card>
 
       {/* Expandable Conversation Transcript */}
-      <Card className="border-slate-200/80 dark:border-slate-800">
+      <Card className="border-slate-200/80 dark:border-white/10">
         <CardHeader className="py-4 px-6 flex flex-row items-center justify-between cursor-pointer select-none" onClick={() => setShowHistory(!showHistory)}>
           <div className="flex items-center gap-2">
-            <MessageSquare className="w-4 h-4 text-purple-600" />
+            <MessageSquare className="w-4 h-4 text-purple-600 dark:text-lav" />
             <CardTitle className="text-sm font-semibold">
               Interview Transcript ({answeredTurns.length} turns)
             </CardTitle>
@@ -130,9 +130,9 @@ export function OnboardingCompletion({
         </CardHeader>
 
         {showHistory && (
-          <CardContent className="p-6 pt-2 space-y-4 border-t border-slate-100 dark:border-slate-800">
+          <CardContent className="p-6 pt-2 space-y-4 border-t border-slate-100 dark:border-white/10">
             {turns.map((turn) => (
-              <div key={turn.turn_id} className="space-y-3 pb-3 border-b border-slate-100 dark:border-slate-800/60 last:border-0 last:pb-0">
+              <div key={turn.turn_id} className="space-y-3 pb-3 border-b border-slate-100 dark:border-white/10 last:border-0 last:pb-0">
                 <ConversationMessage
                   type="ai"
                   content={turn.question}

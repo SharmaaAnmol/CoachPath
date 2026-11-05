@@ -43,7 +43,7 @@ export function RoadmapProgressSummary({
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
         <div className="space-y-1">
           <div className="flex items-center gap-2">
-            <span className="text-xs font-mono font-bold uppercase tracking-wider text-brand-400">
+            <span className="text-xs font-mono font-bold uppercase tracking-wider text-brand-400 dark:text-lav-light">
               Curriculum Execution
             </span>
             <span className="text-slate-500">&bull;</span>
@@ -65,14 +65,14 @@ export function RoadmapProgressSummary({
 
           <div className="border-l border-slate-800 pl-3 space-y-0.5">
             <span className="text-slate-400 block text-[10px] uppercase font-bold tracking-wider">Hours Completed</span>
-            <span className="text-base font-mono font-bold text-emerald-400">
+            <span className="text-base font-mono font-bold text-emerald-400 dark:text-lime-soft">
               {completedHours} <span className="text-xs text-slate-500 font-normal">hrs</span>
             </span>
           </div>
 
           <div className="border-l border-slate-800 pl-3 space-y-0.5">
             <span className="text-slate-400 block text-[10px] uppercase font-bold tracking-wider">Est. Weeks Left</span>
-            <span className="text-base font-mono font-bold text-brand-300">
+            <span className="text-base font-mono font-bold text-brand-300 dark:text-lav-light">
               ~{weeksRemaining} <span className="text-xs text-slate-500 font-normal">wks</span>
             </span>
           </div>
@@ -92,12 +92,12 @@ export function RoadmapProgressSummary({
       {nextTask && (
         <div className="p-3.5 rounded-xl bg-slate-800/80 border border-slate-700/80 flex flex-col sm:flex-row sm:items-center justify-between gap-3 text-xs">
           <div className="flex items-start gap-2.5">
-            <div className="w-7 h-7 rounded-lg bg-brand-500/20 text-brand-400 border border-brand-500/30 flex items-center justify-center shrink-0 mt-0.5">
+            <div className="w-7 h-7 rounded-lg bg-brand-500/20 text-brand-400 border border-brand-500/30 flex items-center justify-center shrink-0 mt-0.5 dark:bg-lav-violet dark:text-lav-light dark:border-lav/50">
               <Target className="w-4 h-4" />
             </div>
             <div className="space-y-0.5">
               <div className="flex items-center gap-2">
-                <span className="text-[10px] font-bold uppercase tracking-wider text-brand-300">
+                <span className="text-[10px] font-bold uppercase tracking-wider text-brand-300 dark:text-lav-light">
                   Next Priority Action
                 </span>
                 <Badge variant="default" size="sm" className="bg-slate-700 text-slate-200 text-[10px]">

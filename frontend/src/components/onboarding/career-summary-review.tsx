@@ -89,11 +89,11 @@ export function CareerSummaryReview({
   const displayData = isEditing ? editedSummary : summary;
 
   return (
-    <Card className="border-purple-200 dark:border-purple-900 shadow-elevated">
-      <CardHeader className="bg-gradient-to-r from-purple-50 via-indigo-50/50 to-transparent dark:from-purple-950/30 dark:via-slate-900 dark:to-transparent border-b border-purple-100 dark:border-slate-800">
+    <Card className="border-purple-200 dark:border-lav/30 shadow-elevated">
+      <CardHeader className="bg-gradient-to-r from-purple-50 via-indigo-50/50 to-transparent dark:from-lav/10 dark:via-white/[0.04] dark:to-transparent border-b border-purple-100 dark:border-white/10">
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
           <div className="space-y-1">
-            <div className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-purple-100 dark:bg-purple-950 text-purple-700 dark:text-purple-300 text-xs font-semibold">
+            <div className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-purple-100 dark:bg-lav/10 text-purple-700 dark:text-lav-light text-xs font-semibold">
               <Sparkles className="w-3.5 h-3.5" />
               <span>AI Synthesized Career Profile</span>
             </div>
@@ -148,9 +148,9 @@ export function CareerSummaryReview({
         )}
 
         {/* 1. Target Role & Career Stage */}
-        <div className="rounded-xl border border-slate-200/90 dark:border-slate-800 p-4 space-y-3">
-          <div className="flex items-center gap-2 text-sm font-semibold text-slate-800 dark:text-slate-200">
-            <Target className="w-4 h-4 text-purple-600" />
+        <div className="rounded-xl border border-slate-200/90 dark:border-white/10 p-4 space-y-3">
+          <div className="flex items-center gap-2 text-sm font-semibold text-slate-800 dark:text-ink-fg">
+            <Target className="w-4 h-4 text-purple-600 dark:text-lav" />
             <span>Target Role & Stage</span>
           </div>
 
@@ -163,13 +163,13 @@ export function CareerSummaryReview({
                 placeholder="e.g. Backend Developer"
               />
               <div className="space-y-1.5">
-                <label className="block text-xs font-semibold uppercase tracking-wider text-slate-700 dark:text-slate-300">
+                <label className="block text-xs font-semibold uppercase tracking-wider text-slate-700 dark:text-ink-fg/80">
                   Career Stage
                 </label>
                 <select
                   value={editedSummary.career_stage || 'early_career'}
                   onChange={(e) => handleTextChange('career_stage', e.target.value)}
-                  className="flex h-10 w-full rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm text-slate-900 focus:border-brand-500 focus:ring-2 focus:ring-brand-500/20 dark:border-slate-700 dark:bg-slate-900 dark:text-slate-100"
+                  className="flex h-10 w-full rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm text-slate-900 focus:border-brand-500 focus:ring-2 focus:ring-brand-500/20 dark:border-white/15 dark:bg-white/[0.04] dark:text-ink-fg dark:focus:border-lav/50"
                 >
                   <option value="student">Student / In College</option>
                   <option value="recent_graduate">Recent Graduate</option>
@@ -181,13 +181,13 @@ export function CareerSummaryReview({
           ) : (
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 text-sm">
               <div>
-                <span className="text-xs text-slate-500 dark:text-slate-400 block">Primary Target Role</span>
+                <span className="text-xs text-slate-500 dark:text-ink-muted block">Primary Target Role</span>
                 <span className="font-semibold text-slate-900 dark:text-white text-base">
                   {displayData.target_role || 'Not specified'}
                 </span>
               </div>
               <div>
-                <span className="text-xs text-slate-500 dark:text-slate-400 block">Career Stage</span>
+                <span className="text-xs text-slate-500 dark:text-ink-muted block">Career Stage</span>
                 <Badge variant="intelligence" size="md" className="capitalize mt-1">
                   {displayData.career_stage?.replace(/_/g, ' ') || 'Early Career'}
                 </Badge>
@@ -197,9 +197,9 @@ export function CareerSummaryReview({
         </div>
 
         {/* 2. Education & Experience */}
-        <div className="rounded-xl border border-slate-200/90 dark:border-slate-800 p-4 space-y-3">
-          <div className="flex items-center gap-2 text-sm font-semibold text-slate-800 dark:text-slate-200">
-            <GraduationCap className="w-4 h-4 text-purple-600" />
+        <div className="rounded-xl border border-slate-200/90 dark:border-white/10 p-4 space-y-3">
+          <div className="flex items-center gap-2 text-sm font-semibold text-slate-800 dark:text-ink-fg">
+            <GraduationCap className="w-4 h-4 text-purple-600 dark:text-lav" />
             <span>Education & Background</span>
           </div>
 
@@ -229,8 +229,8 @@ export function CareerSummaryReview({
           ) : (
             <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 text-sm">
               <div>
-                <span className="text-xs text-slate-500 dark:text-slate-400 block">Education</span>
-                <span className="font-medium text-slate-800 dark:text-slate-200">
+                <span className="text-xs text-slate-500 dark:text-ink-muted block">Education</span>
+                <span className="font-medium text-slate-800 dark:text-ink-fg">
                   {displayData.current_education || 'Not specified'}
                   {displayData.education_field &&
                   !(displayData.current_education || '').toLowerCase().includes(displayData.education_field.toLowerCase())
@@ -239,16 +239,16 @@ export function CareerSummaryReview({
                 </span>
               </div>
               <div>
-                <span className="text-xs text-slate-500 dark:text-slate-400 block">Experience Level</span>
-                <span className="font-medium text-slate-800 dark:text-slate-200">
+                <span className="text-xs text-slate-500 dark:text-ink-muted block">Experience Level</span>
+                <span className="font-medium text-slate-800 dark:text-ink-fg">
                   {displayData.years_of_experience !== null && displayData.years_of_experience !== undefined
                     ? `${displayData.years_of_experience} year${displayData.years_of_experience === 1 ? '' : 's'}`
                     : 'Entry / No prior work experience'}
                 </span>
               </div>
               <div>
-                <span className="text-xs text-slate-500 dark:text-slate-400 block">Recent Role</span>
-                <span className="font-medium text-slate-800 dark:text-slate-200">
+                <span className="text-xs text-slate-500 dark:text-ink-muted block">Recent Role</span>
+                <span className="font-medium text-slate-800 dark:text-ink-fg">
                   {displayData.current_or_recent_role || 'None listed'}
                   {displayData.current_company ? ` at ${displayData.current_company}` : ''}
                 </span>
@@ -258,9 +258,9 @@ export function CareerSummaryReview({
         </div>
 
         {/* 3. Skills & Technologies */}
-        <div className="rounded-xl border border-slate-200/90 dark:border-slate-800 p-4 space-y-3">
-          <div className="flex items-center gap-2 text-sm font-semibold text-slate-800 dark:text-slate-200">
-            <Code className="w-4 h-4 text-purple-600" />
+        <div className="rounded-xl border border-slate-200/90 dark:border-white/10 p-4 space-y-3">
+          <div className="flex items-center gap-2 text-sm font-semibold text-slate-800 dark:text-ink-fg">
+            <Code className="w-4 h-4 text-purple-600 dark:text-lav" />
             <span>Technical Skills & Tools</span>
           </div>
 
@@ -282,7 +282,7 @@ export function CareerSummaryReview({
           ) : (
             <div className="space-y-3">
               <div>
-                <span className="text-xs text-slate-500 dark:text-slate-400 block mb-1.5">Confirmed Skills</span>
+                <span className="text-xs text-slate-500 dark:text-ink-muted block mb-1.5">Confirmed Skills</span>
                 <div className="flex flex-wrap gap-1.5">
                   {displayData.skills && displayData.skills.length > 0 ? (
                     displayData.skills.map((skill) => (
@@ -297,7 +297,7 @@ export function CareerSummaryReview({
               </div>
 
               <div>
-                <span className="text-xs text-slate-500 dark:text-slate-400 block mb-1.5">Technologies & Tools</span>
+                <span className="text-xs text-slate-500 dark:text-ink-muted block mb-1.5">Technologies & Tools</span>
                 <div className="flex flex-wrap gap-1.5">
                   {displayData.technologies && displayData.technologies.length > 0 ? (
                     displayData.technologies.map((tech) => (
@@ -315,9 +315,9 @@ export function CareerSummaryReview({
         </div>
 
         {/* 4. Projects & Learning Commitment */}
-        <div className="rounded-xl border border-slate-200/90 dark:border-slate-800 p-4 space-y-3">
-          <div className="flex items-center gap-2 text-sm font-semibold text-slate-800 dark:text-slate-200">
-            <Clock className="w-4 h-4 text-purple-600" />
+        <div className="rounded-xl border border-slate-200/90 dark:border-white/10 p-4 space-y-3">
+          <div className="flex items-center gap-2 text-sm font-semibold text-slate-800 dark:text-ink-fg">
+            <Clock className="w-4 h-4 text-purple-600 dark:text-lav" />
             <span>Projects & Learning Commitment</span>
           </div>
 
@@ -347,20 +347,20 @@ export function CareerSummaryReview({
           ) : (
             <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 text-sm">
               <div>
-                <span className="text-xs text-slate-500 dark:text-slate-400 block">Weekly Commitment</span>
-                <span className="font-medium text-slate-800 dark:text-slate-200">
+                <span className="text-xs text-slate-500 dark:text-ink-muted block">Weekly Commitment</span>
+                <span className="font-medium text-slate-800 dark:text-ink-fg">
                   {displayData.learning_hours_per_week ? `${displayData.learning_hours_per_week} hrs/week` : 'Flexible'}
                 </span>
               </div>
               <div>
-                <span className="text-xs text-slate-500 dark:text-slate-400 block">Target Timeline</span>
-                <span className="font-medium text-slate-800 dark:text-slate-200">
+                <span className="text-xs text-slate-500 dark:text-ink-muted block">Target Timeline</span>
+                <span className="font-medium text-slate-800 dark:text-ink-fg">
                   {displayData.target_timeline_months ? `${displayData.target_timeline_months} months` : 'Open'}
                 </span>
               </div>
               <div>
-                <span className="text-xs text-slate-500 dark:text-slate-400 block">Notable Projects</span>
-                <span className="font-medium text-slate-800 dark:text-slate-200">
+                <span className="text-xs text-slate-500 dark:text-ink-muted block">Notable Projects</span>
+                <span className="font-medium text-slate-800 dark:text-ink-fg">
                   {displayData.notable_projects && displayData.notable_projects.length > 0
                     ? displayData.notable_projects.join(', ')
                     : 'None mentioned'}
@@ -371,9 +371,9 @@ export function CareerSummaryReview({
         </div>
 
         {/* 5. Preferences & Career Goals */}
-        <div className="rounded-xl border border-slate-200/90 dark:border-slate-800 p-4 space-y-3">
-          <div className="flex items-center gap-2 text-sm font-semibold text-slate-800 dark:text-slate-200">
-            <MapPin className="w-4 h-4 text-purple-600" />
+        <div className="rounded-xl border border-slate-200/90 dark:border-white/10 p-4 space-y-3">
+          <div className="flex items-center gap-2 text-sm font-semibold text-slate-800 dark:text-ink-fg">
+            <MapPin className="w-4 h-4 text-purple-600 dark:text-lav" />
             <span>Preferences & Career Goals</span>
           </div>
 
@@ -381,13 +381,13 @@ export function CareerSummaryReview({
             <div className="space-y-4">
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div className="space-y-1.5">
-                  <label className="block text-xs font-semibold uppercase tracking-wider text-slate-700 dark:text-slate-300">
+                  <label className="block text-xs font-semibold uppercase tracking-wider text-slate-700 dark:text-ink-fg/80">
                     Work Preference
                   </label>
                   <select
                     value={editedSummary.work_preference || 'remote'}
                     onChange={(e) => handleTextChange('work_preference', e.target.value)}
-                    className="flex h-10 w-full rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm text-slate-900 focus:border-brand-500 focus:ring-2 focus:ring-brand-500/20 dark:border-slate-700 dark:bg-slate-900 dark:text-slate-100"
+                    className="flex h-10 w-full rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm text-slate-900 focus:border-brand-500 focus:ring-2 focus:ring-brand-500/20 dark:border-white/15 dark:bg-white/[0.04] dark:text-ink-fg dark:focus:border-lav/50"
                   >
                     <option value="remote">Remote</option>
                     <option value="hybrid">Hybrid</option>
@@ -414,14 +414,14 @@ export function CareerSummaryReview({
             <div className="space-y-2 text-sm">
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div>
-                  <span className="text-xs text-slate-500 dark:text-slate-400 block">Work Mode</span>
-                  <span className="font-medium capitalize text-slate-800 dark:text-slate-200">
+                  <span className="text-xs text-slate-500 dark:text-ink-muted block">Work Mode</span>
+                  <span className="font-medium capitalize text-slate-800 dark:text-ink-fg">
                     {displayData.work_preference || 'Flexible'}
                   </span>
                 </div>
                 <div>
-                  <span className="text-xs text-slate-500 dark:text-slate-400 block">Target Locations</span>
-                  <span className="font-medium text-slate-800 dark:text-slate-200">
+                  <span className="text-xs text-slate-500 dark:text-ink-muted block">Target Locations</span>
+                  <span className="font-medium text-slate-800 dark:text-ink-fg">
                     {displayData.target_locations && displayData.target_locations.length > 0
                       ? displayData.target_locations.join(', ')
                       : 'Any location'}
@@ -430,8 +430,8 @@ export function CareerSummaryReview({
               </div>
               {displayData.career_goals && (
                 <div className="pt-2">
-                  <span className="text-xs text-slate-500 dark:text-slate-400 block">Career Goal Statement</span>
-                  <p className="text-slate-700 dark:text-slate-300 italic text-xs leading-relaxed mt-0.5">
+                  <span className="text-xs text-slate-500 dark:text-ink-muted block">Career Goal Statement</span>
+                  <p className="text-slate-700 dark:text-ink-fg/80 italic text-xs leading-relaxed mt-0.5">
                     &ldquo;{displayData.career_goals}&rdquo;
                   </p>
                 </div>
@@ -441,9 +441,9 @@ export function CareerSummaryReview({
         </div>
       </CardContent>
 
-      <CardFooter className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-slate-50/80 dark:bg-slate-900/60 p-5 rounded-b-xl border-t border-slate-100 dark:border-slate-800">
-        <div className="text-xs text-slate-500 dark:text-slate-400 flex items-center gap-1.5">
-          <CheckCircle2 className="w-4 h-4 text-emerald-500 shrink-0" />
+      <CardFooter className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-slate-50/80 dark:bg-white/[0.04] p-5 rounded-b-xl border-t border-slate-100 dark:border-white/10">
+        <div className="text-xs text-slate-500 dark:text-ink-muted flex items-center gap-1.5">
+          <CheckCircle2 className="w-4 h-4 text-emerald-500 shrink-0 dark:text-lime" />
           <span>
             {isEditing
               ? 'Your custom edits will be applied directly to your Career Profile.'

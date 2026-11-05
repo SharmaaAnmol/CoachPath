@@ -76,7 +76,7 @@ export function ConversationMessage({
       >
         {/* Metadata Header */}
         <div className="flex items-center gap-2 mb-1 px-1">
-          <span className="text-xs font-semibold text-slate-800 dark:text-slate-200">
+          <span className="text-xs font-semibold text-slate-800 dark:text-ink-fg">
             {isAI ? 'CoachPath AI' : 'You'}
           </span>
 
@@ -104,8 +104,8 @@ export function ConversationMessage({
           className={cn(
             'rounded-2xl px-4 py-3 text-sm leading-relaxed whitespace-pre-wrap transition-all shadow-sm',
             isAI
-              ? 'bg-white dark:bg-slate-900 border border-slate-200/90 dark:border-slate-800 text-slate-900 dark:text-slate-100 rounded-tl-sm'
-              : 'bg-brand-600 text-white dark:bg-brand-600 rounded-tr-sm'
+              ? 'bg-white dark:bg-white/[0.04] border border-slate-200/90 dark:border-white/10 text-slate-900 dark:text-ink-fg rounded-tl-sm'
+              : 'bg-brand-600 text-white dark:bg-lav-violet rounded-tr-sm'
           )}
         >
           {content}
@@ -114,7 +114,7 @@ export function ConversationMessage({
 
       {/* User Avatar */}
       {!isAI && (
-        <div className="h-8 w-8 sm:h-9 sm:w-9 rounded-xl bg-slate-800 dark:bg-slate-700 text-slate-200 flex items-center justify-center shrink-0 shadow-sm mt-0.5">
+        <div className="h-8 w-8 sm:h-9 sm:w-9 rounded-xl bg-slate-800 dark:bg-white/10 text-slate-200 flex items-center justify-center shrink-0 shadow-sm mt-0.5">
           <User className="w-4 h-4" />
         </div>
       )}
@@ -133,7 +133,7 @@ export function AIMessageThinking({ category }: { category?: string | null }) {
 
       <div className="flex flex-col items-start max-w-[80%]">
         <div className="flex items-center gap-2 mb-1 px-1">
-          <span className="text-xs font-semibold text-slate-800 dark:text-slate-200">
+          <span className="text-xs font-semibold text-slate-800 dark:text-ink-fg">
             CoachPath AI
           </span>
           {categoryLabel && (
@@ -143,8 +143,8 @@ export function AIMessageThinking({ category }: { category?: string | null }) {
           )}
         </div>
 
-        <div className="rounded-2xl rounded-tl-sm px-4 py-3 bg-white dark:bg-slate-900 border border-slate-200/90 dark:border-slate-800 shadow-sm flex items-center gap-2 text-xs text-slate-500 dark:text-slate-400">
-          <Loader2 className="w-3.5 h-3.5 animate-spin text-purple-600" />
+        <div className="rounded-2xl rounded-tl-sm px-4 py-3 bg-white dark:bg-white/[0.04] border border-slate-200/90 dark:border-white/10 shadow-sm flex items-center gap-2 text-xs text-slate-500 dark:text-ink-muted">
+          <Loader2 className="w-3.5 h-3.5 animate-spin text-purple-600 dark:text-lav" />
           <span>Analyzing response & determining next question...</span>
         </div>
       </div>

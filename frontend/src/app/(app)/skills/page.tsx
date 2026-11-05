@@ -166,14 +166,14 @@ export default function SkillsPage() {
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
           <div className="flex items-center gap-2">
-            <span className="p-2 rounded-xl bg-indigo-50 dark:bg-indigo-950 text-indigo-600 dark:text-indigo-400">
+            <span className="p-2 rounded-xl bg-indigo-50 dark:bg-lav/10 text-indigo-600 dark:text-lav">
               <Cpu className="w-5 h-5" />
             </span>
-            <h1 className="text-2xl font-bold text-slate-900 dark:text-white tracking-tight">
+            <h1 className="font-display text-3xl font-semibold tracking-[-0.035em] text-slate-900 dark:text-ink-fg [text-wrap:balance] md:text-4xl">
               Skill Gap Analysis Engine
             </h1>
           </div>
-          <p className="text-xs text-slate-500 dark:text-slate-400 mt-1">
+          <p className="text-xs text-slate-500 dark:text-ink-muted mt-1">
             Grounded benchmark comparison comparing your verified assessments, projects, and career evidence against role requirements.
           </p>
         </div>
@@ -224,9 +224,9 @@ export default function SkillsPage() {
 
       {/* Success Notification */}
       {successToast && (
-        <div className="p-3 rounded-xl bg-emerald-50 dark:bg-emerald-950/40 border border-emerald-200 dark:border-emerald-800 text-xs text-emerald-800 dark:text-emerald-200 flex items-center justify-between animate-in fade-in-50">
+        <div className="p-3 rounded-xl bg-emerald-50 dark:bg-lime/10 border border-emerald-200 dark:border-lime/30 text-xs text-emerald-800 dark:text-lime-soft flex items-center justify-between animate-in fade-in-50">
           <div className="flex items-center gap-2">
-            <CheckCircle2 className="w-4 h-4 text-emerald-600 dark:text-emerald-400 shrink-0" />
+            <CheckCircle2 className="w-4 h-4 text-emerald-600 dark:text-lime shrink-0" />
             <span>{successToast}</span>
           </div>
         </div>
@@ -290,7 +290,7 @@ export default function SkillsPage() {
               <span>Benchmark v{analysis.role_version}</span>
             </div>
             {isRecalculating && (
-              <span className="flex items-center gap-1 text-indigo-600 dark:text-indigo-400 font-semibold animate-pulse">
+              <span className="flex items-center gap-1 text-indigo-600 dark:text-lav font-semibold animate-pulse">
                 <Loader2 className="w-3 h-3 animate-spin" /> Updating scores...
               </span>
             )}
@@ -317,10 +317,10 @@ export default function SkillsPage() {
           />
 
           {/* Actionable Learning Roadmap Bridge */}
-          <Card className="p-4 bg-gradient-to-r from-brand-900/30 via-indigo-950/30 to-slate-900/50 border border-brand-500/30 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+          <Card className="p-4 bg-gradient-to-r from-brand-900/30 via-indigo-950/30 to-slate-900/50 border border-brand-500/30 flex flex-col sm:flex-row sm:items-center justify-between gap-4 dark:border-lav/50">
             <div className="space-y-1">
-              <div className="flex items-center gap-2 text-brand-400 font-semibold text-xs uppercase tracking-wider">
-                <Compass className="w-4 h-4 text-brand-400" />
+              <div className="flex items-center gap-2 text-brand-400 font-semibold text-xs uppercase tracking-wider dark:text-lav-light">
+                <Compass className="w-4 h-4 text-brand-400 dark:text-lav-light" />
                 <span>Bridge Your Skill Gaps</span>
               </div>
               <p className="text-xs text-slate-300">
@@ -343,10 +343,10 @@ export default function SkillsPage() {
           <div className="space-y-2">
             <div className="flex items-center justify-between">
               <div>
-                <h3 className="text-sm font-bold text-slate-900 dark:text-white uppercase tracking-wider">
+                <h3 className="text-sm font-bold dark:font-display dark:font-semibold dark:tracking-[-0.02em] text-slate-900 dark:text-white uppercase tracking-wider">
                   Comprehensive Role Skill Breakdown
                 </h3>
-                <p className="text-xs text-slate-500 dark:text-slate-400">
+                <p className="text-xs text-slate-500 dark:text-ink-muted">
                   Individual competency calibration comparing required levels (1-4) against supported evidence.
                 </p>
               </div>

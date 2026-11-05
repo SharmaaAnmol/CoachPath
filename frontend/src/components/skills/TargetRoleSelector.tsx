@@ -47,23 +47,23 @@ export function TargetRoleSelector({
   }, []);
 
   return (
-    <Card className="p-4 sm:p-5 border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 shadow-sm">
+    <Card className="p-4 sm:p-5 border-slate-200 dark:border-white/10 bg-white dark:bg-white/[0.04] shadow-sm">
       <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-4">
         <div className="space-y-1">
           <div className="flex items-center gap-2">
-            <span className="p-1.5 rounded-lg bg-indigo-50 dark:bg-indigo-950/50 text-indigo-600 dark:text-indigo-400">
+            <span className="p-1.5 rounded-lg bg-indigo-50 dark:bg-lav/10 text-indigo-600 dark:text-lav">
               <Briefcase className="w-4 h-4" />
             </span>
             <h3 className="text-sm font-semibold text-slate-900 dark:text-white uppercase tracking-wider">
               Benchmark Target Role
             </h3>
             {profileRoleId === selectedRoleId && (
-              <Badge variant="outline" className="text-[10px] bg-indigo-50 dark:bg-indigo-950/40 text-indigo-700 dark:text-indigo-300 border-indigo-200 dark:border-indigo-800 flex items-center gap-1">
+              <Badge variant="outline" className="text-[10px] bg-indigo-50 dark:bg-lav/10 text-indigo-700 dark:text-lav-light border-indigo-200 dark:border-lav/30 flex items-center gap-1">
                 <Star className="w-2.5 h-2.5 fill-current" /> Profile Primary Target
               </Badge>
             )}
           </div>
-          <p className="text-xs text-slate-500 dark:text-slate-400">
+          <p className="text-xs text-slate-500 dark:text-ink-muted">
             {selectedRole
               ? selectedRole.description
               : 'Select a canonical role to compare your verified evidence against benchmark requirements.'}
@@ -78,12 +78,12 @@ export function TargetRoleSelector({
             onClick={() => setIsOpen(!isOpen)}
             className={`w-full flex items-center justify-between px-3.5 py-2.5 rounded-xl border text-left text-sm font-medium transition-all ${
               isOpen
-                ? 'border-indigo-500 ring-2 ring-indigo-500/10 bg-white dark:bg-slate-900'
-                : 'border-slate-200 dark:border-slate-700 bg-slate-50/50 dark:bg-slate-800/50 hover:bg-white dark:hover:bg-slate-800'
+                ? 'border-indigo-500 ring-2 ring-indigo-500/10 bg-white dark:bg-white/[0.04] dark:border-lav/50'
+                : 'border-slate-200 dark:border-white/15 bg-slate-50/50 dark:bg-white/[0.07] hover:bg-white dark:hover:bg-white/[0.07]'
             } ${disabled ? 'opacity-50 cursor-not-allowed' : 'cursor-pointer'}`}
           >
             <div className="flex items-center gap-2 truncate">
-              <Compass className="w-4 h-4 text-indigo-600 dark:text-indigo-400 shrink-0" />
+              <Compass className="w-4 h-4 text-indigo-600 dark:text-lav shrink-0" />
               <span className="truncate text-slate-900 dark:text-white font-semibold">
                 {selectedRole ? selectedRole.title : 'Select a Target Role...'}
               </span>
@@ -93,7 +93,7 @@ export function TargetRoleSelector({
 
           {/* Dropdown Menu */}
           {isOpen && (
-            <div className="absolute z-30 mt-1.5 w-full bg-white dark:bg-slate-900 rounded-xl border border-slate-200 dark:border-slate-700 shadow-xl overflow-hidden py-1.5 max-h-80 overflow-y-auto animate-in fade-in-50 zoom-in-95">
+            <div className="absolute z-30 mt-1.5 w-full bg-white dark:bg-white/[0.04] rounded-xl border border-slate-200 dark:border-white/15 shadow-xl overflow-hidden py-1.5 max-h-80 overflow-y-auto animate-in fade-in-50 zoom-in-95">
               <div className="px-3 py-1.5 text-[11px] font-semibold text-slate-400 uppercase tracking-wider">
                 Supported Canonical Roles ({roles.length})
               </div>
@@ -110,8 +110,8 @@ export function TargetRoleSelector({
                     }}
                     className={`w-full flex items-start justify-between px-3.5 py-2.5 text-left text-xs transition-colors ${
                       isSelected
-                        ? 'bg-indigo-50/80 dark:bg-indigo-950/40 text-indigo-950 dark:text-indigo-100 font-medium'
-                        : 'text-slate-700 dark:text-slate-300 hover:bg-slate-100/70 dark:hover:bg-slate-800'
+                        ? 'bg-indigo-50/80 dark:bg-lav/10 text-indigo-950 dark:text-lav-light font-medium'
+                        : 'text-slate-700 dark:text-ink-fg/80 hover:bg-slate-100/70 dark:hover:bg-white/[0.07]'
                     }`}
                   >
                     <div className="space-y-0.5 pr-2">
@@ -120,20 +120,20 @@ export function TargetRoleSelector({
                           {role.title}
                         </span>
                         {isProfileRole && (
-                          <span className="px-1.5 py-0.2 text-[9px] font-bold rounded bg-indigo-100 dark:bg-indigo-900/60 text-indigo-700 dark:text-indigo-300">
+                          <span className="px-1.5 py-0.2 text-[9px] font-bold rounded bg-indigo-100 dark:bg-lav/10 text-indigo-700 dark:text-lav-light">
                             Current
                           </span>
                         )}
                       </div>
-                      <p className="text-[11px] text-slate-500 dark:text-slate-400 line-clamp-1">
+                      <p className="text-[11px] text-slate-500 dark:text-ink-muted line-clamp-1">
                         {role.description}
                       </p>
-                      <div className="text-[10px] text-slate-400 dark:text-slate-500 pt-0.5">
+                      <div className="text-[10px] text-slate-400 dark:text-ink-dim pt-0.5">
                         {role.requirements?.length || 0} required skills • Category: {role.category}
                       </div>
                     </div>
                     {isSelected && (
-                      <Check className="w-4 h-4 text-indigo-600 dark:text-indigo-400 shrink-0 mt-0.5" />
+                      <Check className="w-4 h-4 text-indigo-600 dark:text-lav shrink-0 mt-0.5" />
                     )}
                   </button>
                 );

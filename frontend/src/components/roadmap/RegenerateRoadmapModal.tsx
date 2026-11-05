@@ -100,8 +100,8 @@ export function RegenerateRoadmapModal({
 
         {/* Weekly Hours Input */}
         <div className="space-y-1.5">
-          <label className="font-bold text-slate-700 dark:text-slate-300 uppercase tracking-wider text-[10px] flex items-center gap-1.5">
-            <Clock className="w-3.5 h-3.5 text-brand-600" />
+          <label className="font-bold text-slate-700 dark:text-ink-fg/80 uppercase tracking-wider text-[10px] flex items-center gap-1.5">
+            <Clock className="w-3.5 h-3.5 text-brand-600 dark:text-lav" />
             Available Study Hours Per Week (1 – 60 hrs)
           </label>
           <Input
@@ -119,8 +119,8 @@ export function RegenerateRoadmapModal({
 
         {/* Timeline Months Input */}
         <div className="space-y-1.5">
-          <label className="font-bold text-slate-700 dark:text-slate-300 uppercase tracking-wider text-[10px] flex items-center gap-1.5">
-            <Calendar className="w-3.5 h-3.5 text-brand-600" />
+          <label className="font-bold text-slate-700 dark:text-ink-fg/80 uppercase tracking-wider text-[10px] flex items-center gap-1.5">
+            <Calendar className="w-3.5 h-3.5 text-brand-600 dark:text-lav" />
             Target Completion Deadline (Months)
           </label>
           <Input
@@ -137,7 +137,7 @@ export function RegenerateRoadmapModal({
         </div>
 
         {error && (
-          <div className="p-2.5 rounded bg-red-50 dark:bg-red-950/30 border border-red-200 dark:border-red-800 text-red-700 dark:text-red-300 text-[11px]">
+          <div className="p-2.5 rounded bg-red-50 dark:bg-crimson/10 border border-red-200 dark:border-crimson/30 text-red-700 dark:text-crimson-tint text-[11px]">
             {error}
           </div>
         )}

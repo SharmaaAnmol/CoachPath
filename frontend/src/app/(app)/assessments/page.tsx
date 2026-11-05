@@ -122,15 +122,15 @@ export default function AssessmentsPage() {
       case 'java':
       case 'c-cpp':
       case 'javascript-typescript':
-        return <Code2 className="w-4 h-4 text-brand-600" />;
+        return <Code2 className="w-4 h-4 text-brand-600 dark:text-lav" />;
       case 'sql-databases':
-        return <Database className="w-4 h-4 text-emerald-600" />;
+        return <Database className="w-4 h-4 text-emerald-600 dark:text-lime" />;
       case 'dsa':
-        return <Binary className="w-4 h-4 text-indigo-600" />;
+        return <Binary className="w-4 h-4 text-indigo-600 dark:text-lav" />;
       case 'web-development':
-        return <Globe className="w-4 h-4 text-sky-600" />;
+        return <Globe className="w-4 h-4 text-sky-600 dark:text-lav" />;
       case 'machine-learning':
-        return <Brain className="w-4 h-4 text-purple-600" />;
+        return <Brain className="w-4 h-4 text-purple-600 dark:text-lav" />;
       case 'ai-llm':
         return <Sparkles className="w-4 h-4 text-amber-500" />;
       default:
@@ -178,10 +178,10 @@ export default function AssessmentsPage() {
       {/* Page Header */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
-          <h2 className="text-2xl font-bold text-slate-900 dark:text-white">
+          <h1 className="font-display text-3xl font-semibold tracking-[-0.035em] text-slate-900 dark:text-ink-fg [text-wrap:balance] md:text-4xl">
             Diagnostic Skill Assessments
-          </h2>
-          <p className="text-xs sm:text-sm text-slate-500 dark:text-slate-400 mt-1">
+          </h1>
+          <p className="text-xs sm:text-sm text-slate-500 dark:text-ink-muted mt-1">
             Server-side deterministic evaluations calibrated across 9 core engineering domains with 20 questions per diagnostic attempt.
           </p>
         </div>
@@ -196,9 +196,9 @@ export default function AssessmentsPage() {
 
       {/* Error Alert */}
       {errorMessage && (
-        <div className="p-4 rounded-xl bg-rose-50 border border-rose-200 text-rose-800 dark:bg-rose-950/40 dark:border-rose-800 dark:text-rose-200 text-xs sm:text-sm flex items-center justify-between">
+        <div className="p-4 rounded-xl bg-rose-50 border border-rose-200 text-rose-800 dark:bg-crimson/10 dark:border-crimson/30 dark:text-crimson-tint text-xs sm:text-sm flex items-center justify-between">
           <div className="flex items-center gap-2">
-            <AlertCircle className="w-4 h-4 shrink-0 text-rose-600" />
+            <AlertCircle className="w-4 h-4 shrink-0 text-rose-600 dark:text-crimson-soft" />
             <span>{errorMessage}</span>
           </div>
           <Button size="sm" variant="outline" onClick={fetchCategories}>
@@ -215,10 +215,10 @@ export default function AssessmentsPage() {
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {[...Array(6)].map((_, i) => (
             <Card key={i} className="p-5 space-y-4 animate-pulse">
-              <div className="h-4 bg-slate-200 dark:bg-slate-800 rounded-md w-1/3" />
-              <div className="h-6 bg-slate-200 dark:bg-slate-800 rounded-md w-3/4" />
-              <div className="h-12 bg-slate-100 dark:bg-slate-850 rounded-md w-full" />
-              <div className="h-8 bg-slate-200 dark:bg-slate-800 rounded-md w-full" />
+              <div className="h-4 bg-slate-200 dark:bg-white/[0.07] rounded-md w-1/3" />
+              <div className="h-6 bg-slate-200 dark:bg-white/[0.07] rounded-md w-3/4" />
+              <div className="h-12 bg-slate-100 dark:bg-white/20 rounded-md w-full" />
+              <div className="h-8 bg-slate-200 dark:bg-white/[0.07] rounded-md w-full" />
             </Card>
           ))}
         </div>
@@ -233,19 +233,19 @@ export default function AssessmentsPage() {
             return (
               <Card
                 key={asmt.id}
-                className="p-5 flex flex-col justify-between hover:border-slate-300 dark:hover:border-slate-700 transition-all shadow-xs"
+                className="p-5 flex flex-col justify-between hover:border-slate-300 dark:hover:border-white/15 transition-all shadow-xs"
               >
                 <div className="space-y-3">
                   <div className="flex items-start justify-between gap-3">
                     <div className="flex items-center gap-1.5">
                       {getDomainIcon(asmt.skill_id)}
-                      <span className="text-xs font-bold text-slate-700 dark:text-slate-300">
+                      <span className="text-xs font-bold text-slate-700 dark:text-ink-fg/80">
                         {asmt.skill_id.toUpperCase()}
                       </span>
                     </div>
 
                     {isCompleted ? (
-                      <div className="flex items-center gap-1.5 text-xs font-bold text-emerald-700 bg-emerald-50 dark:bg-emerald-950/40 dark:text-emerald-300 px-2.5 py-1 rounded-full border border-emerald-200 dark:border-emerald-800">
+                      <div className="flex items-center gap-1.5 text-xs font-bold text-emerald-700 bg-emerald-50 dark:bg-lime/10 dark:text-lime-soft px-2.5 py-1 rounded-full border border-emerald-200 dark:border-lime/30">
                         <Award className="w-3.5 h-3.5" />
                         <span>Best: {asmt.user_best_score}%</span>
                       </div>
@@ -264,12 +264,12 @@ export default function AssessmentsPage() {
                     <h4 className="text-base font-bold text-slate-900 dark:text-white leading-snug">
                       {asmt.title}
                     </h4>
-                    <p className="text-xs text-slate-500 dark:text-slate-400 mt-1 line-clamp-2 leading-relaxed">
+                    <p className="text-xs text-slate-500 dark:text-ink-muted mt-1 line-clamp-2 leading-relaxed">
                       {asmt.description}
                     </p>
                   </div>
 
-                  <div className="flex items-center gap-4 text-xs text-slate-500 dark:text-slate-400 pt-1">
+                  <div className="flex items-center gap-4 text-xs text-slate-500 dark:text-ink-muted pt-1">
                     <span className="flex items-center gap-1">
                       <Clock className="w-3.5 h-3.5" />
                       {asmt.time_limit_minutes} mins
@@ -281,9 +281,9 @@ export default function AssessmentsPage() {
                   </div>
                 </div>
 
-                <div className="pt-4 mt-4 border-t border-slate-100 dark:border-slate-800 flex items-center justify-between">
+                <div className="pt-4 mt-4 border-t border-slate-100 dark:border-white/10 flex items-center justify-between">
                   {isCompleted ? (
-                    <div className="flex items-center gap-1 text-xs text-emerald-600 font-medium">
+                    <div className="flex items-center gap-1 text-xs text-emerald-600 font-medium dark:text-lime">
                       <CheckCircle2 className="w-3.5 h-3.5" />
                       <span>{asmt.attempt_count} Attempt{asmt.attempt_count > 1 ? 's' : ''}</span>
                     </div>

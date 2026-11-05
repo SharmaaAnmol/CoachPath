@@ -72,7 +72,7 @@ export function OnboardingProgress({
   return (
     <div
       className={cn(
-        'rounded-xl border border-slate-200/90 dark:border-slate-800 bg-white dark:bg-slate-900 p-4 shadow-sm transition-all',
+        'rounded-xl border border-slate-200/90 dark:border-white/10 bg-white dark:bg-white/[0.04] p-4 shadow-sm transition-all',
         className
       )}
     >
@@ -80,14 +80,14 @@ export function OnboardingProgress({
         {/* Top Header Row */}
         <div className="flex items-center justify-between gap-2 flex-wrap">
           <div className="flex items-center gap-2">
-            <div className="h-7 w-7 rounded-lg bg-purple-100 dark:bg-purple-950/60 text-purple-600 dark:text-purple-400 flex items-center justify-center">
+            <div className="h-7 w-7 rounded-lg bg-purple-100 dark:bg-lav/10 text-purple-600 dark:text-lav flex items-center justify-center">
               <Sparkles className="w-4 h-4" />
             </div>
             <div>
               <span className="text-xs font-bold tracking-tight text-slate-900 dark:text-white uppercase">
                 Profile Discovery Progress
               </span>
-              <span className="text-xs text-slate-500 dark:text-slate-400 ml-2">
+              <span className="text-xs text-slate-500 dark:text-ink-muted ml-2">
                 Turn {turnCount} / ~{maxTurns}
               </span>
             </div>
@@ -107,7 +107,7 @@ export function OnboardingProgress({
             <button
               type="button"
               onClick={() => setIsExpanded(!isExpanded)}
-              className="text-xs text-slate-500 hover:text-slate-800 dark:hover:text-slate-200 flex items-center gap-1 py-1 px-1.5 rounded-md hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors"
+              className="text-xs text-slate-500 hover:text-slate-800 dark:hover:text-ink-fg flex items-center gap-1 py-1 px-1.5 rounded-md hover:bg-slate-100 dark:hover:bg-white/[0.07] transition-colors"
               aria-label="Toggle all topics breakdown"
             >
               <span>{coveredCount}/{totalAreas} Topics</span>
@@ -123,15 +123,15 @@ export function OnboardingProgress({
             variant={readyToSummarize ? 'verified' : 'intelligence'}
             size="sm"
           />
-          <div className="flex justify-between items-center text-[11px] text-slate-500 dark:text-slate-400">
+          <div className="flex justify-between items-center text-[11px] text-slate-500 dark:text-ink-muted">
             <span>{coveredCount} of {totalAreas} discovery areas covered</span>
-            <span className="font-semibold text-slate-700 dark:text-slate-300">{progressPercent}%</span>
+            <span className="font-semibold text-slate-700 dark:text-ink-fg/80">{progressPercent}%</span>
           </div>
         </div>
 
         {/* Expandable Topic Checklist */}
         {isExpanded && (
-          <div className="pt-3 border-t border-slate-100 dark:border-slate-800 grid grid-cols-2 sm:grid-cols-3 gap-2">
+          <div className="pt-3 border-t border-slate-100 dark:border-white/10 grid grid-cols-2 sm:grid-cols-3 gap-2">
             {ALL_AREAS.map((areaKey) => {
               const isCovered = coveredSet.has(areaKey);
               const isCurrent = currentCategory === areaKey;
@@ -143,16 +143,16 @@ export function OnboardingProgress({
                   className={cn(
                     'flex items-center gap-2 px-2.5 py-1.5 rounded-lg text-xs transition-colors',
                     isCurrent
-                      ? 'bg-purple-50 dark:bg-purple-950/40 text-purple-700 dark:text-purple-300 font-medium border border-purple-200/60 dark:border-purple-800'
+                      ? 'bg-purple-50 dark:bg-lav/10 text-purple-700 dark:text-lav-light font-medium border border-purple-200/60 dark:border-lav/30'
                       : isCovered
-                      ? 'bg-slate-50 dark:bg-slate-800/60 text-slate-700 dark:text-slate-300'
-                      : 'text-slate-400 dark:text-slate-500'
+                      ? 'bg-slate-50 dark:bg-white/[0.07] text-slate-700 dark:text-ink-fg/80'
+                      : 'text-slate-400 dark:text-ink-dim'
                   )}
                 >
                   {isCovered ? (
-                    <CheckCircle2 className="w-3.5 h-3.5 text-emerald-500 shrink-0" />
+                    <CheckCircle2 className="w-3.5 h-3.5 text-emerald-500 shrink-0 dark:text-lime" />
                   ) : (
-                    <Circle className="w-3.5 h-3.5 text-slate-300 dark:text-slate-600 shrink-0" />
+                    <Circle className="w-3.5 h-3.5 text-slate-300 dark:text-ink-dim shrink-0" />
                   )}
                   <span className="truncate">{label}</span>
                 </div>

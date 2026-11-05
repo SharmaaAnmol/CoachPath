@@ -90,27 +90,27 @@ export function DeliverableModal({
     >
       <form onSubmit={handleSubmit} className="space-y-4 text-xs">
         {/* Deliverable Rubric */}
-        <div className="p-3.5 rounded-lg bg-purple-50 dark:bg-purple-950/30 border border-purple-200 dark:border-purple-800 text-purple-900 dark:text-purple-300 space-y-1">
+        <div className="p-3.5 rounded-lg bg-purple-50 dark:bg-lav/10 border border-purple-200 dark:border-lav/30 text-purple-900 dark:text-lav-light space-y-1">
           <div className="flex items-center gap-1.5 font-bold">
-            <FileCheck className="w-4 h-4 text-purple-600" />
+            <FileCheck className="w-4 h-4 text-purple-600 dark:text-lav" />
             <span>Verification Rubric & Deliverable Requirement</span>
           </div>
-          <p className="text-slate-600 dark:text-slate-300 text-[11px] leading-relaxed">
+          <p className="text-slate-600 dark:text-ink-fg/80 text-[11px] leading-relaxed">
             {task.deliverable_requirement || 'Provide a public GitHub repository link verifying your implementation.'}
           </p>
         </div>
 
         {task.completion_criteria && (
-          <div className="p-3 rounded-lg bg-slate-50 dark:bg-slate-800/60 border border-slate-200/80 dark:border-slate-700/60 text-slate-700 dark:text-slate-300 text-[11px] space-y-0.5">
+          <div className="p-3 rounded-lg bg-slate-50 dark:bg-white/[0.07] border border-slate-200/80 dark:border-white/15 text-slate-700 dark:text-ink-fg/80 text-[11px] space-y-0.5">
             <span className="font-semibold text-slate-900 dark:text-white">Acceptance Criteria:</span>
-            <p className="text-slate-500 dark:text-slate-400">{task.completion_criteria}</p>
+            <p className="text-slate-500 dark:text-ink-muted">{task.completion_criteria}</p>
           </div>
         )}
 
         {/* Input */}
         <div className="space-y-1.5">
-          <label className="font-bold text-slate-700 dark:text-slate-300 uppercase tracking-wider text-[10px]">
-            Public GitHub Repository or Live Demo URL <span className="text-red-500">*</span>
+          <label className="font-bold text-slate-700 dark:text-ink-fg/80 uppercase tracking-wider text-[10px]">
+            Public GitHub Repository or Live Demo URL <span className="text-red-500 dark:text-crimson-soft">*</span>
           </label>
           <Input
             type="url"
@@ -129,8 +129,8 @@ export function DeliverableModal({
         </div>
 
         {error && (
-          <div className="p-2.5 rounded bg-red-50 dark:bg-red-950/30 border border-red-200 dark:border-red-800 flex items-center gap-2 text-red-700 dark:text-red-300 text-[11px]">
-            <AlertCircle className="w-4 h-4 shrink-0 text-red-500" />
+          <div className="p-2.5 rounded bg-red-50 dark:bg-crimson/10 border border-red-200 dark:border-crimson/30 flex items-center gap-2 text-red-700 dark:text-crimson-tint text-[11px]">
+            <AlertCircle className="w-4 h-4 shrink-0 text-red-500 dark:text-crimson-soft" />
             <span>{error}</span>
           </div>
         )}

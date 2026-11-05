@@ -65,16 +65,16 @@ export function RoadmapEmptyState({
   };
 
   return (
-    <Card className="p-6 sm:p-10 max-w-3xl mx-auto border-dashed border-2 border-slate-300 dark:border-slate-800 text-center space-y-6">
-      <div className="w-16 h-16 rounded-2xl bg-brand-50 dark:bg-brand-950/50 text-brand-600 dark:text-brand-400 mx-auto flex items-center justify-center border border-brand-200 dark:border-brand-800 shadow-sm">
+    <Card className="p-6 sm:p-10 max-w-3xl mx-auto border-dashed border-2 border-slate-300 dark:border-white/10 text-center space-y-6">
+      <div className="w-16 h-16 rounded-2xl bg-brand-50 dark:bg-lav/10 text-brand-600 dark:text-lav mx-auto flex items-center justify-center border border-brand-200 dark:border-lav/30 shadow-sm">
         <Compass className="w-8 h-8" />
       </div>
 
       <div className="space-y-2 max-w-xl mx-auto">
-        <h3 className="text-2xl font-bold text-slate-900 dark:text-white tracking-tight">
+        <h3 className="text-2xl font-bold dark:font-display dark:font-semibold dark:tracking-[-0.02em] text-slate-900 dark:text-white tracking-tight">
           Personalized Learning Roadmap
         </h3>
-        <p className="text-xs sm:text-sm text-slate-600 dark:text-slate-400 leading-relaxed">
+        <p className="text-xs sm:text-sm text-slate-600 dark:text-ink-muted leading-relaxed">
           CoachPath builds a tailored, milestone-based curriculum to close your verified skill gaps,
           balance study hours against your target deadline, and prepare real portfolio deliverables.
         </p>
@@ -86,27 +86,27 @@ export function RoadmapEmptyState({
         <div
           className={`p-3.5 rounded-xl border ${
             hasRole
-              ? 'bg-emerald-50/50 dark:bg-emerald-950/20 border-emerald-200 dark:border-emerald-800/60'
+              ? 'bg-emerald-50/50 dark:bg-lime/10 border-emerald-200 dark:border-lime/30'
               : 'bg-amber-50/50 dark:bg-amber-950/20 border-amber-200 dark:border-amber-800/60'
           }`}
         >
           <div className="flex items-start gap-2.5">
             {hasRole ? (
-              <CheckCircle2 className="w-4 h-4 text-emerald-600 mt-0.5 shrink-0" />
+              <CheckCircle2 className="w-4 h-4 text-emerald-600 mt-0.5 shrink-0 dark:text-lime" />
             ) : (
               <AlertCircle className="w-4 h-4 text-amber-600 mt-0.5 shrink-0" />
             )}
             <div className="space-y-0.5">
               <span className="font-bold text-slate-900 dark:text-white">Target Role</span>
-              <p className="text-[11px] text-slate-600 dark:text-slate-400">
+              <p className="text-[11px] text-slate-600 dark:text-ink-muted">
                 {hasRole ? (
-                  <span className="font-semibold text-emerald-700 dark:text-emerald-400">
+                  <span className="font-semibold text-emerald-700 dark:text-lime">
                     {targetRole.title}
                   </span>
                 ) : (
                   <span>
                     No target role designated.{' '}
-                    <Link href="/skills" className="text-brand-600 underline font-semibold">
+                    <Link href="/skills" className="text-brand-600 underline font-semibold dark:text-lav">
                       Select Role
                     </Link>
                   </span>
@@ -120,21 +120,21 @@ export function RoadmapEmptyState({
         <div
           className={`p-3.5 rounded-xl border ${
             hasAnalysis
-              ? 'bg-emerald-50/50 dark:bg-emerald-950/20 border-emerald-200 dark:border-emerald-800/60'
-              : 'bg-slate-50 dark:bg-slate-800/50 border-slate-200 dark:border-slate-700'
+              ? 'bg-emerald-50/50 dark:bg-lime/10 border-emerald-200 dark:border-lime/30'
+              : 'bg-slate-50 dark:bg-white/[0.07] border-slate-200 dark:border-white/15'
           }`}
         >
           <div className="flex items-start gap-2.5">
             {hasAnalysis ? (
-              <CheckCircle2 className="w-4 h-4 text-emerald-600 mt-0.5 shrink-0" />
+              <CheckCircle2 className="w-4 h-4 text-emerald-600 mt-0.5 shrink-0 dark:text-lime" />
             ) : (
               <Cpu className="w-4 h-4 text-slate-400 mt-0.5 shrink-0" />
             )}
             <div className="space-y-0.5">
               <span className="font-bold text-slate-900 dark:text-white">Skill Gap Analysis</span>
-              <p className="text-[11px] text-slate-600 dark:text-slate-400">
+              <p className="text-[11px] text-slate-600 dark:text-ink-muted">
                 {hasAnalysis ? (
-                  <span className="text-emerald-700 dark:text-emerald-400 font-semibold">
+                  <span className="text-emerald-700 dark:text-lime font-semibold">
                     Calibrated ({gapAnalysis.role_alignment_score.toFixed(1)}% Alignment)
                   </span>
                 ) : (
@@ -147,15 +147,15 @@ export function RoadmapEmptyState({
       </div>
 
       {/* Constraints Inputs */}
-      <div className="p-5 rounded-2xl bg-slate-50 dark:bg-slate-800/50 border border-slate-200 dark:border-slate-800 max-w-xl mx-auto space-y-4 text-left">
+      <div className="p-5 rounded-2xl bg-slate-50 dark:bg-white/[0.07] border border-slate-200 dark:border-white/10 max-w-xl mx-auto space-y-4 text-left">
         <h4 className="text-xs font-bold text-slate-900 dark:text-white uppercase tracking-wider flex items-center gap-1.5">
-          <Clock className="w-3.5 h-3.5 text-brand-600" />
+          <Clock className="w-3.5 h-3.5 text-brand-600 dark:text-lav" />
           Set Your Study Constraints & Pace
         </h4>
 
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 text-xs">
           <div className="space-y-1">
-            <label className="font-semibold text-slate-700 dark:text-slate-300 text-[11px]">
+            <label className="font-semibold text-slate-700 dark:text-ink-fg/80 text-[11px]">
               Available Weekly Hours
             </label>
             <Input
@@ -170,7 +170,7 @@ export function RoadmapEmptyState({
           </div>
 
           <div className="space-y-1">
-            <label className="font-semibold text-slate-700 dark:text-slate-300 text-[11px]">
+            <label className="font-semibold text-slate-700 dark:text-ink-fg/80 text-[11px]">
               Target Deadline (Months)
             </label>
             <Input
@@ -187,7 +187,7 @@ export function RoadmapEmptyState({
       </div>
 
       {error && (
-        <div className="p-3 rounded-lg bg-red-50 dark:bg-red-950/30 border border-red-200 dark:border-red-800 text-red-700 dark:text-red-300 text-xs max-w-xl mx-auto">
+        <div className="p-3 rounded-lg bg-red-50 dark:bg-crimson/10 border border-red-200 dark:border-crimson/30 text-red-700 dark:text-crimson-tint text-xs max-w-xl mx-auto">
           {error}
         </div>
       )}

@@ -236,10 +236,10 @@ export default function OnboardingPage() {
           <Sparkles className="h-6 w-6" />
         </div>
         <div className="text-center space-y-1">
-          <h3 className="text-base font-bold text-slate-900 dark:text-white">
+          <h3 className="text-base font-bold dark:font-display dark:font-semibold dark:tracking-[-0.02em] text-slate-900 dark:text-white">
             Connecting to AI Career Advisor
           </h3>
-          <p className="text-xs text-slate-500 dark:text-slate-400">
+          <p className="text-xs text-slate-500 dark:text-ink-muted">
             Restoring your personalized onboarding session...
           </p>
         </div>
@@ -254,7 +254,7 @@ export default function OnboardingPage() {
         <div className="flex items-center justify-between">
           <Link
             href="/dashboard"
-            className="inline-flex items-center text-xs font-semibold text-slate-500 hover:text-slate-900 dark:hover:text-slate-200 transition-colors"
+            className="inline-flex items-center text-xs font-semibold text-slate-500 hover:text-slate-900 dark:hover:text-ink-fg transition-colors"
           >
             <ArrowLeft className="w-3.5 h-3.5 mr-1" />
             Back to Dashboard
@@ -278,7 +278,7 @@ export default function OnboardingPage() {
         <div className="flex items-center justify-between">
           <Link
             href="/dashboard"
-            className="inline-flex items-center text-xs font-semibold text-slate-500 hover:text-slate-900 dark:hover:text-slate-200 transition-colors"
+            className="inline-flex items-center text-xs font-semibold text-slate-500 hover:text-slate-900 dark:hover:text-ink-fg transition-colors"
           >
             <ArrowLeft className="w-3.5 h-3.5 mr-1" />
             Save & Exit to Dashboard
@@ -311,9 +311,9 @@ export default function OnboardingPage() {
             isConfirming={isConfirming}
           />
         ) : (
-          <div className="p-8 text-center bg-white dark:bg-slate-900 rounded-xl border border-slate-200 dark:border-slate-800 space-y-3">
-            <Loader2 className="w-6 h-6 animate-spin text-purple-600 mx-auto" />
-            <p className="text-sm font-semibold text-slate-700 dark:text-slate-300">
+          <div className="p-8 text-center bg-white dark:bg-white/[0.04] rounded-xl border border-slate-200 dark:border-white/10 space-y-3">
+            <Loader2 className="w-6 h-6 animate-spin text-purple-600 mx-auto dark:text-lav" />
+            <p className="text-sm font-semibold text-slate-700 dark:text-ink-fg/80">
               Generating your structured career summary...
             </p>
             <Button size="sm" variant="outline" onClick={loadFullSessionState}>
@@ -336,7 +336,7 @@ export default function OnboardingPage() {
       <div className="flex items-center justify-between">
         <Link
           href="/dashboard"
-          className="inline-flex items-center text-xs font-semibold text-slate-500 hover:text-slate-900 dark:hover:text-slate-200 transition-colors"
+          className="inline-flex items-center text-xs font-semibold text-slate-500 hover:text-slate-900 dark:hover:text-ink-fg transition-colors"
         >
           <ArrowLeft className="w-3.5 h-3.5 mr-1" />
           Exit & Resume Later
@@ -379,7 +379,7 @@ export default function OnboardingPage() {
       )}
 
       {/* Conversation Stream Container */}
-      <div className="rounded-2xl border border-slate-200/90 dark:border-slate-800 bg-slate-50/50 dark:bg-slate-950/40 p-4 sm:p-6 min-h-[380px] max-h-[620px] overflow-y-auto space-y-5 shadow-inner">
+      <div className="rounded-2xl border border-slate-200/90 dark:border-white/10 bg-slate-50/50 dark:bg-black/40 p-4 sm:p-6 min-h-[380px] max-h-[620px] overflow-y-auto space-y-5 shadow-inner">
         {turns.length === 0 ? (
           <div className="flex items-center justify-center h-48 text-xs text-slate-400">
             Initiating career discovery interview...

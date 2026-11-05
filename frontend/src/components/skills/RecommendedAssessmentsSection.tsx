@@ -30,14 +30,14 @@ export function RecommendedAssessmentsSection({
     <div className="space-y-3">
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-2">
-          <span className="p-1 rounded-lg bg-indigo-50 dark:bg-indigo-950/60 text-indigo-600 dark:text-indigo-400">
+          <span className="p-1 rounded-lg bg-indigo-50 dark:bg-lav/10 text-indigo-600 dark:text-lav">
             <ClipboardCheck className="w-4 h-4" />
           </span>
           <div>
-            <h3 className="text-sm font-bold text-slate-900 dark:text-white uppercase tracking-wider">
+            <h3 className="text-sm font-bold dark:font-display dark:font-semibold dark:tracking-[-0.02em] text-slate-900 dark:text-white uppercase tracking-wider">
               Recommended Diagnostic Assessments
             </h3>
-            <p className="text-xs text-slate-500 dark:text-slate-400">
+            <p className="text-xs text-slate-500 dark:text-ink-muted">
               Objective examinations designed to calibrate your baseline evidence and verify unassessed skills.
             </p>
           </div>
@@ -48,11 +48,11 @@ export function RecommendedAssessmentsSection({
         {assessments.map((asmt) => (
           <Card
             key={asmt.assessment_id}
-            className="p-4 border-slate-200 dark:border-slate-800 hover:border-indigo-300 dark:hover:border-indigo-800 transition-all flex flex-col justify-between space-y-3 bg-white dark:bg-slate-900 shadow-sm"
+            className="p-4 border-slate-200 dark:border-white/10 hover:border-indigo-300 dark:hover:border-lav/30 transition-all flex flex-col justify-between space-y-3 bg-white dark:bg-white/[0.04] shadow-sm"
           >
             <div className="space-y-1.5">
               <div className="flex items-center justify-between">
-                <Badge variant="outline" className="text-[10px] bg-indigo-50 dark:bg-indigo-950/40 text-indigo-700 dark:text-indigo-300 border-indigo-200">
+                <Badge variant="outline" className="text-[10px] bg-indigo-50 dark:bg-lav/10 text-indigo-700 dark:text-lav-light border-indigo-200 dark:border-lav/30">
                   Diagnostic Exam
                 </Badge>
                 <div className="flex items-center gap-1 text-[11px] text-slate-400">
@@ -65,12 +65,12 @@ export function RecommendedAssessmentsSection({
                 {asmt.title}
               </h4>
 
-              <p className="text-xs text-slate-500 dark:text-slate-400 leading-relaxed">
+              <p className="text-xs text-slate-500 dark:text-ink-muted leading-relaxed">
                 {asmt.reason}
               </p>
             </div>
 
-            <div className="pt-2 border-t border-slate-100 dark:border-slate-800 flex items-center justify-between">
+            <div className="pt-2 border-t border-slate-100 dark:border-white/10 flex items-center justify-between">
               <span className="text-[11px] text-slate-400">
                 20 Multiple Choice Questions
               </span>
