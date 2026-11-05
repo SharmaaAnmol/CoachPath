@@ -3,14 +3,7 @@
 import * as React from 'react';
 import Link from 'next/link';
 import { motion } from 'framer-motion';
-import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/card';
-import { BentoGrid, BentoCard } from '@/components/ui/bento-grid';
-import { StatCard } from '@/components/ui/stat-card';
-import { Button } from '@/components/ui/button';
-import { Badge } from '@/components/ui/badge';
-import { ProgressBar } from '@/components/ui/progress-bar';
-import { Alert } from '@/components/ui/alert';
-import { NumberTicker } from '@/components/ui/number-ticker';
+import { GlassButton, GlassEmptyState, GlassPanel, PageHeader, StatusChip } from '@/components/glass';
 import { useAuth } from '@/hooks/use-auth';
 import { profileClient } from '@/lib/profile-client';
 import { onboardingClient } from '@/lib/onboarding-client';
@@ -26,31 +19,45 @@ import {
   AssessmentCategoryItem,
   SkillGapAnalysisData,
 } from '@/types';
-import {
-  fadeIn,
-  slideUp,
-  staggerContainer,
-  staggerItem,
-} from '@/lib/motion';
-import {
-  Gauge,
-  Cpu,
-  Compass,
-  Briefcase,
-  Sparkles,
-  ArrowRight,
-  CheckCircle2,
-  Clock,
-  ExternalLink,
-  Target,
-  Layers,
-  ClipboardCheck,
-  ChevronRight,
-  ShieldCheck,
-  Building2,
-  MapPin,
-  TrendingUp,
-} from 'lucide-react';
+import { staggerContainer, staggerItem } from '@/lib/motion';
+import { ArrowRight, Briefcase, Building2, CheckCircle2, Circle, MapPin, Sparkles, Target } from 'lucide-react';
+
+function Meter({ label, value }: { label: string; value: number }) {
+  const v = Math.max(0, Math.min(100, Math.round(value)));
+  return (
+    <li>
+      <div className="flex justify-between text-sm">
+        <span className="text-ink-muted">{label}</span>
+        <span className="tabular-nums">{v}%</span>
+      </div>
+      <div className="mt-1.5 h-1.5 overflow-hidden rounded-full bg-white/10" role="presentation">
+        <div className="h-full rounded-full bg-gradient-to-r from-lav to-lime" style={{ width: `${v}%` }} />
+      </div>
+    </li>
+  );
+}
+
+function Stat({ label, value, note, href }: { label: string; value: string; note: string; href: string }) {
+  return (
+    <Link href={href} className="block rounded-glass">
+      <GlassPanel interactive className="h-full p-5">
+        <p className="text-xs text-ink-dim">{label}</p>
+        <p className="mt-2 font-display text-3xl font-semibold tabular-nums tracking-[-0.03em]">{value}</p>
+        <p className="mt-1 text-sm text-ink-muted">{note}</p>
+      </GlassPanel>
+    </Link>
+  );
+}
+
+function Check({ done, children }: { done: boolean; children: React.ReactNode }) {
+  return (
+    <li className="flex items-center gap-2.5 text-sm">
+      {done ? <CheckCircle2 className="h-4 w-4 shrink-0 text-lime" /> : <Circle className="h-4 w-4 shrink-0 text-ink-dim" />}
+      <span className={done ? 'text-ink-fg' : 'text-ink-muted'}>{children}</span>
+      <span className="sr-only">{done ? '(done)' : '(not done)'}</span>
+    </li>
+  );
+}
 
 export default function DashboardPage() {
   const { user } = useAuth();
@@ -137,421 +144,234 @@ export default function DashboardPage() {
   const verifiedSkillsCount = (skillGap?.strongest_skills?.length) ?? (profile?.verified_skills_count ?? passedAssessmentsCount);
   const gapSkillsCount = (skillGap?.missing_skills?.length) ?? 0;
 
+  const roadmapPct = roadmap?.progress_percentage || 0;
+  const onboardingOpen = onboardingSession && onboardingSession.status !== 'completed';
+  const awaiting = onboardingSession?.status === 'awaiting_confirmation';
+  const inProgress = onboardingSession?.status === 'in_progress';
+
   return (
-    <motion.div
-      initial="hidden"
-      animate="visible"
-      variants={staggerContainer}
-      className="space-y-7 pb-10"
-    >
-      {/* 1. Hero Hub Banner */}
-      <motion.div
-        variants={slideUp}
-        className="relative overflow-hidden rounded-3xl bg-gradient-to-br from-slate-900 via-indigo-950 to-slate-900 p-6 md:p-8 text-white shadow-elevated border border-slate-800"
-      >
-        {/* Subtle decorative glow */}
-        <div className="absolute top-0 right-0 -mt-10 -mr-10 h-64 w-64 rounded-full bg-brand-500/10 blur-3xl pointer-events-none" />
-        <div className="absolute bottom-0 left-1/3 -mb-10 h-48 w-48 rounded-full bg-purple-500/10 blur-3xl pointer-events-none" />
-
-        <div className="relative z-10 flex flex-col lg:flex-row lg:items-center justify-between gap-6">
-          <div className="space-y-3 max-w-2xl">
-            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white/10 backdrop-blur-md text-indigo-200 text-xs font-mono border border-white/10">
-              <Sparkles className="w-3.5 h-3.5 text-indigo-400" />
-              <span>{targetRoleTitle}</span>
-            </div>
-            <h2 className="text-2xl sm:text-3xl lg:text-4xl font-extrabold tracking-tight text-white">
-              Welcome back, {firstName}
-            </h2>
-            <p className="text-sm text-slate-300 leading-relaxed">
-              {readinessScore > 0 ? (
-                <>
-                  Your career readiness is calibrated at{' '}
-                  <strong className="text-white font-semibold">
-                    <NumberTicker value={readinessScore} suffix="%" />
-                  </strong>{' '}
-                  across diagnostic skill benchmarks and roadmap milestones.
-                </>
-              ) : (
-                <>
-                  Ready to calibrate your engineering profile? Complete your diagnostic assessments and generate your milestone roadmap below.
-                </>
-              )}
-            </p>
-          </div>
-
-          <div className="flex flex-wrap items-center gap-3 shrink-0">
-            <Link href="/career-readiness">
-              <Button variant="intelligence" size="md">
-                <Gauge className="w-4 h-4 mr-2" /> View Readiness Hub
-              </Button>
-            </Link>
-            <Link href="/roadmap">
-              <Button
-                variant="outline"
-                size="md"
-                className="bg-white/10 border-white/20 text-white hover:bg-white/20"
-              >
-                <Compass className="w-4 h-4 mr-2" />
-                {roadmap ? 'Resume Roadmap' : 'Generate Roadmap'}
-              </Button>
-            </Link>
-          </div>
-        </div>
+    <motion.div initial="hidden" animate="visible" variants={staggerContainer} className="flex flex-col gap-6 pb-10">
+      <motion.div variants={staggerItem}>
+        <PageHeader
+          title={`Welcome back, ${firstName}`}
+          description={
+            readinessScore > 0
+              ? `${targetRoleTitle} track. Your career readiness is ${readinessScore}% across skill tests and roadmap milestones.`
+              : `${targetRoleTitle}. Take a skill test and generate your roadmap to calibrate your readiness.`
+          }
+          actions={
+            <GlassButton variant="glass" href="/career-readiness">
+              View Readiness Hub
+            </GlassButton>
+          }
+        />
       </motion.div>
 
-      {/* 2. Onboarding Status Banner (if unconfirmed or in-progress) */}
-      {onboardingSession && onboardingSession.status !== 'completed' && (
-        <motion.div variants={slideUp}>
-          <Alert
-            variant={onboardingSession.status === 'awaiting_confirmation' ? 'success' : 'intelligence'}
-            title={
-              onboardingSession.status === 'awaiting_confirmation'
-                ? 'AI Career Profile Summary Ready for Confirmation'
-                : onboardingSession.status === 'in_progress'
-                ? `AI Career Discovery In Progress (Turn ${onboardingSession.turn_count || 1})`
-                : 'Complete Your AI Career Discovery Interview'
-            }
-          >
-            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mt-1.5">
-              <span className="text-xs text-slate-600 dark:text-slate-300">
-                {onboardingSession.status === 'awaiting_confirmation'
-                  ? 'Your personalized career summary is synthesized and awaiting your confirmation to update your master profile.'
-                  : onboardingSession.status === 'in_progress'
+      {onboardingOpen && (
+        <motion.div variants={staggerItem}>
+          <GlassPanel className="flex flex-col gap-4 p-5 sm:flex-row sm:items-center sm:justify-between">
+            <div className="min-w-0">
+              <StatusChip tone={awaiting ? 'done' : 'active'}>{awaiting ? 'Ready to confirm' : 'AI onboarding'}</StatusChip>
+              <h2 className="mt-3 font-display text-lg font-semibold tracking-[-0.02em]">
+                {awaiting
+                  ? 'AI Career Profile Summary Ready for Confirmation'
+                  : inProgress
+                  ? `AI Career Discovery In Progress (Turn ${onboardingSession?.turn_count || 1})`
+                  : 'Complete Your AI Career Discovery Interview'}
+              </h2>
+              <p className="mt-1 text-sm text-ink-muted">
+                {awaiting
+                  ? 'Your personalized career summary is ready. Confirm it to update your master profile.'
+                  : inProgress
                   ? 'Resume your adaptive conversation to identify your strengths and target career goals.'
-                  : 'Establish your target engineering path and experience baseline with our adaptive AI interview.'}
-              </span>
-              <Link href="/onboarding">
-                <Button
-                  size="sm"
-                  variant={onboardingSession.status === 'awaiting_confirmation' ? 'primary' : 'intelligence'}
-                >
-                  <Sparkles className="w-3.5 h-3.5 mr-1.5" />
-                  {onboardingSession.status === 'awaiting_confirmation'
-                    ? 'Review & Confirm'
-                    : onboardingSession.status === 'in_progress'
-                    ? 'Resume Discovery'
-                    : 'Start Interview'}
-                </Button>
-              </Link>
+                  : 'Set your target engineering path and experience baseline with a short AI interview.'}
+              </p>
             </div>
-          </Alert>
+            <GlassButton variant={awaiting ? 'lime' : 'primary'} href="/onboarding" className="shrink-0">
+              <Sparkles className="h-4 w-4" />
+              {awaiting ? 'Review & Confirm' : inProgress ? 'Resume Discovery' : 'Start Interview'}
+            </GlassButton>
+          </GlassPanel>
         </motion.div>
       )}
 
-      {/* 3. Top 4 Metric Stat Cards */}
-      <motion.div variants={staggerItem} className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-        <StatCard
-          title="Career Readiness"
-          value={readinessScore > 0 ? `${readinessScore}%` : 'Pending'}
-          subtitle={readinessScore > 0 ? '4-Pillar Calibrated Score' : 'Take assessments to calibrate'}
-          icon={<Gauge className="w-5 h-5" />}
-          iconColor="intelligence"
-          trend={readinessScore > 0 ? { value: `${readinessScore}%`, isPositive: true, label: 'overall' } : undefined}
-        />
-        <StatCard
-          title="Verified Skills"
+      <motion.div variants={staggerItem} className="grid gap-4 lg:grid-cols-[1.25fr_1fr]">
+        {/* The one next step */}
+        <GlassPanel className="relative overflow-hidden p-6 sm:p-7">
+          <span aria-hidden className="pointer-events-none absolute -right-16 -top-16 h-56 w-56 rounded-full bg-crimson/20 blur-3xl" />
+          {roadmap && activeTask ? (
+            <>
+              <StatusChip tone="alert">Next step</StatusChip>
+              <h2 className="mt-4 max-w-lg font-display text-2xl font-semibold leading-tight tracking-[-0.03em] sm:text-[28px]">
+                {activeTask.title}
+              </h2>
+              <p className="mt-2 max-w-lg text-sm leading-relaxed text-ink-muted">
+                {[currentPhase?.title, activeTask.skill_name, `about ${activeTask.estimated_hours || 4} hours`].filter(Boolean).join(' · ')}
+              </p>
+              {activeTask.description && (
+                <p className="mt-2 line-clamp-3 max-w-lg text-sm leading-relaxed text-ink-muted">{activeTask.description}</p>
+              )}
+              <div className="mt-6 flex flex-wrap gap-3">
+                <GlassButton variant="lime" href="/roadmap">
+                  Work on task <ArrowRight className="h-4 w-4" />
+                </GlassButton>
+              </div>
+            </>
+          ) : (
+            <>
+              <StatusChip tone="alert">Next step</StatusChip>
+              <h2 className="mt-4 max-w-lg font-display text-2xl font-semibold leading-tight tracking-[-0.03em] sm:text-[28px]">
+                Generate your milestone roadmap
+              </h2>
+              <p className="mt-2 max-w-lg text-sm leading-relaxed text-ink-muted">
+                Get step-by-step milestones, vetted learning material and project deliverables built from your skill gaps.
+              </p>
+              <div className="mt-6">
+                <GlassButton variant="lime" href="/roadmap">
+                  Generate roadmap <ArrowRight className="h-4 w-4" />
+                </GlassButton>
+              </div>
+            </>
+          )}
+        </GlassPanel>
+
+        {/* Readiness */}
+        <GlassPanel className="p-6 sm:p-7">
+          <div className="flex items-baseline justify-between gap-3">
+            <h2 className="font-display text-lg font-semibold tracking-[-0.02em]">Career readiness</h2>
+            {gapSkillsCount > 0 && <StatusChip tone="alert">{gapSkillsCount} gaps</StatusChip>}
+          </div>
+          {readinessScore > 0 ? (
+            <p className="mt-3 font-display text-6xl font-semibold tabular-nums tracking-[-0.05em]">
+              {readinessScore}
+              <span className="text-3xl text-ink-dim">%</span>
+            </p>
+          ) : (
+            <p className="mt-3 font-display text-3xl font-semibold tracking-[-0.03em] text-ink-muted">Not calibrated yet</p>
+          )}
+          <ul className="mt-5 flex flex-col gap-3">
+            <Meter label="Skill tests passed" value={totalAssessmentsCount ? (passedAssessmentsCount / totalAssessmentsCount) * 100 : 0} />
+            <Meter label="Roadmap progress" value={roadmapPct} />
+            <Meter label="Profile completeness" value={completeness} />
+          </ul>
+        </GlassPanel>
+      </motion.div>
+
+      <motion.div variants={staggerItem} className="grid grid-cols-1 gap-4 sm:grid-cols-3">
+        <Stat
+          label="Verified skills"
           value={`${verifiedSkillsCount}`}
-          subtitle={`${passedAssessmentsCount} of ${totalAssessmentsCount} tests passed`}
-          icon={<Cpu className="w-5 h-5" />}
-          iconColor="verified"
-          trend={gapSkillsCount > 0 ? { value: `${gapSkillsCount} Gaps`, isPositive: false, label: 'to address' } : undefined}
+          note={`${passedAssessmentsCount} of ${totalAssessmentsCount} tests passed`}
+          href="/skills"
         />
-        <StatCard
-          title="Roadmap Sprint"
-          value={roadmap ? `${roadmap.progress_percentage || 0}%` : 'Not Started'}
-          subtitle={roadmap ? `${roadmap.completed_tasks || 0} of ${roadmap.total_tasks || 0} tasks done` : 'Dynamic milestone plan'}
-          icon={<Compass className="w-5 h-5" />}
-          iconColor="action"
-          trend={roadmap ? { value: `Phase ${roadmap.phases?.filter(p => p.is_completed).length + 1 || 1}`, isPositive: true } : undefined}
+        <Stat
+          label="Roadmap"
+          value={roadmap ? `${roadmap.completed_tasks || 0} of ${roadmap.total_tasks || 0}` : 'Not started'}
+          note={roadmap ? `Tasks done · ${roadmapPct}% complete` : 'Generate a milestone plan'}
+          href="/roadmap"
         />
-        <StatCard
-          title="Semantic Job Matches"
-          value={jobMatches.length > 0 ? `${jobMatches[0]?.match?.overall_score || 0}%` : `${jobMatches.length} Active`}
-          subtitle={jobMatches.length > 0 ? jobMatches[0]?.job?.company_name || 'Top Fit' : 'Matches against live tech roles'}
-          icon={<Briefcase className="w-5 h-5" />}
-          iconColor="brand"
-          trend={jobMatches.length > 0 ? { value: `${jobMatches.length} Matches`, isPositive: true } : undefined}
+        <Stat
+          label="Job matches"
+          value={jobMatches.length > 0 ? `${jobMatches[0]?.match?.overall_score ?? 0}%` : '0'}
+          note={jobMatches.length > 0 ? `Best fit · ${jobMatches[0]?.job?.company_name || 'top match'}` : 'Matches against live tech roles'}
+          href="/jobs"
         />
       </motion.div>
 
-      {/* 4. Bento Grid: High Impact Modular Layout */}
       <motion.div variants={staggerItem}>
-        <BentoGrid>
-          {/* Bento Card 1: Active Milestone / Roadmap Action (colSpan 2) */}
-          <BentoCard colSpan={2} gradient className="space-y-4">
-            <div className="flex items-center justify-between pb-3 border-b border-slate-100 dark:border-slate-800">
-              <div className="flex items-center gap-2">
-                <div className="p-2 rounded-xl bg-amber-50 dark:bg-amber-950/40 text-amber-600">
-                  <Compass className="w-5 h-5" />
-                </div>
-                <div>
-                  <h3 className="text-base font-bold text-slate-900 dark:text-white">
-                    {roadmap ? `Current Milestone: ${currentPhase?.title || 'Active Sprint'}` : 'Personalized Milestone Roadmap'}
-                  </h3>
-                  <p className="text-xs text-slate-500 dark:text-slate-400">
-                    {roadmap ? `${roadmap.progress_percentage || 0}% overall sprint completion` : 'AI-structured curriculum tailored to your gap matrix'}
-                  </p>
-                </div>
-              </div>
-              <Link href="/roadmap" className="text-xs font-semibold text-brand-600 dark:text-brand-400 hover:underline inline-flex items-center gap-1">
-                <span>View Roadmap</span>
-                <ChevronRight className="w-3.5 h-3.5" />
-              </Link>
+        {jobMatches.length > 0 ? (
+          <GlassPanel className="p-2 sm:p-3">
+            <div className="flex items-center justify-between px-4 pb-2 pt-3">
+              <h2 className="font-display text-lg font-semibold tracking-[-0.02em]">Top job matches</h2>
+              <GlassButton variant="ghost" size="sm" href="/jobs">
+                View all jobs
+              </GlassButton>
             </div>
-
-            {roadmap && activeTask ? (
-              <div className="p-4 rounded-2xl bg-amber-50/60 dark:bg-amber-950/20 border border-amber-200/80 dark:border-amber-900/40 space-y-3">
-                <div className="flex items-start justify-between gap-3">
-                  <div className="space-y-1">
-                    <Badge variant="action" size="sm">
-                      {activeTask.skill_name || activeTask.task_type || 'Deliverable'} • {activeTask.estimated_hours || 4} hrs
-                    </Badge>
-                    <h4 className="text-sm font-bold text-slate-900 dark:text-white">
-                      {activeTask.title}
-                    </h4>
-                    <p className="text-xs text-slate-600 dark:text-slate-300 leading-relaxed">
-                      {activeTask.description}
-                    </p>
-                  </div>
-                </div>
-
-                <div className="pt-2 flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-t border-amber-200/50 dark:border-amber-900/30 text-xs">
-                  <div className="flex items-center gap-1.5 text-slate-600 dark:text-slate-300 truncate">
-                    <ExternalLink className="w-3.5 h-3.5 text-amber-600 shrink-0" />
-                    <span className="truncate">Deliverable: <strong>{activeTask.title}</strong></span>
-                  </div>
-                  <Link href="/roadmap">
-                    <Button size="sm" variant="primary">
-                      Work on Task
-                    </Button>
-                  </Link>
-                </div>
-              </div>
-            ) : (
-              /* Meaningful Zero-Mock Empty State */
-              <div className="p-6 rounded-2xl bg-slate-50 dark:bg-slate-900/50 border border-dashed border-slate-200 dark:border-slate-800 text-center space-y-3">
-                <div className="h-12 w-12 rounded-2xl bg-brand-50 dark:bg-brand-950/40 text-brand-600 flex items-center justify-center mx-auto">
-                  <Target className="w-6 h-6" />
-                </div>
-                <div className="space-y-1 max-w-md mx-auto">
-                  <h4 className="text-sm font-bold text-slate-900 dark:text-white">
-                    No active roadmap sprint generated yet
-                  </h4>
-                  <p className="text-xs text-slate-500 dark:text-slate-400 leading-relaxed">
-                    Generate an adaptive roadmap to receive step-by-step milestones, vetted documentation, and verifiable repository deliverables.
-                  </p>
-                </div>
-                <Link href="/roadmap" className="inline-block pt-1">
-                  <Button size="sm" variant="primary">
-                    <Sparkles className="w-3.5 h-3.5 mr-1.5" /> Generate Milestone Sprint
-                  </Button>
-                </Link>
-              </div>
-            )}
-          </BentoCard>
-
-          {/* Bento Card 2: Diagnostic Skill Assessments (colSpan 1) */}
-          <BentoCard colSpan={1} className="space-y-4">
-            <div className="flex items-center justify-between pb-3 border-b border-slate-100 dark:border-slate-800">
-              <div className="flex items-center gap-2">
-                <div className="p-2 rounded-xl bg-purple-50 dark:bg-purple-950/40 text-purple-600">
-                  <ClipboardCheck className="w-5 h-5" />
-                </div>
-                <div>
-                  <h3 className="text-sm font-bold text-slate-900 dark:text-white">
-                    Skill Diagnostics
-                  </h3>
-                  <p className="text-[11px] text-slate-500 dark:text-slate-400">
-                    Deterministic verification
-                  </p>
-                </div>
-              </div>
-              <Link href="/assessments" className="text-xs font-semibold text-brand-600 dark:text-brand-400 hover:underline">
-                All Tests
-              </Link>
-            </div>
-
-            <div className="space-y-2.5">
-              <div className="flex items-center justify-between text-xs">
-                <span className="text-slate-600 dark:text-slate-400 font-medium">Passed Benchmarks</span>
-                <span className="font-bold text-slate-900 dark:text-white">
-                  {passedAssessmentsCount} / {totalAssessmentsCount}
-                </span>
-              </div>
-              <ProgressBar
-                value={totalAssessmentsCount > 0 ? (passedAssessmentsCount / totalAssessmentsCount) * 100 : 0}
-                color="intelligence"
-                className="h-2"
-              />
-            </div>
-
-            <div className="p-3.5 rounded-xl bg-slate-50 dark:bg-slate-800/40 border border-slate-100 dark:border-slate-800 space-y-2 text-xs">
-              <div className="font-semibold text-slate-900 dark:text-white flex items-center justify-between">
-                <span>Recommended Test</span>
-                <Badge variant="intelligence" size="sm">20 Qs</Badge>
-              </div>
-              <p className="text-slate-500 dark:text-slate-400 text-[11px] leading-relaxed">
-                System Design & Distributed Patterns — calibrates your technical architecture score.
-              </p>
-              <Link href="/assessments" className="block pt-1">
-                <Button size="sm" variant="intelligence" className="w-full text-xs">
-                  Start Diagnostic
-                </Button>
-              </Link>
-            </div>
-          </BentoCard>
-
-          {/* Bento Card 3: Top Semantic Job Matches (colSpan 2) */}
-          <BentoCard colSpan={2} className="space-y-4">
-            <div className="flex items-center justify-between pb-3 border-b border-slate-100 dark:border-slate-800">
-              <div className="flex items-center gap-2">
-                <div className="p-2 rounded-xl bg-indigo-50 dark:bg-indigo-950/40 text-indigo-600">
-                  <Briefcase className="w-5 h-5" />
-                </div>
-                <div>
-                  <h3 className="text-base font-bold text-slate-900 dark:text-white">
-                    Personalized Job Matches
-                  </h3>
-                  <p className="text-xs text-slate-500 dark:text-slate-400">
-                    Ranked by multi-factor semantic embeddings and verified skill alignment
-                  </p>
-                </div>
-              </div>
-              <Link href="/jobs" className="text-xs font-semibold text-brand-600 dark:text-brand-400 hover:underline inline-flex items-center gap-1">
-                <span>View All Jobs</span>
-                <ChevronRight className="w-3.5 h-3.5" />
-              </Link>
-            </div>
-
-            {jobMatches.length > 0 ? (
-              <div className="space-y-3">
-                {jobMatches.slice(0, 2).map((item, idx) => (
-                  <div
-                    key={item.job?.id || idx}
-                    className="p-4 rounded-2xl border border-slate-200/80 dark:border-slate-800/80 hover:border-slate-300 dark:hover:border-slate-700 transition-all flex flex-col sm:flex-row sm:items-center justify-between gap-3 bg-white dark:bg-slate-900"
-                  >
-                    <div className="space-y-1 min-w-0">
-                      <div className="flex items-center gap-2 flex-wrap">
-                        <span className="text-sm font-bold text-slate-900 dark:text-white truncate">
+            <ul>
+              {jobMatches.slice(0, 3).map((item, idx) => {
+                const fit = item.match?.overall_score ?? 0;
+                return (
+                  <li key={item.job?.id || idx}>
+                    <Link
+                      href={`/jobs/${item.job?.id || ''}`}
+                      className="flex items-center gap-4 rounded-2xl px-4 py-4 transition-colors duration-200 hover:bg-white/[0.04]"
+                    >
+                      <span className="grid h-10 w-10 shrink-0 place-items-center rounded-xl border border-white/10 bg-white/5">
+                        <Building2 className="h-4 w-4 text-ink-muted" />
+                      </span>
+                      <span className="min-w-0 flex-1">
+                        <span className="block font-medium">
                           {item.job?.title}
+                          {item.job?.company_name ? ` · ${item.job.company_name}` : ''}
                         </span>
-                        <Badge
-                          variant={
-                            (item.match?.overall_score || 0) >= 80
-                              ? 'verified'
-                              : (item.match?.overall_score || 0) >= 60
-                              ? 'action'
-                              : 'default'
-                          }
-                          size="sm"
-                        >
-                          {item.match?.overall_score || 85}% Match
-                        </Badge>
-                      </div>
-                      <div className="flex items-center gap-3 text-xs text-slate-500 dark:text-slate-400 flex-wrap">
-                        <span className="flex items-center gap-1">
-                          <Building2 className="w-3.5 h-3.5 text-slate-400" />
-                          {item.job?.company_name}
+                        <span className="flex items-center gap-1 text-sm text-ink-dim">
+                          <MapPin className="h-3.5 w-3.5 shrink-0" />
+                          {[item.job?.location, item.job?.remote_type].filter(Boolean).join(' · ') || 'Location not listed'}
                         </span>
-                        <span className="flex items-center gap-1">
-                          <MapPin className="w-3.5 h-3.5 text-slate-400" />
-                          {item.job?.location} ({item.job?.remote_type || 'Hybrid'})
+                      </span>
+                      <span className="text-right">
+                        <span className={`block font-display text-xl font-semibold tabular-nums ${fit >= 80 ? 'text-lime' : 'text-lav'}`}>
+                          {fit}%
                         </span>
-                      </div>
-                    </div>
-
-                    <Link href={`/jobs/${item.job?.id || ''}`} className="shrink-0">
-                      <Button size="sm" variant="outline" className="w-full sm:w-auto">
-                        Explain Match
-                      </Button>
+                        <span className="block text-xs text-ink-dim">fit</span>
+                      </span>
                     </Link>
-                  </div>
-                ))}
-              </div>
-            ) : (
-              /* Zero-mock empty state for jobs */
-              <div className="p-6 rounded-2xl bg-slate-50 dark:bg-slate-900/50 border border-dashed border-slate-200 dark:border-slate-800 text-center space-y-3">
-                <div className="h-12 w-12 rounded-2xl bg-indigo-50 dark:bg-indigo-950/40 text-indigo-600 flex items-center justify-center mx-auto">
-                  <Briefcase className="w-6 h-6" />
-                </div>
-                <div className="space-y-1 max-w-md mx-auto">
-                  <h4 className="text-sm font-bold text-slate-900 dark:text-white">
-                    No active job matches generated yet
-                  </h4>
-                  <p className="text-xs text-slate-500 dark:text-slate-400 leading-relaxed">
-                    Set your target role in Career Profile and take a diagnostic test to generate semantic job matches across live engineering listings.
-                  </p>
-                </div>
-                <Link href="/jobs" className="inline-block pt-1">
-                  <Button size="sm" variant="outline">
-                    Explore Job Feed
-                  </Button>
-                </Link>
-              </div>
-            )}
-          </BentoCard>
+                  </li>
+                );
+              })}
+            </ul>
+          </GlassPanel>
+        ) : (
+          <GlassEmptyState
+            icon={<Briefcase className="h-5 w-5" />}
+            title="No job matches yet"
+            description="Set your target role in Career Profile and take a skill test to get matches across live engineering listings."
+            action={<GlassButton variant="glass" href="/jobs">Explore job feed</GlassButton>}
+          />
+        )}
+      </motion.div>
 
-          {/* Bento Card 4: Career Profile Completeness & Action Steps (colSpan 1) */}
-          <BentoCard colSpan={1} className="space-y-4">
-            <div className="flex items-center justify-between pb-3 border-b border-slate-100 dark:border-slate-800">
-              <div className="flex items-center gap-2">
-                <div className="p-2 rounded-xl bg-emerald-50 dark:bg-emerald-950/40 text-emerald-600">
-                  <ShieldCheck className="w-5 h-5" />
-                </div>
-                <div>
-                  <h3 className="text-sm font-bold text-slate-900 dark:text-white">
-                    Profile Evidence
-                  </h3>
-                  <p className="text-[11px] text-slate-500 dark:text-slate-400">
-                    Truthful career graph
-                  </p>
-                </div>
-              </div>
-              <Link href="/career-profile" className="text-xs font-semibold text-brand-600 dark:text-brand-400 hover:underline">
-                Profile
-              </Link>
-            </div>
+      <motion.div variants={staggerItem} className="grid gap-4 md:grid-cols-2">
+        <GlassPanel className="flex flex-col p-6">
+          <div className="flex items-center justify-between">
+            <h2 className="font-display text-lg font-semibold tracking-[-0.02em]">Skill tests</h2>
+            <GlassButton variant="ghost" size="sm" href="/assessments">
+              All tests
+            </GlassButton>
+          </div>
+          <p className="mt-3 font-display text-4xl font-semibold tabular-nums tracking-[-0.04em]">
+            {passedAssessmentsCount}
+            <span className="text-xl text-ink-dim"> / {totalAssessmentsCount} passed</span>
+          </p>
+          <p className="mt-3 text-sm text-ink-muted">
+            Recommended: System Design & Distributed Patterns, 20 questions. It calibrates your architecture score.
+          </p>
+          <div className="mt-auto pt-5">
+            <GlassButton variant="primary" href="/assessments">
+              <Target className="h-4 w-4" /> Start a test
+            </GlassButton>
+          </div>
+        </GlassPanel>
 
-            <div className="space-y-2">
-              <div className="flex items-center justify-between text-xs">
-                <span className="text-slate-600 dark:text-slate-400 font-medium">Completeness</span>
-                <span className="font-bold text-slate-900 dark:text-white">{completeness.toFixed(0)}%</span>
-              </div>
-              <ProgressBar value={completeness} color="verified" className="h-2" />
-            </div>
-
-            <div className="space-y-2 text-xs pt-1">
-              <div className="flex items-center gap-2 text-slate-700 dark:text-slate-300">
-                <CheckCircle2 className="w-4 h-4 text-emerald-600 shrink-0" />
-                <span>Account Verified</span>
-              </div>
-              <div className="flex items-center gap-2 text-slate-700 dark:text-slate-300">
-                {profile?.primary_role ? (
-                  <CheckCircle2 className="w-4 h-4 text-emerald-600 shrink-0" />
-                ) : (
-                  <div className="w-4 h-4 rounded-full border border-slate-300 shrink-0" />
-                )}
-                <span>Target Role Configured</span>
-              </div>
-              <div className="flex items-center gap-2 text-slate-700 dark:text-slate-300">
-                {passedAssessmentsCount > 0 ? (
-                  <CheckCircle2 className="w-4 h-4 text-emerald-600 shrink-0" />
-                ) : (
-                  <div className="w-4 h-4 rounded-full border border-slate-300 shrink-0" />
-                )}
-                <span>Diagnostic Assessment Passed</span>
-              </div>
-            </div>
-
-            <div className="pt-2">
-              <Link href="/resume" className="block">
-                <Button size="sm" variant="secondary" className="w-full text-xs">
-                  Optimize Resume Diff &rarr;
-                </Button>
-              </Link>
-            </div>
-          </BentoCard>
-        </BentoGrid>
+        <GlassPanel className="flex flex-col p-6">
+          <div className="flex items-center justify-between">
+            <h2 className="font-display text-lg font-semibold tracking-[-0.02em]">Profile evidence</h2>
+            <span className="text-sm tabular-nums text-ink-muted">{completeness.toFixed(0)}% complete</span>
+          </div>
+          <ul className="mt-4 flex flex-col gap-2.5">
+            <Check done>Account verified</Check>
+            <Check done={!!profile?.primary_role}>Target role set</Check>
+            <Check done={passedAssessmentsCount > 0}>A skill test passed</Check>
+          </ul>
+          <div className="mt-auto flex flex-wrap gap-3 pt-5">
+            <GlassButton variant="glass" href="/resume">
+              Optimize resume
+            </GlassButton>
+            <GlassButton variant="ghost" href="/career-profile">
+              Edit profile
+            </GlassButton>
+          </div>
+        </GlassPanel>
       </motion.div>
     </motion.div>
   );

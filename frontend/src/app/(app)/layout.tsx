@@ -4,7 +4,6 @@ import * as React from 'react';
 import { useRouter, usePathname } from 'next/navigation';
 import { AppShell } from '@/components/layout/app-shell';
 import { useAuth } from '@/hooks/use-auth';
-import { Sparkles } from 'lucide-react';
 
 export default function AppLayout({
   children,
@@ -25,14 +24,12 @@ export default function AppLayout({
   // Flash prevention loading screen during session verification
   if (isLoading || status === 'loading') {
     return (
-      <div className="min-h-screen bg-slate-900 flex flex-col items-center justify-center text-white px-4">
+      <div className="cp-dark flex min-h-screen flex-col items-center justify-center px-4">
         <div className="flex flex-col items-center gap-4">
-          <div className="h-12 w-12 rounded-2xl bg-gradient-to-tr from-brand-600 to-purple-500 flex items-center justify-center text-white shadow-lg shadow-purple-500/20 animate-pulse">
-            <Sparkles className="h-6 w-6 text-white" />
-          </div>
+          <span className="grid h-12 w-12 animate-pulse place-items-center rounded-2xl bg-gradient-to-b from-lav-light to-lav text-lg font-bold text-lav-ink">C</span>
           <div className="text-center space-y-1">
-            <p className="font-bold text-base tracking-tight text-white">Loading Workspace</p>
-            <p className="text-xs text-slate-400">Verifying secure career session...</p>
+            <p className="font-display text-base font-semibold tracking-[-0.02em] text-ink-fg">Loading Workspace</p>
+            <p className="text-sm text-ink-muted">Verifying secure career session...</p>
           </div>
         </div>
       </div>
@@ -41,14 +38,12 @@ export default function AppLayout({
 
   if (!isAuthenticated) {
     return (
-      <div className="min-h-screen bg-slate-900 flex flex-col items-center justify-center text-white px-4">
+      <div className="cp-dark flex min-h-screen flex-col items-center justify-center px-4">
         <div className="flex flex-col items-center gap-4">
-          <div className="h-12 w-12 rounded-2xl bg-gradient-to-tr from-brand-600 to-purple-500 flex items-center justify-center text-white shadow-lg shadow-purple-500/20 animate-pulse">
-            <Sparkles className="h-6 w-6 text-white" />
-          </div>
+          <span className="grid h-12 w-12 animate-pulse place-items-center rounded-2xl bg-gradient-to-b from-lav-light to-lav text-lg font-bold text-lav-ink">C</span>
           <div className="text-center space-y-1">
-            <p className="font-bold text-base tracking-tight text-white">Redirecting to Sign In</p>
-            <p className="text-xs text-slate-400">Please sign in to access your workspace...</p>
+            <p className="font-display text-base font-semibold tracking-[-0.02em] text-ink-fg">Redirecting to Sign In</p>
+            <p className="text-sm text-ink-muted">Please sign in to access your workspace...</p>
           </div>
         </div>
       </div>
