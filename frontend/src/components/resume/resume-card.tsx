@@ -41,11 +41,11 @@ export function ResumeCard({
   const isProcessing = ['uploaded', 'processing', 'parsing'].includes(resume.status);
 
   return (
-    <Card className="p-4 border-slate-200 dark:border-slate-800 hover:border-slate-300 dark:hover:border-slate-700 transition-all shadow-sm">
+    <Card className="p-4 border-slate-200 dark:border-white/10 hover:border-slate-300 dark:hover:border-white/15 transition-all shadow-sm">
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
         {/* File Details */}
         <div className="flex items-start gap-3 min-w-0">
-          <div className="w-10 h-10 rounded-xl bg-brand-50 dark:bg-brand-950/40 text-brand-600 dark:text-brand-400 flex items-center justify-center shrink-0 mt-0.5">
+          <div className="w-10 h-10 rounded-xl bg-brand-50 dark:bg-lav/10 text-brand-600 dark:text-lav flex items-center justify-center shrink-0 mt-0.5">
             <FileText className="w-5 h-5" />
           </div>
 
@@ -55,7 +55,7 @@ export function ResumeCard({
                 {resume.file_name}
               </h4>
               {resume.is_primary && (
-                <span className="text-[10px] uppercase font-bold tracking-wider px-2 py-0.5 rounded-full bg-brand-100 text-brand-800 dark:bg-brand-950/80 dark:text-brand-300 border border-brand-200 dark:border-brand-800">
+                <span className="text-[10px] uppercase font-bold tracking-wider px-2 py-0.5 rounded-full bg-brand-100 text-brand-800 dark:bg-lav/10 dark:text-lav-light border border-brand-200 dark:border-lav/30">
                   Primary Source
                 </span>
               )}
@@ -81,7 +81,7 @@ export function ResumeCard({
               )}
             </div>
 
-            <div className="flex items-center gap-2 text-xs text-slate-500 dark:text-slate-400">
+            <div className="flex items-center gap-2 text-xs text-slate-500 dark:text-ink-muted">
               <span>{(resume.file_size_bytes / 1024).toFixed(1)} KB</span>
               <span>&bull;</span>
               <span>
@@ -95,7 +95,7 @@ export function ResumeCard({
               {resume.parsed_at && (
                 <>
                   <span>&bull;</span>
-                  <span className="text-emerald-600 dark:text-emerald-400">
+                  <span className="text-emerald-600 dark:text-lime">
                     Parsed{' '}
                     {new Date(resume.parsed_at).toLocaleDateString(undefined, {
                       month: 'short',
@@ -107,7 +107,7 @@ export function ResumeCard({
             </div>
 
             {isFailed && resume.parsing_error && (
-              <p className="text-xs text-rose-600 dark:text-rose-400 line-clamp-1 pt-0.5">
+              <p className="text-xs text-rose-600 dark:text-crimson-soft line-clamp-1 pt-0.5">
                 Error: {resume.parsing_error}
               </p>
             )}
@@ -155,7 +155,7 @@ export function ResumeCard({
             <Button
               variant="ghost"
               size="sm"
-              className="text-slate-400 hover:text-rose-600 dark:hover:text-rose-400"
+              className="text-slate-400 hover:text-rose-600 dark:hover:text-crimson-soft"
               onClick={() => onDelete(resume)}
               title="Delete resume"
             >

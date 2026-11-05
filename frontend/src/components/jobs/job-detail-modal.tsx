@@ -113,7 +113,7 @@ export function JobDetailModal({
           >
             {copied ? (
               <>
-                <Check className="w-3.5 h-3.5 text-emerald-600" />
+                <Check className="w-3.5 h-3.5 text-emerald-600 dark:text-lime" />
                 Copied Link
               </>
             ) : (
@@ -133,7 +133,7 @@ export function JobDetailModal({
                   onClose();
                   onOpenMatchDrawer(job, match);
                 }}
-                className="flex items-center gap-1.5 text-brand-600 dark:text-brand-400"
+                className="flex items-center gap-1.5 text-brand-600 dark:text-lav"
               >
                 <Sparkles className="w-3.5 h-3.5" />
                 Explain Fit
@@ -148,7 +148,7 @@ export function JobDetailModal({
                 href={job.application_url}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="inline-flex items-center justify-center font-medium rounded-xl transition-all focus:outline-none focus:ring-2 focus:ring-offset-2 disabled:opacity-50 text-xs px-3.5 py-2 shadow-subtle bg-slate-900 text-white hover:bg-slate-800 focus:ring-slate-900 dark:bg-white dark:text-slate-900 dark:hover:bg-slate-100 dark:focus:ring-white"
+                className="inline-flex items-center justify-center font-medium rounded-xl transition-all focus:outline-none focus:ring-2 focus:ring-offset-2 disabled:opacity-50 text-xs px-3.5 py-2 shadow-subtle bg-slate-900 text-white hover:bg-slate-800 focus:ring-slate-900 dark:bg-lav dark:text-lav-ink dark:hover:bg-lav-light dark:focus:ring-white"
               >
                 Apply on Official Site
                 <ExternalLink className="w-3.5 h-3.5 ml-1.5" />
@@ -161,7 +161,7 @@ export function JobDetailModal({
       <div className="space-y-6 text-xs sm:text-sm">
         {/* Personalized Match Fit Banner (if match available) */}
         {match && (
-          <div className="p-4 rounded-xl bg-gradient-to-r from-brand-50/70 via-indigo-50/50 to-white dark:from-slate-800 dark:via-slate-800 dark:to-slate-850 border border-brand-200/80 dark:border-brand-900/60 shadow-sm flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+          <div className="p-4 rounded-xl bg-gradient-to-r from-brand-50/70 via-indigo-50/50 to-white dark:from-white/[0.07] dark:via-white/[0.07] dark:to-white/20 border border-brand-200/80 dark:border-lav/30 shadow-sm flex flex-col sm:flex-row sm:items-center justify-between gap-4">
             <div className="flex items-center gap-4">
               <MatchScoreBadge
                 score={match.overall_score}
@@ -184,7 +184,7 @@ export function JobDetailModal({
                   isProvisional={match.breakdown?.is_provisional}
                   size="sm"
                 />
-                <p className="text-[11px] text-slate-500 dark:text-slate-400">
+                <p className="text-[11px] text-slate-500 dark:text-ink-muted">
                   {match.matched_skills.length} matched mandatory skills • {match.missing_skills.length} missing skill gaps
                 </p>
               </div>
@@ -208,7 +208,7 @@ export function JobDetailModal({
         )}
 
         {/* Key Metadata Grid */}
-        <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 p-3.5 rounded-xl bg-slate-50 dark:bg-slate-800/60 border border-slate-200/80 dark:border-slate-800">
+        <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 p-3.5 rounded-xl bg-slate-50 dark:bg-white/[0.07] border border-slate-200/80 dark:border-white/10">
           <div>
             <span className="text-[10px] font-semibold text-slate-400 uppercase tracking-wider block">
               Compensation
@@ -240,20 +240,20 @@ export function JobDetailModal({
             <span className="text-[10px] font-semibold text-slate-400 uppercase tracking-wider block">
               Listing Freshness
             </span>
-            <span className="font-semibold text-emerald-600 dark:text-emerald-400 mt-0.5 block capitalize">
+            <span className="font-semibold text-emerald-600 dark:text-lime mt-0.5 block capitalize">
               {job.freshness_status} (Posted {formatDate(job.posted_at)})
             </span>
           </div>
         </div>
 
         {/* Source & Freshness Transparency Banner */}
-        <div className="p-3 rounded-xl border border-blue-100 bg-blue-50/60 dark:border-blue-900/50 dark:bg-blue-950/30 text-xs flex items-start gap-2.5">
-          <ShieldCheck className="w-4 h-4 text-blue-600 dark:text-blue-400 shrink-0 mt-0.5" />
+        <div className="p-3 rounded-xl border border-blue-100 bg-blue-50/60 dark:border-lav/30 dark:bg-lav/10 text-xs flex items-start gap-2.5">
+          <ShieldCheck className="w-4 h-4 text-blue-600 dark:text-lav shrink-0 mt-0.5" />
           <div className="space-y-0.5">
-            <span className="font-semibold text-blue-900 dark:text-blue-300">
+            <span className="font-semibold text-blue-900 dark:text-lav-light">
               Verified Source Lineage: {job.source.toUpperCase()}
             </span>
-            <p className="text-blue-700 dark:text-blue-400 text-[11px] leading-relaxed">
+            <p className="text-blue-700 dark:text-lav text-[11px] leading-relaxed">
               Ingested from {job.source === 'seed' ? 'Curated Industry Benchmark Catalog' : job.source === 'manual' ? 'Candidate-Imported Listing' : 'Permitted Developer API'}.
               {job.last_verified_at && ` Last verified alive on ${formatDate(job.last_verified_at)}.`}
               {job.data_quality_score && ` Data completeness score: ${Math.round(job.data_quality_score * 100)}%.`}
@@ -265,9 +265,9 @@ export function JobDetailModal({
         {job.responsibilities && job.responsibilities.length > 0 && (
           <div className="space-y-2">
             <h4 className="font-bold text-slate-900 dark:text-white text-xs sm:text-sm flex items-center gap-1.5">
-              <Briefcase className="w-4 h-4 text-brand-500" /> Key Responsibilities
+              <Briefcase className="w-4 h-4 text-brand-500 dark:text-lav" /> Key Responsibilities
             </h4>
-            <ul className="space-y-1.5 pl-4 list-disc text-slate-700 dark:text-slate-300 text-xs leading-relaxed">
+            <ul className="space-y-1.5 pl-4 list-disc text-slate-700 dark:text-ink-fg/80 text-xs leading-relaxed">
               {job.responsibilities.map((r, i) => (
                 <li key={i}>{r}</li>
               ))}
@@ -279,9 +279,9 @@ export function JobDetailModal({
         {job.required_qualifications && job.required_qualifications.length > 0 && (
           <div className="space-y-2">
             <h4 className="font-bold text-slate-900 dark:text-white text-xs sm:text-sm flex items-center gap-1.5">
-              <ListChecks className="w-4 h-4 text-emerald-600" /> Mandatory Qualifications
+              <ListChecks className="w-4 h-4 text-emerald-600 dark:text-lime" /> Mandatory Qualifications
             </h4>
-            <ul className="space-y-1.5 pl-4 list-disc text-slate-700 dark:text-slate-300 text-xs leading-relaxed">
+            <ul className="space-y-1.5 pl-4 list-disc text-slate-700 dark:text-ink-fg/80 text-xs leading-relaxed">
               {job.required_qualifications.map((q, i) => (
                 <li key={i}>{q}</li>
               ))}
@@ -293,9 +293,9 @@ export function JobDetailModal({
         {job.preferred_qualifications && job.preferred_qualifications.length > 0 && (
           <div className="space-y-2">
             <h4 className="font-bold text-slate-900 dark:text-white text-xs sm:text-sm flex items-center gap-1.5">
-              <Sparkles className="w-4 h-4 text-indigo-500" /> Preferred Qualifications
+              <Sparkles className="w-4 h-4 text-indigo-500 dark:text-lav" /> Preferred Qualifications
             </h4>
-            <ul className="space-y-1.5 pl-4 list-disc text-slate-700 dark:text-slate-300 text-xs leading-relaxed">
+            <ul className="space-y-1.5 pl-4 list-disc text-slate-700 dark:text-ink-fg/80 text-xs leading-relaxed">
               {job.preferred_qualifications.map((p, i) => (
                 <li key={i}>{p}</li>
               ))}
@@ -304,7 +304,7 @@ export function JobDetailModal({
         )}
 
         {/* Canonical Skill Tagging */}
-        <div className="space-y-3 pt-2 border-t border-slate-100 dark:border-slate-800">
+        <div className="space-y-3 pt-2 border-t border-slate-100 dark:border-white/10">
           <h4 className="font-bold text-slate-900 dark:text-white text-xs sm:text-sm">
             Standardized Canonical Skills Tagged
           </h4>
@@ -317,7 +317,7 @@ export function JobDetailModal({
               <div className="flex flex-wrap gap-1.5">
                 {requiredSkills.map((s) => (
                   <Badge key={s.skill_id} variant="verified" size="md">
-                    <CheckCircle2 className="w-3.5 h-3.5 text-emerald-600 mr-1" />
+                    <CheckCircle2 className="w-3.5 h-3.5 text-emerald-600 mr-1 dark:text-lime" />
                     {s.name}
                     {s.source_phrase && (
                       <span className="text-[10px] text-slate-400 font-normal ml-1">
@@ -352,11 +352,11 @@ export function JobDetailModal({
         </div>
 
         {/* Full Job Description */}
-        <div className="space-y-2 pt-2 border-t border-slate-100 dark:border-slate-800">
+        <div className="space-y-2 pt-2 border-t border-slate-100 dark:border-white/10">
           <h4 className="font-bold text-slate-900 dark:text-white text-xs sm:text-sm flex items-center gap-1.5">
             <FileText className="w-4 h-4 text-slate-400" /> Full Job Description
           </h4>
-          <div className="prose prose-xs dark:prose-invert max-w-none text-slate-700 dark:text-slate-300 whitespace-pre-line leading-relaxed p-4 rounded-xl bg-slate-50/50 dark:bg-slate-900/50 border border-slate-100 dark:border-slate-800">
+          <div className="prose prose-xs dark:prose-invert max-w-none text-slate-700 dark:text-ink-fg/80 whitespace-pre-line leading-relaxed p-4 rounded-xl bg-slate-50/50 dark:bg-white/[0.04] border border-slate-100 dark:border-white/10">
             {job.description_markdown}
           </div>
         </div>

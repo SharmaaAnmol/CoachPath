@@ -45,10 +45,10 @@ export function BentoCard({
   return (
     <div
       className={cn(
-        'group relative rounded-2xl border border-slate-200/80 bg-white p-6 text-slate-900 shadow-card transition-all duration-300 hover:border-slate-300 hover:shadow-elevated dark:border-slate-800/80 dark:bg-slate-900/90 dark:text-slate-100 dark:hover:border-slate-700 overflow-hidden flex flex-col justify-between',
+        'group relative rounded-2xl border border-slate-200/80 bg-white p-6 text-slate-900 shadow-card transition-all duration-300 hover:border-slate-300 hover:shadow-elevated dark:border-white/10 dark:bg-white/[0.04] dark:text-ink-fg dark:hover:border-white/15 overflow-hidden flex flex-col justify-between',
         colSpanClasses[colSpan],
         rowSpanClasses[rowSpan],
-        gradient && 'bg-gradient-to-br from-white via-slate-50/50 to-indigo-50/20 dark:from-slate-900 dark:via-slate-900 dark:to-indigo-950/20',
+        gradient && 'bg-gradient-to-br from-white via-slate-50/50 to-indigo-50/20 dark:from-white/[0.04] dark:via-white/[0.04] dark:to-lav/10',
         className
       )}
       {...props}

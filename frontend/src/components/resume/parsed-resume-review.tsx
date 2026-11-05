@@ -291,8 +291,8 @@ export function ParsedResumeReview({
               <ShieldCheck className="w-3.5 h-3.5 mr-1" /> Draft Mode
             </Badge>
           </div>
-          <p className="text-xs text-slate-500 dark:text-slate-400 mt-1">
-            Source: <strong className="text-slate-700 dark:text-slate-300">{parsedData.file_name}</strong> &bull; Inspect and edit extracted details before confirming profile merge.
+          <p className="text-xs text-slate-500 dark:text-ink-muted mt-1">
+            Source: <strong className="text-slate-700 dark:text-ink-fg/80">{parsedData.file_name}</strong> &bull; Inspect and edit extracted details before confirming profile merge.
           </p>
         </div>
 
@@ -323,7 +323,7 @@ export function ParsedResumeReview({
       {activeTab === 'education' && (
         <div className="space-y-4">
           <div className="flex items-center justify-between">
-            <p className="text-xs text-slate-500 dark:text-slate-400">
+            <p className="text-xs text-slate-500 dark:text-ink-muted">
               Select and review academic degrees to commit to your profile.
             </p>
             <Button
@@ -362,8 +362,8 @@ export function ParsedResumeReview({
                   key={edu.id}
                   className={`p-5 transition-all space-y-4 border ${
                     edu.selected
-                      ? 'border-brand-200 dark:border-brand-900 bg-white dark:bg-slate-900'
-                      : 'border-slate-200 dark:border-slate-800 opacity-60 bg-slate-50/50 dark:bg-slate-950/20'
+                      ? 'border-brand-200 dark:border-lav/30 bg-white dark:bg-white/[0.04]'
+                      : 'border-slate-200 dark:border-white/10 opacity-60 bg-slate-50/50 dark:bg-black/40'
                   }`}
                 >
                   <div className="flex items-center justify-between gap-3">
@@ -379,7 +379,7 @@ export function ParsedResumeReview({
                             )
                           );
                         }}
-                        className="w-4 h-4 rounded text-brand-600 focus:ring-brand-500 border-slate-300 dark:border-slate-700"
+                        className="w-4 h-4 rounded text-brand-600 focus:ring-brand-500 border-slate-300 dark:border-white/15 dark:text-lav"
                         id={`edu_check_${edu.id}`}
                       />
                       <label
@@ -398,7 +398,7 @@ export function ParsedResumeReview({
                         onClick={() =>
                           setEducationList((prev) => prev.filter((item) => item.id !== edu.id))
                         }
-                        className="text-slate-400 hover:text-rose-600 h-8 w-8 p-0"
+                        className="text-slate-400 hover:text-rose-600 h-8 w-8 p-0 dark:hover:text-crimson-soft"
                       >
                         <Trash2 className="w-4 h-4" />
                       </Button>
@@ -408,7 +408,7 @@ export function ParsedResumeReview({
                   {/* Form fields */}
                   <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 pt-2">
                     <div>
-                      <label className="text-xs font-medium text-slate-600 dark:text-slate-400">
+                      <label className="text-xs font-medium text-slate-600 dark:text-ink-muted">
                         Institution Name
                       </label>
                       <Input
@@ -426,7 +426,7 @@ export function ParsedResumeReview({
                     </div>
 
                     <div>
-                      <label className="text-xs font-medium text-slate-600 dark:text-slate-400">
+                      <label className="text-xs font-medium text-slate-600 dark:text-ink-muted">
                         Degree
                       </label>
                       <Input
@@ -444,7 +444,7 @@ export function ParsedResumeReview({
                     </div>
 
                     <div>
-                      <label className="text-xs font-medium text-slate-600 dark:text-slate-400">
+                      <label className="text-xs font-medium text-slate-600 dark:text-ink-muted">
                         Field of Study
                       </label>
                       <Input
@@ -462,7 +462,7 @@ export function ParsedResumeReview({
                     </div>
 
                     <div>
-                      <label className="text-xs font-medium text-slate-600 dark:text-slate-400">
+                      <label className="text-xs font-medium text-slate-600 dark:text-ink-muted">
                         Start Date
                       </label>
                       <Input
@@ -480,7 +480,7 @@ export function ParsedResumeReview({
                     </div>
 
                     <div>
-                      <label className="text-xs font-medium text-slate-600 dark:text-slate-400">
+                      <label className="text-xs font-medium text-slate-600 dark:text-ink-muted">
                         End Date / Graduation
                       </label>
                       <Input
@@ -501,7 +501,7 @@ export function ParsedResumeReview({
                     </div>
 
                     <div>
-                      <label className="text-xs font-medium text-slate-600 dark:text-slate-400">
+                      <label className="text-xs font-medium text-slate-600 dark:text-ink-muted">
                         GPA (Optional)
                       </label>
                       <Input
@@ -534,7 +534,7 @@ export function ParsedResumeReview({
       {activeTab === 'experience' && (
         <div className="space-y-4">
           <div className="flex items-center justify-between">
-            <p className="text-xs text-slate-500 dark:text-slate-400">
+            <p className="text-xs text-slate-500 dark:text-ink-muted">
               Select and review professional work experiences. Edit bullet points as needed.
             </p>
             <Button
@@ -573,8 +573,8 @@ export function ParsedResumeReview({
                   key={exp.id}
                   className={`p-5 transition-all space-y-4 border ${
                     exp.selected
-                      ? 'border-brand-200 dark:border-brand-900 bg-white dark:bg-slate-900'
-                      : 'border-slate-200 dark:border-slate-800 opacity-60 bg-slate-50/50 dark:bg-slate-950/20'
+                      ? 'border-brand-200 dark:border-lav/30 bg-white dark:bg-white/[0.04]'
+                      : 'border-slate-200 dark:border-white/10 opacity-60 bg-slate-50/50 dark:bg-black/40'
                   }`}
                 >
                   <div className="flex items-center justify-between gap-3">
@@ -590,7 +590,7 @@ export function ParsedResumeReview({
                             )
                           );
                         }}
-                        className="w-4 h-4 rounded text-brand-600 focus:ring-brand-500 border-slate-300 dark:border-slate-700"
+                        className="w-4 h-4 rounded text-brand-600 focus:ring-brand-500 border-slate-300 dark:border-white/15 dark:text-lav"
                         id={`exp_check_${exp.id}`}
                       />
                       <label
@@ -609,7 +609,7 @@ export function ParsedResumeReview({
                         onClick={() =>
                           setExperienceList((prev) => prev.filter((item) => item.id !== exp.id))
                         }
-                        className="text-slate-400 hover:text-rose-600 h-8 w-8 p-0"
+                        className="text-slate-400 hover:text-rose-600 h-8 w-8 p-0 dark:hover:text-crimson-soft"
                       >
                         <Trash2 className="w-4 h-4" />
                       </Button>
@@ -618,7 +618,7 @@ export function ParsedResumeReview({
 
                   <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 pt-2">
                     <div>
-                      <label className="text-xs font-medium text-slate-600 dark:text-slate-400">
+                      <label className="text-xs font-medium text-slate-600 dark:text-ink-muted">
                         Company Name
                       </label>
                       <Input
@@ -636,7 +636,7 @@ export function ParsedResumeReview({
                     </div>
 
                     <div>
-                      <label className="text-xs font-medium text-slate-600 dark:text-slate-400">
+                      <label className="text-xs font-medium text-slate-600 dark:text-ink-muted">
                         Job Title
                       </label>
                       <Input
@@ -654,7 +654,7 @@ export function ParsedResumeReview({
                     </div>
 
                     <div>
-                      <label className="text-xs font-medium text-slate-600 dark:text-slate-400">
+                      <label className="text-xs font-medium text-slate-600 dark:text-ink-muted">
                         Start Date
                       </label>
                       <Input
@@ -672,7 +672,7 @@ export function ParsedResumeReview({
                     </div>
 
                     <div>
-                      <label className="text-xs font-medium text-slate-600 dark:text-slate-400">
+                      <label className="text-xs font-medium text-slate-600 dark:text-ink-muted">
                         End Date
                       </label>
                       <Input
@@ -695,7 +695,7 @@ export function ParsedResumeReview({
 
                   {/* Bullet points */}
                   <div className="space-y-2 pt-2">
-                    <label className="text-xs font-medium text-slate-600 dark:text-slate-400">
+                    <label className="text-xs font-medium text-slate-600 dark:text-ink-muted">
                       Responsibilities & Quantified Achievements
                     </label>
                     {exp.bullet_points.map((bullet, bIdx) => (
@@ -731,7 +731,7 @@ export function ParsedResumeReview({
                               })
                             );
                           }}
-                          className="h-8 w-8 p-0 text-slate-400 hover:text-rose-500"
+                          className="h-8 w-8 p-0 text-slate-400 hover:text-rose-500 dark:hover:text-crimson-soft"
                         >
                           <X className="w-3.5 h-3.5" />
                         </Button>
@@ -751,7 +751,7 @@ export function ParsedResumeReview({
                           })
                         );
                       }}
-                      className="text-xs text-brand-600 dark:text-brand-400"
+                      className="text-xs text-brand-600 dark:text-lav"
                     >
                       <Plus className="w-3 h-3 mr-1" /> Add Bullet Point
                     </Button>
@@ -770,7 +770,7 @@ export function ParsedResumeReview({
         <div className="space-y-6">
           <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
             <div>
-              <p className="text-xs text-slate-500 dark:text-slate-400">
+              <p className="text-xs text-slate-500 dark:text-ink-muted">
                 Skills normalized against the CoachPath taxonomy. Checked skills will be linked to your profile as unverified claims.
               </p>
             </div>
@@ -800,7 +800,7 @@ export function ParsedResumeReview({
           {/* Canonical Matched Skills */}
           <div className="space-y-3">
             <div className="flex items-center gap-2">
-              <h4 className="text-xs font-semibold uppercase tracking-wider text-slate-700 dark:text-slate-300">
+              <h4 className="text-xs font-semibold uppercase tracking-wider text-slate-700 dark:text-ink-fg/80">
                 Taxonomy Matched Skills ({preview?.normalized_skills.length || 0})
               </h4>
               <Badge variant="verified" size="sm">
@@ -823,8 +823,8 @@ export function ParsedResumeReview({
                       }
                       className={`p-3 cursor-pointer border flex items-center justify-between gap-3 transition-all ${
                         isChecked
-                          ? 'border-brand-500 bg-brand-50/40 dark:bg-brand-950/20'
-                          : 'border-slate-200 dark:border-slate-800 opacity-60'
+                          ? 'border-brand-500 bg-brand-50/40 dark:bg-lav/10 dark:border-lav/50'
+                          : 'border-slate-200 dark:border-white/10 opacity-60'
                       }`}
                     >
                       <div className="flex items-center gap-2.5 min-w-0">
@@ -832,7 +832,7 @@ export function ParsedResumeReview({
                           type="checkbox"
                           checked={isChecked}
                           onChange={() => {}} // handled by card onClick
-                          className="w-4 h-4 rounded text-brand-600 focus:ring-brand-500 border-slate-300"
+                          className="w-4 h-4 rounded text-brand-600 focus:ring-brand-500 border-slate-300 dark:text-lav"
                         />
                         <div className="min-w-0">
                           <p className="text-sm font-semibold text-slate-900 dark:text-white truncate">
@@ -856,7 +856,7 @@ export function ParsedResumeReview({
           {preview?.raw_unmatched_skills && preview.raw_unmatched_skills.length > 0 && (
             <div className="space-y-3 pt-3">
               <div className="flex items-center gap-2">
-                <h4 className="text-xs font-semibold uppercase tracking-wider text-slate-700 dark:text-slate-300">
+                <h4 className="text-xs font-semibold uppercase tracking-wider text-slate-700 dark:text-ink-fg/80">
                   Additional Unmapped Terms ({preview.raw_unmatched_skills.length})
                 </h4>
                 <Badge variant="secondary" size="sm">
@@ -879,8 +879,8 @@ export function ParsedResumeReview({
                       }
                       className={`px-3 py-1.5 rounded-full text-xs font-medium border flex items-center gap-1.5 transition-all ${
                         isChecked
-                          ? 'bg-slate-900 text-white dark:bg-white dark:text-slate-900 border-transparent'
-                          : 'bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400 border-slate-200 dark:border-slate-700'
+                          ? 'bg-slate-900 text-white dark:bg-lav dark:text-lav-ink border-transparent'
+                          : 'bg-slate-100 dark:bg-white/[0.07] text-slate-600 dark:text-ink-muted border-slate-200 dark:border-white/15'
                       }`}
                     >
                       {isChecked ? <Check className="w-3 h-3" /> : <Plus className="w-3 h-3" />}
@@ -900,7 +900,7 @@ export function ParsedResumeReview({
       {activeTab === 'projects' && (
         <div className="space-y-4">
           <div className="flex items-center justify-between">
-            <p className="text-xs text-slate-500 dark:text-slate-400">
+            <p className="text-xs text-slate-500 dark:text-ink-muted">
               Technical software repositories and portfolio artifacts extracted from your resume.
             </p>
             <Button
@@ -938,8 +938,8 @@ export function ParsedResumeReview({
                   key={proj.id}
                   className={`p-5 transition-all space-y-4 border ${
                     proj.selected
-                      ? 'border-brand-200 dark:border-brand-900 bg-white dark:bg-slate-900'
-                      : 'border-slate-200 dark:border-slate-800 opacity-60 bg-slate-50/50 dark:bg-slate-950/20'
+                      ? 'border-brand-200 dark:border-lav/30 bg-white dark:bg-white/[0.04]'
+                      : 'border-slate-200 dark:border-white/10 opacity-60 bg-slate-50/50 dark:bg-black/40'
                   }`}
                 >
                   <div className="flex items-center justify-between gap-3">
@@ -955,7 +955,7 @@ export function ParsedResumeReview({
                             )
                           );
                         }}
-                        className="w-4 h-4 rounded text-brand-600 focus:ring-brand-500 border-slate-300"
+                        className="w-4 h-4 rounded text-brand-600 focus:ring-brand-500 border-slate-300 dark:text-lav"
                         id={`proj_check_${proj.id}`}
                       />
                       <label
@@ -974,7 +974,7 @@ export function ParsedResumeReview({
                         onClick={() =>
                           setProjectsList((prev) => prev.filter((item) => item.id !== proj.id))
                         }
-                        className="text-slate-400 hover:text-rose-600 h-8 w-8 p-0"
+                        className="text-slate-400 hover:text-rose-600 h-8 w-8 p-0 dark:hover:text-crimson-soft"
                       >
                         <Trash2 className="w-4 h-4" />
                       </Button>
@@ -983,7 +983,7 @@ export function ParsedResumeReview({
 
                   <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 pt-2">
                     <div>
-                      <label className="text-xs font-medium text-slate-600 dark:text-slate-400">
+                      <label className="text-xs font-medium text-slate-600 dark:text-ink-muted">
                         Project Title
                       </label>
                       <Input
@@ -1001,7 +1001,7 @@ export function ParsedResumeReview({
                     </div>
 
                     <div>
-                      <label className="text-xs font-medium text-slate-600 dark:text-slate-400">
+                      <label className="text-xs font-medium text-slate-600 dark:text-ink-muted">
                         GitHub URL (Optional)
                       </label>
                       <Input
@@ -1020,7 +1020,7 @@ export function ParsedResumeReview({
                     </div>
 
                     <div>
-                      <label className="text-xs font-medium text-slate-600 dark:text-slate-400">
+                      <label className="text-xs font-medium text-slate-600 dark:text-ink-muted">
                         Live Demo URL (Optional)
                       </label>
                       <Input
@@ -1040,7 +1040,7 @@ export function ParsedResumeReview({
                   </div>
 
                   <div>
-                    <label className="text-xs font-medium text-slate-600 dark:text-slate-400">
+                    <label className="text-xs font-medium text-slate-600 dark:text-ink-muted">
                       Project Description
                     </label>
                     <Textarea
@@ -1059,7 +1059,7 @@ export function ParsedResumeReview({
                   </div>
 
                   <div>
-                    <label className="text-xs font-medium text-slate-600 dark:text-slate-400">
+                    <label className="text-xs font-medium text-slate-600 dark:text-ink-muted">
                       Technologies (comma separated)
                     </label>
                     <Input
@@ -1091,7 +1091,7 @@ export function ParsedResumeReview({
       {activeTab === 'certifications' && (
         <div className="space-y-4">
           <div className="flex items-center justify-between">
-            <p className="text-xs text-slate-500 dark:text-slate-400">
+            <p className="text-xs text-slate-500 dark:text-ink-muted">
               Professional licenses, cloud certifications, and credentials.
             </p>
             <Button
@@ -1129,8 +1129,8 @@ export function ParsedResumeReview({
                   key={cert.id}
                   className={`p-5 transition-all space-y-4 border ${
                     cert.selected
-                      ? 'border-brand-200 dark:border-brand-900 bg-white dark:bg-slate-900'
-                      : 'border-slate-200 dark:border-slate-800 opacity-60 bg-slate-50/50 dark:bg-slate-950/20'
+                      ? 'border-brand-200 dark:border-lav/30 bg-white dark:bg-white/[0.04]'
+                      : 'border-slate-200 dark:border-white/10 opacity-60 bg-slate-50/50 dark:bg-black/40'
                   }`}
                 >
                   <div className="flex items-center justify-between gap-3">
@@ -1146,7 +1146,7 @@ export function ParsedResumeReview({
                             )
                           );
                         }}
-                        className="w-4 h-4 rounded text-brand-600 focus:ring-brand-500 border-slate-300"
+                        className="w-4 h-4 rounded text-brand-600 focus:ring-brand-500 border-slate-300 dark:text-lav"
                         id={`cert_check_${cert.id}`}
                       />
                       <label
@@ -1167,7 +1167,7 @@ export function ParsedResumeReview({
                             prev.filter((item) => item.id !== cert.id)
                           )
                         }
-                        className="text-slate-400 hover:text-rose-600 h-8 w-8 p-0"
+                        className="text-slate-400 hover:text-rose-600 h-8 w-8 p-0 dark:hover:text-crimson-soft"
                       >
                         <Trash2 className="w-4 h-4" />
                       </Button>
@@ -1176,7 +1176,7 @@ export function ParsedResumeReview({
 
                   <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 pt-2">
                     <div>
-                      <label className="text-xs font-medium text-slate-600 dark:text-slate-400">
+                      <label className="text-xs font-medium text-slate-600 dark:text-ink-muted">
                         Certification Name
                       </label>
                       <Input
@@ -1194,7 +1194,7 @@ export function ParsedResumeReview({
                     </div>
 
                     <div>
-                      <label className="text-xs font-medium text-slate-600 dark:text-slate-400">
+                      <label className="text-xs font-medium text-slate-600 dark:text-ink-muted">
                         Issuing Organization
                       </label>
                       <Input
@@ -1214,7 +1214,7 @@ export function ParsedResumeReview({
                     </div>
 
                     <div>
-                      <label className="text-xs font-medium text-slate-600 dark:text-slate-400">
+                      <label className="text-xs font-medium text-slate-600 dark:text-ink-muted">
                         Issue Date
                       </label>
                       <Input
@@ -1232,7 +1232,7 @@ export function ParsedResumeReview({
                     </div>
 
                     <div>
-                      <label className="text-xs font-medium text-slate-600 dark:text-slate-400">
+                      <label className="text-xs font-medium text-slate-600 dark:text-ink-muted">
                         Credential ID (Optional)
                       </label>
                       <Input
@@ -1269,7 +1269,7 @@ export function ParsedResumeReview({
                 type="checkbox"
                 checked={includePersonalInfo}
                 onChange={(e) => setIncludePersonalInfo(e.target.checked)}
-                className="w-4 h-4 rounded text-brand-600 focus:ring-brand-500 border-slate-300"
+                className="w-4 h-4 rounded text-brand-600 focus:ring-brand-500 border-slate-300 dark:text-lav"
                 id="check_personal"
               />
               <label
@@ -1287,7 +1287,7 @@ export function ParsedResumeReview({
             }`}
           >
             <div>
-              <label className="text-xs font-medium text-slate-600 dark:text-slate-400">
+              <label className="text-xs font-medium text-slate-600 dark:text-ink-muted">
                 Headline
               </label>
               <Input
@@ -1300,7 +1300,7 @@ export function ParsedResumeReview({
             </div>
 
             <div>
-              <label className="text-xs font-medium text-slate-600 dark:text-slate-400">
+              <label className="text-xs font-medium text-slate-600 dark:text-ink-muted">
                 Location
               </label>
               <Input
@@ -1313,7 +1313,7 @@ export function ParsedResumeReview({
             </div>
 
             <div>
-              <label className="text-xs font-medium text-slate-600 dark:text-slate-400">
+              <label className="text-xs font-medium text-slate-600 dark:text-ink-muted">
                 Phone Number
               </label>
               <Input
@@ -1326,7 +1326,7 @@ export function ParsedResumeReview({
             </div>
 
             <div>
-              <label className="text-xs font-medium text-slate-600 dark:text-slate-400">
+              <label className="text-xs font-medium text-slate-600 dark:text-ink-muted">
                 LinkedIn Profile URL
               </label>
               <Input
@@ -1339,7 +1339,7 @@ export function ParsedResumeReview({
             </div>
 
             <div>
-              <label className="text-xs font-medium text-slate-600 dark:text-slate-400">
+              <label className="text-xs font-medium text-slate-600 dark:text-ink-muted">
                 GitHub Profile URL
               </label>
               <Input
@@ -1352,7 +1352,7 @@ export function ParsedResumeReview({
             </div>
 
             <div>
-              <label className="text-xs font-medium text-slate-600 dark:text-slate-400">
+              <label className="text-xs font-medium text-slate-600 dark:text-ink-muted">
                 Portfolio URL
               </label>
               <Input
@@ -1375,10 +1375,10 @@ export function ParsedResumeReview({
           <h4 className="text-sm font-semibold text-slate-900 dark:text-white">
             Resume Summary & Objective Statement
           </h4>
-          <p className="text-xs text-slate-500 dark:text-slate-400">
+          <p className="text-xs text-slate-500 dark:text-ink-muted">
             Extracted directly from candidate document header:
           </p>
-          <div className="p-4 bg-slate-50 dark:bg-slate-800/60 rounded-xl border border-slate-200 dark:border-slate-700 text-xs leading-relaxed text-slate-700 dark:text-slate-300 whitespace-pre-wrap font-mono">
+          <div className="p-4 bg-slate-50 dark:bg-white/[0.07] rounded-xl border border-slate-200 dark:border-white/15 text-xs leading-relaxed text-slate-700 dark:text-ink-fg/80 whitespace-pre-wrap font-mono">
             {preview?.executive_summary ||
               'No standalone executive summary was explicitly detected in this document.'}
           </div>

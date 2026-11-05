@@ -59,8 +59,8 @@ export function ResumeDeleteDialog({
       }
     >
       <div className="space-y-4">
-        <div className="flex items-start gap-3 p-3 bg-rose-50/50 dark:bg-rose-950/20 border border-rose-200 dark:border-rose-900 rounded-lg text-rose-900 dark:text-rose-200 text-xs">
-          <AlertTriangle className="w-5 h-5 text-rose-600 dark:text-rose-400 shrink-0 mt-0.5" />
+        <div className="flex items-start gap-3 p-3 bg-rose-50/50 dark:bg-crimson/10 border border-rose-200 dark:border-crimson/30 rounded-lg text-rose-900 dark:text-crimson-tint text-xs">
+          <AlertTriangle className="w-5 h-5 text-rose-600 dark:text-crimson-soft shrink-0 mt-0.5" />
           <div className="space-y-1">
             <p className="font-semibold text-sm">Are you sure you want to delete this resume?</p>
             <p>

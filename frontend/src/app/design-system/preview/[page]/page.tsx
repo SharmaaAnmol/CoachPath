@@ -3,8 +3,9 @@ import { AppShell } from '@/components/layout/app-shell';
 import Dashboard from '@/app/(app)/dashboard/page';
 import Jobs from '@/app/(app)/jobs/page';
 import Roadmap from '@/app/(app)/roadmap/page';
+import Resume from '@/app/(app)/resume/page';
 
-const pages: Record<string, React.ComponentType> = { dashboard: Dashboard, jobs: Jobs, roadmap: Roadmap };
+const pages: Record<string, React.ComponentType> = { dashboard: Dashboard, jobs: Jobs, roadmap: Roadmap, resume: Resume };
 
 /** Dev-only: real app pages inside the real shell without sign-in, so data cards show their empty states. */
 export default function Preview({ params }: { params: { page: string } }) {

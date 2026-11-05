@@ -38,12 +38,12 @@ export function ResumeApprovalSummary({
     (hasPersonalInfo ? 1 : 0);
 
   return (
-    <Card className="p-4 bg-gradient-to-r from-slate-900 via-brand-950 to-slate-900 text-white border-brand-800 shadow-lg">
+    <Card className="p-4 bg-gradient-to-r from-slate-900 via-brand-950 to-slate-900 text-white border-brand-800 shadow-lg dark:border-lav/50">
       <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-4">
         {/* Left: Tally and Explanation */}
         <div className="space-y-1">
           <div className="flex items-center gap-2">
-            <div className="w-7 h-7 rounded-lg bg-brand-500/20 text-brand-300 flex items-center justify-center">
+            <div className="w-7 h-7 rounded-lg bg-brand-500/20 text-brand-300 flex items-center justify-center dark:bg-lav-violet dark:text-lav-light">
               <ShieldCheck className="w-4 h-4" />
             </div>
             <h4 className="font-semibold text-sm text-white">
@@ -97,7 +97,7 @@ export function ResumeApprovalSummary({
             onClick={onConfirm}
             isLoading={isConfirming}
             disabled={isConfirming || totalItems === 0}
-            className="bg-emerald-600 hover:bg-emerald-700 text-white font-semibold shadow-md"
+            className="bg-emerald-600 hover:bg-emerald-700 text-white font-semibold shadow-md dark:bg-lime/20 dark:hover:bg-lime/20"
           >
             <CheckCircle2 className="w-4 h-4 mr-1.5" />
             Confirm & Merge into Career Profile
