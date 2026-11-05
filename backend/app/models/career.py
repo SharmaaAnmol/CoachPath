@@ -279,7 +279,7 @@ class Education(Base, UUIDMixin, TimestampMixin):
     __tablename__ = "education"
     __table_args__ = (
         CheckConstraint(
-            "gpa IS NULL OR (gpa >= 0.0 AND gpa <= 4.0)",
+            "gpa IS NULL OR (gpa >= 0.0 AND gpa <= 10.0)",
             name="education_gpa_check",
         ),
         Index("education_profile_id_idx", "career_profile_id"),
@@ -323,9 +323,9 @@ class Education(Base, UUIDMixin, TimestampMixin):
         doc="True if candidate is currently enrolled",
     )
     gpa: Mapped[Optional[decimal.Decimal]] = mapped_column(
-        Numeric(3, 2),
+        Numeric(4, 2),
         nullable=True,
-        doc="Cumulative grade point average on a 4.0 scale",
+        doc="Cumulative grade point average on a 4.0 or 10.0 (CGPA) scale",
     )
 
     # Relationships

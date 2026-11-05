@@ -184,6 +184,13 @@ async def test_education_crud_and_validation(client: AsyncClient):
     assert update_res.json()["gpa"] == 3.92
     assert update_res.json()["is_current"] is True
 
+    # 4b. 10-point CGPA (common in India) is accepted and stored; above 10 is rejected
+    cgpa_res = await client.put(f"/api/v1/profile/education/{edu_id}", headers=headers, json={"gpa": 8.4})
+    assert cgpa_res.status_code == 200
+    assert cgpa_res.json()["gpa"] == 8.4
+    too_high = await client.put(f"/api/v1/profile/education/{edu_id}", headers=headers, json={"gpa": 10.5})
+    assert too_high.status_code == 422
+
     # 5. Delete education
     del_res = await client.delete(f"/api/v1/profile/education/{edu_id}", headers=headers)
     assert del_res.status_code == 204

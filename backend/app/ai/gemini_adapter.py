@@ -167,7 +167,7 @@ class GeminiProviderAdapter(LLMProvider):
                 raise
             except Exception as exc:
                 logger.error("Gemini structured generation failure: %s", exc)
-                raise ServiceUnavailableException("Gemini", f"Inference failure: {exc}") from exc
+                raise ServiceUnavailableException("Gemini", "The AI provider request failed. Please try again in a minute.") from exc
 
         raise ServiceUnavailableException(
             "Gemini",
@@ -217,7 +217,7 @@ class GeminiProviderAdapter(LLMProvider):
                 raise
             except Exception as exc:
                 logger.error("Gemini text generation failure: %s", exc)
-                raise ServiceUnavailableException("Gemini", f"Inference failure: {exc}") from exc
+                raise ServiceUnavailableException("Gemini", "The AI provider request failed. Please try again in a minute.") from exc
 
         raise ServiceUnavailableException(
             "Gemini",

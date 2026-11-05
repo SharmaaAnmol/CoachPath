@@ -107,7 +107,7 @@ class EducationBase(BaseModel):
     start_date: date
     end_date: Optional[date] = None
     is_current: bool = False
-    gpa: Optional[float] = Field(None, ge=0.0, le=4.0)
+    gpa: Optional[float] = Field(None, ge=0.0, le=10.0)
 
     @field_validator("end_date")
     @classmethod
@@ -135,7 +135,7 @@ class EducationUpdate(BaseModel):
     start_date: Optional[date] = None
     end_date: Optional[date] = None
     is_current: Optional[bool] = None
-    gpa: Optional[float] = Field(None, ge=0.0, le=4.0)
+    gpa: Optional[float] = Field(None, ge=0.0, le=10.0)
 
 
 class EducationResponse(BaseModel):

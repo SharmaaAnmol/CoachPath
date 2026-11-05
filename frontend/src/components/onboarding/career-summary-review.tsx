@@ -139,9 +139,9 @@ export function CareerSummaryReview({
           <div className="p-3.5 rounded-xl bg-amber-50 dark:bg-amber-950/30 border border-amber-200 dark:border-amber-800 text-amber-800 dark:text-amber-300 text-xs flex items-start gap-2.5">
             <AlertTriangle className="w-4 h-4 shrink-0 mt-0.5 text-amber-600 dark:text-amber-400" />
             <div>
-              <p className="font-semibold">Optional areas skipped:</p>
+              <p className="font-semibold">Optional areas not covered yet:</p>
               <p className="mt-0.5 text-amber-700 dark:text-amber-400">
-                {displayData.missing_areas.join(', ')}. You can fill these in anytime later in your Career Profile.
+                {displayData.missing_areas.map((a) => a.replace(/_/g, ' ')).join(', ')}. You can fill these in anytime later in your Career Profile.
               </p>
             </div>
           </div>
@@ -232,7 +232,10 @@ export function CareerSummaryReview({
                 <span className="text-xs text-slate-500 dark:text-slate-400 block">Education</span>
                 <span className="font-medium text-slate-800 dark:text-slate-200">
                   {displayData.current_education || 'Not specified'}
-                  {displayData.education_field ? ` in ${displayData.education_field}` : ''}
+                  {displayData.education_field &&
+                  !(displayData.current_education || '').toLowerCase().includes(displayData.education_field.toLowerCase())
+                    ? ` in ${displayData.education_field}`
+                    : ''}
                 </span>
               </div>
               <div>

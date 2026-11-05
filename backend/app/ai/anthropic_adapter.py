@@ -103,7 +103,7 @@ class AnthropicProviderAdapter(LLMProvider):
             )
         except anthropic.APIError as exc:
             logger.error("Anthropic generation error: %s", exc)
-            raise ServiceUnavailableException("Anthropic", f"Inference failure: {exc}") from exc
+            raise ServiceUnavailableException("Anthropic", "The AI provider request failed. Please try again in a minute.") from exc
         except Exception as exc:  # SDK raises on output that fails client-side schema validation
             logger.error("Anthropic response failed schema validation: %s", exc)
             raise ServiceUnavailableException(
@@ -131,7 +131,7 @@ class AnthropicProviderAdapter(LLMProvider):
             )
         except anthropic.APIError as exc:
             logger.error("Anthropic text generation error: %s", exc)
-            raise ServiceUnavailableException("Anthropic", f"Inference failure: {exc}") from exc
+            raise ServiceUnavailableException("Anthropic", "The AI provider request failed. Please try again in a minute.") from exc
 
         self._check_stop_reason(message)
         return "".join(b.text for b in message.content if b.type == "text")

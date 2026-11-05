@@ -278,7 +278,7 @@ class ConfirmEducationItem(BaseModel):
     start_date: str = Field(..., description="Start date (YYYY, YYYY-MM, or YYYY-MM-DD)")
     end_date: Optional[str] = Field(None, description="End date or expected graduation")
     is_current: bool = Field(default=False)
-    gpa: Optional[float] = Field(None, ge=0.0, le=4.0)
+    gpa: Optional[float] = Field(None, ge=0.0, le=10.0)
 
 
 class ConfirmExperienceItem(BaseModel):

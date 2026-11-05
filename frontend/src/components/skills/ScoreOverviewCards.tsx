@@ -206,7 +206,9 @@ export function ScoreOverviewCards({
             <span className="text-slate-500 dark:text-slate-400">
               {unassessedCount > 0
                 ? `${unassessedCount} skill${unassessedCount > 1 ? 's' : ''} require diagnostic testing`
-                : 'All relevant skills assessed'}
+                : missingCount > 0
+                  ? `${missingCount} required skill${missingCount > 1 ? 's' : ''} with no evidence yet`
+                  : 'All relevant skills assessed'}
             </span>
             <span className="text-[11px] font-semibold text-emerald-600 dark:text-emerald-400">
               Objective Backing

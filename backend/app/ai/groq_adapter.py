@@ -87,6 +87,8 @@ class GroqProviderAdapter(LLMProvider):
                 temperature=temperature,
                 max_tokens=max_tokens,
                 response_format={"type": "json_object"},
+                # gpt-oss reasons before answering; keep that short so it fits Groq's free-tier token budget
+                **({"reasoning_effort": "low"} if "gpt-oss" in self._model else {}),
             )
             raw_content = response.choices[0].message.content
             if not raw_content:
@@ -101,7 +103,7 @@ class GroqProviderAdapter(LLMProvider):
             ) from parse_err
         except Exception as exc:
             logger.error("Groq generation error: %s", exc)
-            raise ServiceUnavailableException("Groq", f"Inference failure: {exc}") from exc
+            raise ServiceUnavailableException("Groq", "The AI provider request failed. Please try again in a minute.") from exc
 
     async def generate_text(
         self,
@@ -131,4 +133,4 @@ class GroqProviderAdapter(LLMProvider):
             return response.choices[0].message.content or ""
         except Exception as exc:
             logger.error("Groq text generation error: %s", exc)
-            raise ServiceUnavailableException("Groq", f"Inference failure: {exc}") from exc
+            raise ServiceUnavailableException("Groq", "The AI provider request failed. Please try again in a minute.") from exc
