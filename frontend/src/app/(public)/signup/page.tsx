@@ -110,7 +110,7 @@ export default function SignupPage() {
           setErrorMessage(
             <span>
               An account with this email address already exists.{' '}
-              <Link href={`/login?email=${encodeURIComponent(trimmedEmail)}`} className="underline font-bold text-rose-700 dark:text-rose-300">
+              <Link href={`/login?email=${encodeURIComponent(trimmedEmail)}`} className="underline font-bold text-rose-700 dark:text-crimson-tint">
                 Sign in here &rarr;
               </Link>
             </span>
@@ -119,7 +119,7 @@ export default function SignupPage() {
           setErrorMessage(
             <span>
               The staging server was waking up from sleep (cold start). Your account may have been created.{' '}
-              <Link href={`/login?email=${encodeURIComponent(trimmedEmail)}`} className="underline font-bold text-rose-700 dark:text-rose-300">
+              <Link href={`/login?email=${encodeURIComponent(trimmedEmail)}`} className="underline font-bold text-rose-700 dark:text-crimson-tint">
                 Click here to sign in
               </Link>{' '}
               or submit again.
@@ -150,7 +150,7 @@ export default function SignupPage() {
   return (
     <div className="min-h-[85vh] flex items-center justify-center px-4 py-12 relative overflow-hidden bg-grid-subtle">
       {/* Ambient background glow */}
-      <div className="absolute top-1/4 left-1/2 -translate-x-1/2 -translate-y-1/2 w-96 h-96 rounded-full bg-brand-500/10 blur-3xl pointer-events-none" />
+      <div className="absolute top-1/4 left-1/2 -translate-x-1/2 -translate-y-1/2 w-96 h-96 rounded-full bg-brand-500/10 blur-3xl pointer-events-none dark:bg-lav-violet" />
 
       <motion.div
         initial="hidden"
@@ -166,7 +166,7 @@ export default function SignupPage() {
           <h2 className="text-2xl font-bold tracking-tight text-slate-900 dark:text-white">
             Create Your Career Intelligence Profile
           </h2>
-          <p className="text-xs text-slate-500 dark:text-slate-400">
+          <p className="text-xs text-slate-500 dark:text-ink-muted">
             Validate your engineering skills, eliminate missing gaps, and match with tech roles.
           </p>
         </div>
@@ -209,7 +209,7 @@ export default function SignupPage() {
             />
 
             <div className="space-y-1.5">
-              <label className="block text-xs font-semibold uppercase tracking-wider text-slate-700 dark:text-slate-300">
+              <label className="block text-xs font-semibold uppercase tracking-wider text-slate-700 dark:text-ink-fg/80">
                 Create Password
               </label>
               <input
@@ -223,27 +223,27 @@ export default function SignupPage() {
                 }}
                 placeholder="At least 8 characters"
                 autoComplete="new-password"
-                className="flex h-10 w-full rounded-xl border border-slate-300 bg-white px-3 py-2 text-sm text-slate-900 focus:border-brand-500 focus:outline-none focus:ring-2 focus:ring-brand-500/20 disabled:bg-slate-100 disabled:opacity-60 dark:border-slate-700 dark:bg-slate-900 dark:text-slate-100 dark:disabled:bg-slate-800 transition-colors"
+                className="flex h-10 w-full rounded-xl border border-slate-300 bg-white px-3 py-2 text-sm text-slate-900 focus:border-brand-500 focus:outline-none focus:ring-2 focus:ring-brand-500/20 disabled:bg-slate-100 disabled:opacity-60 dark:border-white/15 dark:bg-white/[0.04] dark:text-ink-fg dark:disabled:bg-white/[0.07] transition-colors dark:focus:border-lav/50"
               />
 
               {/* Password Complexity Checklist */}
               {password.length > 0 && (
-                <div className="p-3 bg-slate-50 dark:bg-slate-900/50 rounded-xl border border-slate-200 dark:border-slate-800 space-y-1 text-[11px]">
-                  <p className="font-semibold text-slate-600 dark:text-slate-400">Password requirements:</p>
+                <div className="p-3 bg-slate-50 dark:bg-white/[0.04] rounded-xl border border-slate-200 dark:border-white/10 space-y-1 text-[11px]">
+                  <p className="font-semibold text-slate-600 dark:text-ink-muted">Password requirements:</p>
                   <div className="grid grid-cols-2 gap-1 text-slate-500">
-                    <span className={passwordChecks.length ? 'text-emerald-600 font-medium' : ''}>
+                    <span className={passwordChecks.length ? 'text-emerald-600 font-medium dark:text-lime' : ''}>
                       {passwordChecks.length ? '✓' : '•'} 8+ characters
                     </span>
-                    <span className={passwordChecks.upper ? 'text-emerald-600 font-medium' : ''}>
+                    <span className={passwordChecks.upper ? 'text-emerald-600 font-medium dark:text-lime' : ''}>
                       {passwordChecks.upper ? '✓' : '•'} Uppercase letter
                     </span>
-                    <span className={passwordChecks.lower ? 'text-emerald-600 font-medium' : ''}>
+                    <span className={passwordChecks.lower ? 'text-emerald-600 font-medium dark:text-lime' : ''}>
                       {passwordChecks.lower ? '✓' : '•'} Lowercase letter
                     </span>
-                    <span className={passwordChecks.digit ? 'text-emerald-600 font-medium' : ''}>
+                    <span className={passwordChecks.digit ? 'text-emerald-600 font-medium dark:text-lime' : ''}>
                       {passwordChecks.digit ? '✓' : '•'} Number
                     </span>
-                    <span className={passwordChecks.special ? 'text-emerald-600 font-medium' : ''}>
+                    <span className={passwordChecks.special ? 'text-emerald-600 font-medium dark:text-lime' : ''}>
                       {passwordChecks.special ? '✓' : '•'} Special character
                     </span>
                   </div>
@@ -253,7 +253,7 @@ export default function SignupPage() {
 
             {/* Persona Selector */}
             <div className="space-y-1.5">
-              <label className="block text-xs font-semibold uppercase tracking-wider text-slate-700 dark:text-slate-300">
+              <label className="block text-xs font-semibold uppercase tracking-wider text-slate-700 dark:text-ink-fg/80">
                 Current Career Stage
               </label>
               <div className="grid grid-cols-3 gap-2 text-xs">
@@ -263,8 +263,8 @@ export default function SignupPage() {
                   onClick={() => setPersona('student')}
                   className={`p-2.5 rounded-xl border text-center transition-all ${
                     persona === 'student'
-                      ? 'border-brand-600 bg-brand-50 text-brand-700 font-semibold dark:bg-brand-950 dark:text-brand-300 shadow-sm'
-                      : 'border-slate-200 text-slate-600 hover:bg-slate-50 dark:border-slate-700 dark:text-slate-300'
+                      ? 'border-brand-600 bg-brand-50 text-brand-700 font-semibold dark:bg-lav/10 dark:text-lav-light shadow-sm dark:border-lav/50'
+                      : 'border-slate-200 text-slate-600 hover:bg-slate-50 dark:border-white/15 dark:text-ink-fg/80'
                   }`}
                 >
                   Student
@@ -275,8 +275,8 @@ export default function SignupPage() {
                   onClick={() => setPersona('grad')}
                   className={`p-2.5 rounded-xl border text-center transition-all ${
                     persona === 'grad'
-                      ? 'border-brand-600 bg-brand-50 text-brand-700 font-semibold dark:bg-brand-950 dark:text-brand-300 shadow-sm'
-                      : 'border-slate-200 text-slate-600 hover:bg-slate-50 dark:border-slate-700 dark:text-slate-300'
+                      ? 'border-brand-600 bg-brand-50 text-brand-700 font-semibold dark:bg-lav/10 dark:text-lav-light shadow-sm dark:border-lav/50'
+                      : 'border-slate-200 text-slate-600 hover:bg-slate-50 dark:border-white/15 dark:text-ink-fg/80'
                   }`}
                 >
                   Recent Grad
@@ -287,8 +287,8 @@ export default function SignupPage() {
                   onClick={() => setPersona('early_pro')}
                   className={`p-2.5 rounded-xl border text-center transition-all ${
                     persona === 'early_pro'
-                      ? 'border-brand-600 bg-brand-50 text-brand-700 font-semibold dark:bg-brand-950 dark:text-brand-300 shadow-sm'
-                      : 'border-slate-200 text-slate-600 hover:bg-slate-50 dark:border-slate-700 dark:text-slate-300'
+                      ? 'border-brand-600 bg-brand-50 text-brand-700 font-semibold dark:bg-lav/10 dark:text-lav-light shadow-sm dark:border-lav/50'
+                      : 'border-slate-200 text-slate-600 hover:bg-slate-50 dark:border-white/15 dark:text-ink-fg/80'
                   }`}
                 >
                   Early Pro (1-3 YOE)
@@ -298,14 +298,14 @@ export default function SignupPage() {
 
             {/* Target Role Selector */}
             <div className="space-y-1.5">
-              <label className="block text-xs font-semibold uppercase tracking-wider text-slate-700 dark:text-slate-300">
+              <label className="block text-xs font-semibold uppercase tracking-wider text-slate-700 dark:text-ink-fg/80">
                 Primary Target Role
               </label>
               <select
                 value={targetRole}
                 disabled={isSubmitting}
                 onChange={(e) => setTargetRole(e.target.value as TargetRole)}
-                className="flex h-10 w-full rounded-xl border border-slate-300 bg-white px-3 py-2 text-sm text-slate-900 focus:border-brand-500 focus:outline-none focus:ring-2 focus:ring-brand-500/20 disabled:bg-slate-100 disabled:opacity-60 dark:border-slate-700 dark:bg-slate-900 dark:text-slate-100 dark:disabled:bg-slate-800 transition-colors"
+                className="flex h-10 w-full rounded-xl border border-slate-300 bg-white px-3 py-2 text-sm text-slate-900 focus:border-brand-500 focus:outline-none focus:ring-2 focus:ring-brand-500/20 disabled:bg-slate-100 disabled:opacity-60 dark:border-white/15 dark:bg-white/[0.04] dark:text-ink-fg dark:disabled:bg-white/[0.07] transition-colors dark:focus:border-lav/50"
               >
                 {roles.map((role) => (
                   <option key={role} value={role}>
@@ -315,8 +315,8 @@ export default function SignupPage() {
               </select>
             </div>
 
-            <div className="flex items-start gap-2 pt-1 text-xs text-slate-500 dark:text-slate-400">
-              <ShieldCheck className="w-4 h-4 text-emerald-600 shrink-0 mt-0.5" />
+            <div className="flex items-start gap-2 pt-1 text-xs text-slate-500 dark:text-ink-muted">
+              <ShieldCheck className="w-4 h-4 text-emerald-600 shrink-0 mt-0.5 dark:text-lime" />
               <span>
                 By continuing, you agree to CoachPath&apos;s Responsible AI Policy and human approval safeguards. We never contact recruiters without your explicit confirmation.
               </span>
@@ -338,9 +338,9 @@ export default function SignupPage() {
             </Button>
           </form>
 
-          <div className="pt-4 border-t border-slate-100 dark:border-slate-800 text-center text-xs text-slate-500">
+          <div className="pt-4 border-t border-slate-100 dark:border-white/10 text-center text-xs text-slate-500">
             Already have an account?{' '}
-            <Link href="/login" className="font-semibold text-brand-600 hover:underline">
+            <Link href="/login" className="font-semibold text-brand-600 hover:underline dark:text-lav">
               Sign In
             </Link>
           </div>

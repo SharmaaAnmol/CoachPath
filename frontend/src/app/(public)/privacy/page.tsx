@@ -12,16 +12,16 @@ export default function PrivacyPage() {
         <h1 className="text-4xl font-extrabold text-slate-900 dark:text-white tracking-tight">
           Privacy Policy & Responsible AI Commitments
         </h1>
-        <p className="text-base text-slate-600 dark:text-slate-300 leading-relaxed">
+        <p className="text-base text-slate-600 dark:text-ink-fg/80 leading-relaxed">
           How CoachPath safeguards your personal career data, enforces ethical AI boundaries, and ensures you retain full ownership of your records.
         </p>
       </div>
 
-      <div className="space-y-8 text-sm text-slate-700 dark:text-slate-300 leading-relaxed">
+      <div className="space-y-8 text-sm text-slate-700 dark:text-ink-fg/80 leading-relaxed">
         {/* Section 1 */}
         <Card className="p-6 md:p-8 space-y-4">
           <div className="flex items-center gap-2 text-base font-bold text-slate-900 dark:text-white">
-            <ShieldCheck className="w-5 h-5 text-emerald-600" />
+            <ShieldCheck className="w-5 h-5 text-emerald-600 dark:text-lime" />
             <h3>1. Grounded Anti-Fabrication & Evidence Safeguards</h3>
           </div>
           <p>
@@ -32,7 +32,7 @@ export default function PrivacyPage() {
         {/* Section 2 */}
         <Card className="p-6 md:p-8 space-y-4">
           <div className="flex items-center gap-2 text-base font-bold text-slate-900 dark:text-white">
-            <Lock className="w-5 h-5 text-purple-600" />
+            <Lock className="w-5 h-5 text-purple-600 dark:text-lav" />
             <h3>2. Strict Data Ownership & Evidence-Bounded AI</h3>
           </div>
           <p>
@@ -43,7 +43,7 @@ export default function PrivacyPage() {
         {/* Section 3 */}
         <Card className="p-6 md:p-8 space-y-4">
           <div className="flex items-center gap-2 text-base font-bold text-slate-900 dark:text-white">
-            <FileCheck className="w-5 h-5 text-blue-600" />
+            <FileCheck className="w-5 h-5 text-blue-600 dark:text-lav" />
             <h3>3. Mandatory Human Approval Gate</h3>
           </div>
           <p>
@@ -60,7 +60,7 @@ export default function PrivacyPage() {
           <p>
             CoachPath is designed around principles of data minimization and user ownership aligned with our Phase 16 compliance roadmap:
           </p>
-          <ul className="list-disc list-inside space-y-2 pl-2 text-slate-600 dark:text-slate-400">
+          <ul className="list-disc list-inside space-y-2 pl-2 text-slate-600 dark:text-ink-muted">
             <li><strong>Career Data Portability:</strong> Self-service JSON export tools are currently in development for Phase 16. In the interim, candidates can request a manual export of their profile and assessment history by contacting support.</li>
             <li><strong>Account Erasure:</strong> Candidates retain the right to delete their data. While self-service automated deletion workflows are scheduled for Phase 16, candidates can request permanent account and resume file erasure via admin support, which removes records from Neon Cloud PostgreSQL and file storage.</li>
           </ul>

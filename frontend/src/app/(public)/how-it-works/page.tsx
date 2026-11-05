@@ -118,7 +118,7 @@ export default function HowItWorksPage() {
         <h1 className="text-4xl font-extrabold text-slate-900 dark:text-white tracking-tight">
           How CoachPath Powers Your Career Journey
         </h1>
-        <p className="text-base text-slate-600 dark:text-slate-300 leading-relaxed">
+        <p className="text-base text-slate-600 dark:text-ink-fg/80 leading-relaxed">
           The step-by-step engineering feedback loop that takes you from self-reported uncertainty to verified market readiness.
         </p>
       </div>
@@ -130,7 +130,7 @@ export default function HowItWorksPage() {
             <Card key={step.num} className="p-6 md:p-8 hover:border-slate-300 transition-all">
               <div className="flex flex-col md:flex-row md:items-start gap-6">
                 <div className="flex md:flex-col items-center gap-3 shrink-0">
-                  <div className="h-12 w-12 rounded-2xl bg-purple-50 dark:bg-purple-950/50 border border-purple-200 dark:border-purple-800 flex items-center justify-center text-purple-600 dark:text-purple-400 font-bold">
+                  <div className="h-12 w-12 rounded-2xl bg-purple-50 dark:bg-lav/10 border border-purple-200 dark:border-lav/30 flex items-center justify-center text-purple-600 dark:text-lav font-bold">
                     <Icon className="w-6 h-6" />
                   </div>
                   <span className="font-mono text-xs font-bold text-slate-400">
@@ -140,15 +140,15 @@ export default function HowItWorksPage() {
 
                 <div className="space-y-4 flex-1">
                   <div>
-                    <span className="text-[11px] font-bold uppercase tracking-wider text-purple-600 dark:text-purple-400">
+                    <span className="text-[11px] font-bold uppercase tracking-wider text-purple-600 dark:text-lav">
                       {step.tag}
                     </span>
-                    <h3 className="text-xl font-bold text-slate-900 dark:text-white mt-0.5">
+                    <h3 className="text-xl font-bold dark:font-display dark:font-semibold dark:tracking-[-0.02em] text-slate-900 dark:text-white mt-0.5">
                       {step.title}
                     </h3>
                   </div>
 
-                  <p className="text-sm text-slate-600 dark:text-slate-300 leading-relaxed">
+                  <p className="text-sm text-slate-600 dark:text-ink-fg/80 leading-relaxed">
                     {step.description}
                   </p>
 
@@ -157,9 +157,9 @@ export default function HowItWorksPage() {
                     {step.outputs.map((out) => (
                       <span
                         key={out}
-                        className="inline-flex items-center gap-1 rounded-md px-2.5 py-1 text-xs font-medium bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 border border-slate-200/80 dark:border-slate-700"
+                        className="inline-flex items-center gap-1 rounded-md px-2.5 py-1 text-xs font-medium bg-slate-100 dark:bg-white/[0.07] text-slate-700 dark:text-ink-fg/80 border border-slate-200/80 dark:border-white/15"
                       >
-                        <CheckCircle2 className="w-3 h-3 text-emerald-600" />
+                        <CheckCircle2 className="w-3 h-3 text-emerald-600 dark:text-lime" />
                         {out}
                       </span>
                     ))}
@@ -173,7 +173,7 @@ export default function HowItWorksPage() {
 
       <div className="p-8 rounded-2xl bg-gradient-to-r from-brand-600 to-purple-600 text-white text-center space-y-4 shadow-elevated">
         <h3 className="text-2xl font-bold">Experience the connected intelligence loop</h3>
-        <p className="text-sm text-purple-100 max-w-lg mx-auto">
+        <p className="text-sm text-purple-100 max-w-lg mx-auto dark:text-lav-light">
           Explore the full interactive system with pre-loaded candidate data, or build your own profile in minutes.
         </p>
         <div className="flex justify-center gap-3 pt-2">
