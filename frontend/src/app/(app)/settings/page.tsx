@@ -17,6 +17,7 @@ import {
 } from 'lucide-react';
 import { useAuth } from '@/hooks/use-auth';
 import { profileClient } from '@/lib/profile-client';
+import { apiClient, ApiClientError } from '@/lib/api-client';
 
 export default function SettingsPage() {
   const { user, refreshUser } = useAuth();
@@ -204,39 +205,56 @@ export default function SettingsPage() {
         </div>
       </Card>
 
-      {/* Danger Zone: Account Deletion */}
-      <Card className="p-6 border-slate-200 dark:border-white/10 bg-slate-50/40 dark:bg-white/[0.04] space-y-4">
-        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
-          <div className="flex items-center gap-2 text-slate-800 dark:text-ink-fg font-bold">
-            <AlertTriangle className="w-5 h-5 text-amber-600" />
-            <h3 className="text-base">Danger Zone: Permanent Account Deletion</h3>
-          </div>
-          <Badge variant="outline" size="sm" className="text-amber-700 bg-amber-50 border-amber-200 dark:bg-amber-950/40 dark:border-amber-800 dark:text-amber-300 w-fit">
-            Scheduled for Phase 16
-          </Badge>
-        </div>
-        <p className="text-xs text-slate-600 dark:text-ink-muted leading-relaxed">
-          Self-service account deletion is currently unavailable in this preview release. A safe and irreversible purge requires an orchestrated backend workflow across 37 relational tables, file storage repositories, vector index registries, and active session caches.
-        </p>
-
-        <div className="p-3.5 rounded-xl bg-amber-50/70 dark:bg-amber-950/30 border border-amber-200 dark:border-amber-800/60 text-xs text-amber-900 dark:text-amber-200 leading-relaxed">
-          <p>
-            <strong className="text-amber-950 dark:text-amber-100">Action Unavailable:</strong> Automated self-service deletion will be activated in Phase 16 with password re-authentication and multi-tier verification. If you require immediate account and data removal, please contact the administrative team.
-          </p>
-        </div>
-
-        <div>
-          <Button
-            size="sm"
-            variant="destructive"
-            disabled
-            aria-disabled="true"
-            title="Self-service account deletion is scheduled for Phase 16"
-          >
-            <Trash2 className="w-3.5 h-3.5 mr-1.5" /> Delete Account & Purge Data (Unavailable)
-          </Button>
-        </div>
-      </Card>
+      <DeleteAccountCard />
     </div>
+  );
+}
+
+function DeleteAccountCard() {
+  const [password, setPassword] = React.useState('');
+  const [confirm, setConfirm] = React.useState('');
+  const [busy, setBusy] = React.useState(false);
+  const [error, setError] = React.useState<string | null>(null);
+  const ready = password.length > 0 && confirm === 'DELETE';
+
+  const onDelete = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!ready) return;
+    setBusy(true);
+    setError(null);
+    try {
+      await apiClient.delete('/settings/account', { body: JSON.stringify({ password, confirm }) });
+      window.location.href = '/delete-account?done=1'; // full reload drops all signed-in state
+    } catch (err) {
+      setError(err instanceof ApiClientError ? err.message : 'Could not delete your account. Please try again.');
+      setBusy(false);
+    }
+  };
+
+  return (
+    <Card className="p-6 space-y-4 border-crimson/30 dark:border-crimson/30 dark:bg-crimson/[0.06]">
+      <div className="flex items-center gap-2 font-bold text-slate-800 dark:text-ink-fg">
+        <AlertTriangle className="w-5 h-5 text-crimson" aria-hidden />
+        <h3 className="text-base">Delete account</h3>
+      </div>
+      <p className="text-sm text-slate-600 dark:text-ink-muted leading-relaxed">
+        This permanently deletes your account and everything in it: profile, resumes and files, assessments, roadmap,
+        applications and messages. It cannot be undone.
+      </p>
+      <form onSubmit={onDelete} className="grid gap-3 sm:max-w-sm">
+        <label className="grid gap-1.5 text-sm">
+          Your password
+          <Input type="password" autoComplete="current-password" value={password} onChange={(e) => setPassword(e.target.value)} />
+        </label>
+        <label className="grid gap-1.5 text-sm">
+          Type DELETE to confirm
+          <Input value={confirm} onChange={(e) => setConfirm(e.target.value)} autoCapitalize="characters" autoComplete="off" />
+        </label>
+        {error && <p role="alert" className="text-sm text-crimson-soft">{error}</p>}
+        <Button type="submit" size="sm" variant="destructive" disabled={!ready || busy} className="w-fit min-h-11">
+          <Trash2 className="w-3.5 h-3.5 mr-1.5" /> {busy ? 'Deleting…' : 'Delete my account'}
+        </Button>
+      </form>
+    </Card>
   );
 }
