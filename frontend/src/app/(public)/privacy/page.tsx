@@ -1,78 +1,100 @@
 import Link from 'next/link';
-import { Button } from '@/components/ui/button';
-import { Badge } from '@/components/ui/badge';
-import { Card } from '@/components/ui/card';
-import { Lock, ShieldCheck, FileCheck, CheckCircle2, ArrowRight } from 'lucide-react';
+import type { Metadata } from 'next';
+
+export const metadata: Metadata = { title: 'Privacy policy · CoachPath' };
+
+const SUPPORT_EMAIL = process.env.NEXT_PUBLIC_SUPPORT_EMAIL;
+const UPDATED = '6 November 2026';
+
+const SECTIONS: { title: string; body: React.ReactNode }[] = [
+  {
+    title: 'What we collect',
+    body: (
+      <ul>
+        <li><strong>Account:</strong> your name, email address and a hashed password.</li>
+        <li><strong>Career data you give us:</strong> onboarding answers, target roles, skills, assessment answers and scores, roadmap progress.</li>
+        <li><strong>Resumes:</strong> the files you upload and the text we extract from them, plus the tailored versions you create.</li>
+        <li><strong>Job search data:</strong> jobs you import or save, application packages and recruiter messages you write in CoachPath.</li>
+        <li><strong>Technical data:</strong> sign-in sessions and basic request logs used to keep the service secure and working.</li>
+      </ul>
+    ),
+  },
+  {
+    title: 'How we use it',
+    body: (
+      <p>
+        Only to run CoachPath for you: to find your skill gaps, build your roadmap, match jobs, tailor resumes and draft
+        messages. We do not sell your data, we do not show ads, and CoachPath never applies to jobs or messages anyone on
+        your behalf. You review and send everything yourself.
+      </p>
+    ),
+  },
+  {
+    title: 'Services that process your data',
+    body: (
+      <ul>
+        <li><strong>Groq</strong> runs the AI features. We send only the text a feature needs, such as resume content for tailoring.</li>
+        <li><strong>Vercel</strong> hosts the website and app.</li>
+        <li><strong>Render</strong> hosts our server.</li>
+        <li><strong>Neon</strong> stores our database.</li>
+        <li><strong>Cloudflare R2</strong> stores uploaded resume files.</li>
+      </ul>
+    ),
+  },
+  {
+    title: 'Security',
+    body: (
+      <p>
+        Data is sent over HTTPS. Passwords are stored only as Argon2 hashes. Sessions use secure, HTTP-only cookies, and
+        each account can only read its own data.
+      </p>
+    ),
+  },
+  {
+    title: 'How long we keep it, and deleting it',
+    body: (
+      <p>
+        We keep your data while your account exists. You can delete your account at any time in{' '}
+        <strong>Settings → Delete account</strong>. That permanently removes your account, profile, resumes and files,
+        assessments, roadmap, applications and messages straight away. See{' '}
+        <Link href="/delete-account" className="text-lav underline underline-offset-4">how to delete your account</Link>.
+      </p>
+    ),
+  },
+  {
+    title: 'Contact',
+    body: (
+      <p>
+        Questions about your data:{' '}
+        {SUPPORT_EMAIL ? (
+          <a href={`mailto:${SUPPORT_EMAIL}`} className="text-lav underline underline-offset-4">{SUPPORT_EMAIL}</a>
+        ) : (
+          'use the contact address on our Google Play listing'
+        )}
+        .
+      </p>
+    ),
+  },
+];
 
 export default function PrivacyPage() {
   return (
-    <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-16 space-y-12">
-      <div className="text-center space-y-4 max-w-2xl mx-auto">
-        <Badge variant="verified" size="md">Security & Trust</Badge>
-        <h1 className="text-4xl font-extrabold text-slate-900 dark:text-white tracking-tight">
-          Privacy Policy & Responsible AI Commitments
-        </h1>
-        <p className="text-base text-slate-600 dark:text-ink-fg/80 leading-relaxed">
-          How CoachPath safeguards your personal career data, enforces ethical AI boundaries, and ensures you retain full ownership of your records.
-        </p>
-      </div>
-
-      <div className="space-y-8 text-sm text-slate-700 dark:text-ink-fg/80 leading-relaxed">
-        {/* Section 1 */}
-        <Card className="p-6 md:p-8 space-y-4">
-          <div className="flex items-center gap-2 text-base font-bold text-slate-900 dark:text-white">
-            <ShieldCheck className="w-5 h-5 text-emerald-600 dark:text-lime" />
-            <h3>1. Grounded Anti-Fabrication & Evidence Safeguards</h3>
-          </div>
-          <p>
-            CoachPath utilizes a specialized two-pass audit pipeline for resume tailoring. Our system is designed to prevent fabricating credentials, fake project statistics, or technology claims that lack grounded evidence in your profile records or diagnostic test logs. If an LLM suggests a phrase unsupported by evidence, our server-side validator flags unverified skills before presentation, reinforcing human-in-the-loop candidate review.
-          </p>
-        </Card>
-
-        {/* Section 2 */}
-        <Card className="p-6 md:p-8 space-y-4">
-          <div className="flex items-center gap-2 text-base font-bold text-slate-900 dark:text-white">
-            <Lock className="w-5 h-5 text-purple-600 dark:text-lav" />
-            <h3>2. Strict Data Ownership & Evidence-Bounded AI</h3>
-          </div>
-          <p>
-            Your career profile, resumes, project links, and assessment scores are strictly your intellectual property. CoachPath does not sell candidate data to third-party data brokers, nor do we permit public AI providers to train public models on your private documents. All AI interactions utilize prompt minimization and evidence bounding, sending only the context necessary to evaluate skills or tailor documents.
-          </p>
-        </Card>
-
-        {/* Section 3 */}
-        <Card className="p-6 md:p-8 space-y-4">
-          <div className="flex items-center gap-2 text-base font-bold text-slate-900 dark:text-white">
-            <FileCheck className="w-5 h-5 text-blue-600 dark:text-lav" />
-            <h3>3. Mandatory Human Approval Gate</h3>
-          </div>
-          <p>
-            CoachPath does not deploy autonomous agents that auto-apply to jobs or email recruiters without human knowledge. All generated recruiter messages, application submissions, and resume diffs require explicit candidate review, approval, and action.
-          </p>
-        </Card>
-
-        {/* Section 4 */}
-        <Card className="p-6 md:p-8 space-y-4">
-          <div className="flex items-center gap-2 text-base font-bold text-slate-900 dark:text-white">
-            <CheckCircle2 className="w-5 h-5 text-amber-600" />
-            <h3>4. Data Portability & Account Erasure</h3>
-          </div>
-          <p>
-            CoachPath is designed around principles of data minimization and user ownership aligned with our Phase 16 compliance roadmap:
-          </p>
-          <ul className="list-disc list-inside space-y-2 pl-2 text-slate-600 dark:text-ink-muted">
-            <li><strong>Career Data Portability:</strong> Self-service JSON export tools are currently in development for Phase 16. In the interim, candidates can request a manual export of their profile and assessment history by contacting support.</li>
-            <li><strong>Account Erasure:</strong> Candidates retain the right to delete their data. While self-service automated deletion workflows are scheduled for Phase 16, candidates can request permanent account and resume file erasure via admin support, which removes records from Neon Cloud PostgreSQL and file storage.</li>
-          </ul>
-        </Card>
-      </div>
-
-      <div className="text-center pt-4">
-        <Link href="/settings">
-          <Button variant="outline" size="md">
-            Manage Privacy Settings in App
-          </Button>
-        </Link>
+    <div className="mx-auto max-w-3xl px-4 py-16 sm:px-6">
+      <h1 className="font-display text-4xl font-semibold tracking-[-0.03em] text-ink-fg">Privacy policy</h1>
+      <p className="mt-3 text-sm text-ink-dim">Last updated {UPDATED}</p>
+      <p className="mt-6 text-base leading-relaxed text-ink-muted">
+        CoachPath is a career coaching app. This page explains what data it keeps about you, why, who else handles it,
+        and how to delete it.
+      </p>
+      <div className="mt-10 space-y-10">
+        {SECTIONS.map((s) => (
+          <section key={s.title}>
+            <h2 className="font-display text-xl font-semibold tracking-[-0.02em] text-ink-fg">{s.title}</h2>
+            <div className="mt-3 text-[15px] leading-relaxed text-ink-muted [&_li]:mt-2 [&_strong]:text-ink-fg [&_ul]:list-disc [&_ul]:pl-5">
+              {s.body}
+            </div>
+          </section>
+        ))}
       </div>
     </div>
   );
