@@ -121,7 +121,7 @@ export default function SettingsPage() {
               type="checkbox"
               checked={humanApprovalGate}
               onChange={(e) => setHumanApprovalGate(e.target.checked)}
-              className="h-5 w-5 rounded border-slate-300 text-brand-600 focus:ring-brand-500 cursor-pointer dark:text-lav"
+              className="h-6 w-6 shrink-0 rounded border-slate-300 text-brand-600 focus:ring-brand-500 cursor-pointer dark:text-lav"
             />
           </div>
 
@@ -153,7 +153,7 @@ export default function SettingsPage() {
               type="checkbox"
               checked={emailAlerts}
               onChange={(e) => setEmailAlerts(e.target.checked)}
-              className="h-5 w-5 rounded border-slate-300 text-brand-600 focus:ring-brand-500 cursor-pointer dark:text-lav"
+              className="h-6 w-6 shrink-0 rounded border-slate-300 text-brand-600 focus:ring-brand-500 cursor-pointer dark:text-lav"
             />
           </div>
         </div>
