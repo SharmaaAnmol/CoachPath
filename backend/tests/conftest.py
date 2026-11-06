@@ -71,3 +71,13 @@ async def client(test_session) -> AsyncGenerator[AsyncClient, None]:
     transport = ASGITransport(app=app)
     async with AsyncClient(transport=transport, base_url="http://test") as ac:
         yield ac
+
+
+@pytest.fixture(autouse=True)
+def _reset_ai_rate_limits():
+    """AI per-user caps are process-global; clear them so tests stay independent."""
+    from app.core.rate_limit import ai_rate_limiters
+
+    for limiter in ai_rate_limiters:
+        limiter.reset_all()
+    yield

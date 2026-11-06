@@ -39,8 +39,22 @@ services:
         value: openai/gpt-oss-120b
       - key: AI_REQUEST_TIMEOUT
         value: "60"
+      # Set to "r2" in the Render dashboard once the S3_* values below are filled in.
+      # "local" keeps resumes on the instance disk, which is wiped on every deploy.
       - key: STORAGE_PROVIDER
-        value: local
+        sync: false
+      - key: S3_ENDPOINT_URL
+        sync: false
+      - key: S3_ACCESS_KEY_ID
+        sync: false
+      - key: S3_SECRET_ACCESS_KEY
+        sync: false
+      - key: S3_BUCKET_NAME
+        sync: false
+      - key: AI_RATE_LIMIT_PER_MINUTE
+        value: "10"
+      - key: AI_RATE_LIMIT_PER_DAY
+        value: "150"
       - key: UPLOAD_DIR
         value: uploads
       - key: JOB_INGESTION_ENABLED

@@ -16,7 +16,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.ai.base import LLMProvider
 from app.ai.factory import get_llm_provider
-from app.api.dependencies import get_session, require_active_user
+from app.api.dependencies import ai_rate_limit, get_session, require_active_user
 from app.models.auth import User
 from app.schemas.applications import (
     ApplicationPackageApproveRequest,
@@ -62,6 +62,7 @@ async def applications_status() -> Dict[str, str]:
 
 @router.post(
     "/prepare",
+    dependencies=[Depends(ai_rate_limit)],
     response_model=ApplicationPackageResponse,
     status_code=status.HTTP_201_CREATED,
     summary="Prepare Evidence-Grounded Application Package",
@@ -72,6 +73,7 @@ async def applications_status() -> Dict[str, str]:
 )
 @router.post(
     "/packages/prepare",
+    dependencies=[Depends(ai_rate_limit)],
     response_model=ApplicationPackageResponse,
     status_code=status.HTTP_201_CREATED,
     include_in_schema=False,
@@ -239,6 +241,7 @@ async def confirm_application_submission(
 
 @router.post(
     "/packages/{package_id}/outreach",
+    dependencies=[Depends(ai_rate_limit)],
     response_model=RecruiterOutreachResponse,
     status_code=status.HTTP_201_CREATED,
     summary="Create Recruiter Outreach Draft for Package",

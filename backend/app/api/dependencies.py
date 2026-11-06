@@ -152,3 +152,10 @@ def ensure_resource_ownership(
 
     if current_user.id != target_id and current_user.role != "admin":
         raise ForbiddenException("You do not have permission to access or modify this resource.")
+
+
+async def ai_rate_limit(current_user: User = Depends(get_current_user)) -> None:
+    """Route dependency for AI-backed endpoints: per-user minute and day caps (429 when exceeded)."""
+    from app.core.rate_limit import check_ai_rate_limit
+
+    check_ai_rate_limit(str(current_user.id))
