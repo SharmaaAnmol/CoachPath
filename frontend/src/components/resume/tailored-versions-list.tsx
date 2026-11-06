@@ -56,19 +56,19 @@ export function TailoredVersionsList({
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
           <h3 className="text-lg font-bold text-slate-900 dark:text-white flex items-center gap-2">
-            <Layers className="w-5 h-5 text-purple-600" />
+            <Layers className="w-5 h-5 text-purple-600 dark:text-lav" />
             <span>Tailored Resume Versions</span>
-            <span className="text-xs font-mono font-normal px-2 py-0.5 rounded-full bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400">
+            <span className="text-xs font-mono font-normal px-2 py-0.5 rounded-full bg-slate-100 dark:bg-white/[0.07] text-slate-600 dark:text-ink-muted">
               {versions.length}
             </span>
           </h3>
-          <p className="text-xs text-slate-500 dark:text-slate-400 mt-0.5">
+          <p className="text-xs text-slate-500 dark:text-ink-muted mt-0.5">
             Historical versions created for specific target roles and job opportunities.
           </p>
         </div>
 
         <div className="flex items-center gap-2">
-          <Button size="sm" variant="primary" onClick={onCreateNewClick} className="bg-purple-600 hover:bg-purple-700">
+          <Button size="sm" variant="primary" onClick={onCreateNewClick} className="bg-purple-600 hover:bg-purple-700 dark:bg-lav-violet dark:hover:bg-lav-violet">
             <Plus className="w-4 h-4 mr-1.5" /> Tailor for New Job
           </Button>
         </div>
@@ -76,13 +76,13 @@ export function TailoredVersionsList({
 
       {/* Filter and Search Bar */}
       <div className="flex flex-col sm:flex-row items-center justify-between gap-3">
-        <div className="flex items-center rounded-lg bg-slate-100 dark:bg-slate-800 p-0.5 text-xs w-full sm:w-auto">
+        <div className="flex items-center rounded-lg bg-slate-100 dark:bg-white/[0.07] p-0.5 text-xs w-full sm:w-auto">
           <button
             type="button"
             onClick={() => setFilterStatus('all')}
             className={`px-3 py-1.5 rounded-md font-semibold transition-all ${
               filterStatus === 'all'
-                ? 'bg-white dark:bg-slate-900 text-slate-900 dark:text-white shadow-sm'
+                ? 'bg-white dark:bg-white/[0.04] text-slate-900 dark:text-white shadow-sm'
                 : 'text-slate-500 hover:text-slate-900 dark:hover:text-white'
             }`}
           >
@@ -93,7 +93,7 @@ export function TailoredVersionsList({
             onClick={() => setFilterStatus('draft')}
             className={`px-3 py-1.5 rounded-md font-semibold transition-all ${
               filterStatus === 'draft'
-                ? 'bg-white dark:bg-slate-900 text-amber-700 dark:text-amber-400 shadow-sm'
+                ? 'bg-white dark:bg-white/[0.04] text-amber-700 dark:text-amber-400 shadow-sm'
                 : 'text-slate-500 hover:text-slate-900 dark:hover:text-white'
             }`}
           >
@@ -104,7 +104,7 @@ export function TailoredVersionsList({
             onClick={() => setFilterStatus('approved')}
             className={`px-3 py-1.5 rounded-md font-semibold transition-all ${
               filterStatus === 'approved'
-                ? 'bg-white dark:bg-slate-900 text-emerald-700 dark:text-emerald-400 shadow-sm'
+                ? 'bg-white dark:bg-white/[0.04] text-emerald-700 dark:text-lime shadow-sm'
                 : 'text-slate-500 hover:text-slate-900 dark:hover:text-white'
             }`}
           >
@@ -119,7 +119,7 @@ export function TailoredVersionsList({
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
             placeholder="Filter by job or company..."
-            className="w-full pl-8 pr-3 py-1.5 text-xs rounded-lg border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-purple-500"
+            className="w-full pl-8 pr-3 py-1.5 text-xs rounded-lg border border-slate-200 dark:border-white/10 bg-white dark:bg-white/[0.04] text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-purple-500"
           />
         </div>
       </div>
@@ -135,8 +135,8 @@ export function TailoredVersionsList({
           ))}
         </div>
       ) : filtered.length === 0 ? (
-        <div className="p-12 text-center rounded-2xl border border-dashed border-slate-200 dark:border-slate-800 bg-slate-50/50 dark:bg-slate-900/50 space-y-3">
-          <div className="w-12 h-12 rounded-2xl bg-purple-100 dark:bg-purple-950/60 text-purple-600 flex items-center justify-center mx-auto">
+        <div className="p-12 text-center rounded-2xl border border-dashed border-slate-200 dark:border-white/10 bg-slate-50/50 dark:bg-white/[0.04] space-y-3">
+          <div className="w-12 h-12 rounded-2xl bg-purple-100 dark:bg-lav/10 text-purple-600 flex items-center justify-center mx-auto dark:text-lav">
             <FileText className="w-6 h-6" />
           </div>
           <div className="space-y-1 max-w-sm mx-auto">
@@ -145,14 +145,14 @@ export function TailoredVersionsList({
                 ? 'No Tailored Versions Yet'
                 : 'No Matching Versions Found'}
             </h4>
-            <p className="text-xs text-slate-500 dark:text-slate-400">
+            <p className="text-xs text-slate-500 dark:text-ink-muted">
               {versions.length === 0
                 ? 'Select a target job and create your first evidence-grounded tailored resume variant.'
                 : 'Try clearing your search term or changing your status filter.'}
             </p>
           </div>
           {versions.length === 0 && (
-            <Button size="sm" variant="primary" onClick={onCreateNewClick} className="bg-purple-600 hover:bg-purple-700">
+            <Button size="sm" variant="primary" onClick={onCreateNewClick} className="bg-purple-600 hover:bg-purple-700 dark:bg-lav-violet dark:hover:bg-lav-violet">
               <Sparkles className="w-4 h-4 mr-1.5" /> Start Tailoring Now
             </Button>
           )}
@@ -162,28 +162,28 @@ export function TailoredVersionsList({
           {filtered.map((ver) => (
             <Card
               key={ver.id}
-              className="p-4 hover:border-slate-300 dark:hover:border-slate-700 transition-all shadow-sm"
+              className="p-4 hover:border-slate-300 dark:hover:border-white/15 transition-all shadow-sm"
             >
               <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
                 {/* Left details */}
                 <div className="space-y-1.5 min-w-0">
                   <div className="flex items-center gap-2 flex-wrap">
-                    <span className="font-mono text-xs font-bold px-2 py-0.5 rounded bg-purple-100 dark:bg-purple-950/60 text-purple-800 dark:text-purple-300">
+                    <span className="font-mono text-xs font-bold px-2 py-0.5 rounded bg-purple-100 dark:bg-lav/10 text-purple-800 dark:text-lav-light">
                       v{ver.version_number}
                     </span>
                     <h4 className="text-sm font-bold text-slate-900 dark:text-white truncate">
                       {ver.job_title || 'Target Job Opportunity'}
                     </h4>
                     {ver.company_name && (
-                      <span className="text-xs text-slate-500 dark:text-slate-400">
-                        at <strong className="text-slate-700 dark:text-slate-300">{ver.company_name}</strong>
+                      <span className="text-xs text-slate-500 dark:text-ink-muted">
+                        at <strong className="text-slate-700 dark:text-ink-fg/80">{ver.company_name}</strong>
                       </span>
                     )}
                   </div>
 
-                  <div className="flex items-center gap-3 text-xs text-slate-500 dark:text-slate-400 flex-wrap">
+                  <div className="flex items-center gap-3 text-xs text-slate-500 dark:text-ink-muted flex-wrap">
                     {ver.status === 'approved' ? (
-                      <span className="inline-flex items-center gap-1 text-[11px] font-semibold text-emerald-700 bg-emerald-100 dark:bg-emerald-950/60 dark:text-emerald-300 px-2 py-0.5 rounded-full">
+                      <span className="inline-flex items-center gap-1 text-[11px] font-semibold text-emerald-700 bg-emerald-100 dark:bg-lime/10 dark:text-lime-soft px-2 py-0.5 rounded-full">
                         <CheckCircle2 className="w-3.5 h-3.5" />
                         Approved {ver.approved_at ? new Date(ver.approved_at).toLocaleDateString() : ''}
                       </span>
@@ -195,7 +195,7 @@ export function TailoredVersionsList({
                     )}
 
                     {ver.anti_hallucination_verified && (
-                      <span className="inline-flex items-center gap-1 text-[11px] text-emerald-600 dark:text-emerald-400 font-medium">
+                      <span className="inline-flex items-center gap-1 text-[11px] text-emerald-600 dark:text-lime font-medium">
                         <ShieldCheck className="w-3.5 h-3.5" /> Grounded Audit Passed
                       </span>
                     )}
@@ -229,7 +229,7 @@ export function TailoredVersionsList({
                     size="sm"
                     variant="ghost"
                     onClick={() => onDeleteVersion(ver)}
-                    className="text-slate-400 hover:text-rose-600 hover:bg-rose-50 dark:hover:bg-rose-950/40 p-2"
+                    className="text-slate-400 hover:text-rose-600 hover:bg-rose-50 dark:hover:bg-crimson/10 p-2 dark:hover:text-crimson-soft"
                   >
                     <Trash2 className="w-4 h-4" />
                   </Button>

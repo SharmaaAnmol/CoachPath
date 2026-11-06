@@ -29,7 +29,7 @@ export function AssessmentCard({ assessment, onStart, className }: AssessmentCar
             {assessment.difficulty}
           </Badge>
           {isCompleted ? (
-            <div className="flex items-center gap-1.5 text-xs font-bold text-emerald-700 bg-emerald-50 dark:bg-emerald-950/40 dark:text-emerald-300 px-2.5 py-1 rounded-full border border-emerald-200 dark:border-emerald-800">
+            <div className="flex items-center gap-1.5 text-xs font-bold text-emerald-700 bg-emerald-50 dark:bg-lime/10 dark:text-lime-soft px-2.5 py-1 rounded-full border border-emerald-200 dark:border-lime/30">
               <Award className="w-3.5 h-3.5" />
               <span>Score: {assessment.score}%</span>
             </div>
@@ -44,12 +44,12 @@ export function AssessmentCard({ assessment, onStart, className }: AssessmentCar
           <h4 className="text-base font-bold text-slate-900 dark:text-white leading-snug">
             {assessment.title}
           </h4>
-          <p className="text-xs text-slate-500 dark:text-slate-400 mt-1">
-            Validates: <span className="font-semibold text-slate-700 dark:text-slate-300">{assessment.skillName}</span>
+          <p className="text-xs text-slate-500 dark:text-ink-muted mt-1">
+            Validates: <span className="font-semibold text-slate-700 dark:text-ink-fg/80">{assessment.skillName}</span>
           </p>
         </div>
 
-        <div className="flex items-center gap-4 text-xs text-slate-500 dark:text-slate-400 pt-1">
+        <div className="flex items-center gap-4 text-xs text-slate-500 dark:text-ink-muted pt-1">
           <span className="flex items-center gap-1">
             <Clock className="w-3.5 h-3.5" />
             {assessment.durationMinutes} mins
@@ -61,10 +61,10 @@ export function AssessmentCard({ assessment, onStart, className }: AssessmentCar
         </div>
       </div>
 
-      <div className="pt-4 mt-4 border-t border-slate-100 dark:border-slate-800 flex items-center justify-between">
+      <div className="pt-4 mt-4 border-t border-slate-100 dark:border-white/10 flex items-center justify-between">
         {isCompleted ? (
           <div className="flex items-center gap-1.5 text-xs text-slate-500">
-            <CheckCircle2 className="w-4 h-4 text-emerald-600" />
+            <CheckCircle2 className="w-4 h-4 text-emerald-600 dark:text-lime" />
             <span>Passed & Verified</span>
           </div>
         ) : (

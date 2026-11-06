@@ -24,35 +24,35 @@ export function InteractivePlatformPreview() {
   const [activeTab, setActiveTab] = React.useState<'readiness' | 'skills' | 'roadmap' | 'diff'>('readiness');
 
   return (
-    <div className="w-full rounded-2xl border border-slate-700/80 bg-slate-900/95 shadow-2xl backdrop-blur-xl overflow-hidden text-left text-slate-100">
+    <div className="w-full rounded-2xl border border-white/15 bg-ink-900/95 shadow-2xl backdrop-blur-xl overflow-hidden text-left text-slate-100">
       {/* Window Title Bar */}
-      <div className="flex items-center justify-between px-4 py-3 bg-slate-950/70 border-b border-slate-800 text-xs">
+      <div className="flex items-center justify-between px-4 py-3 bg-ink-900/70 border-b border-white/10 text-xs">
         <div className="flex items-center gap-2">
-          <div className="w-3 h-3 rounded-full bg-rose-500/80" />
+          <div className="w-3 h-3 rounded-full bg-rose-500/80 dark:bg-crimson" />
           <div className="w-3 h-3 rounded-full bg-amber-500/80" />
-          <div className="w-3 h-3 rounded-full bg-emerald-500/80" />
+          <div className="w-3 h-3 rounded-full bg-emerald-500/80 dark:bg-lime/20" />
           <span className="ml-2 font-mono text-[11px] text-slate-400">
             CoachPath Intelligence Engine &bull; Illustrative Demo Candidate: Aarav Mehta (Target: Full-Stack Engineer)
           </span>
         </div>
-        <div className="hidden sm:flex items-center gap-2 text-[11px] text-emerald-400 font-mono">
-          <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
+        <div className="hidden sm:flex items-center gap-2 text-[11px] text-emerald-400 font-mono dark:text-lime-soft">
+          <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse dark:bg-lime/20" />
           Evidence Grounded &bull; Active
         </div>
       </div>
 
       {/* Interactive Tabs Header */}
-      <div className="flex border-b border-slate-800 bg-slate-900/50 overflow-x-auto">
+      <div className="flex border-b border-white/10 bg-ink-900/50 overflow-x-auto">
         <button
           onClick={() => setActiveTab('readiness')}
           className={cn(
             'flex items-center gap-2 px-5 py-3 text-xs font-semibold transition-all border-b-2',
             activeTab === 'readiness'
-              ? 'border-brand-500 text-white bg-slate-800/60'
+              ? 'border-brand-500 text-white bg-ink-800/60 dark:border-lav/50'
               : 'border-transparent text-slate-400 hover:text-slate-200 hover:bg-slate-800/30'
           )}
         >
-          <Gauge className="w-4 h-4 text-purple-400" />
+          <Gauge className="w-4 h-4 text-purple-400 dark:text-lav-light" />
           <span>Readiness Preview (78%)</span>
         </button>
 
@@ -61,11 +61,11 @@ export function InteractivePlatformPreview() {
           className={cn(
             'flex items-center gap-2 px-5 py-3 text-xs font-semibold transition-all border-b-2',
             activeTab === 'skills'
-              ? 'border-brand-500 text-white bg-slate-800/60'
+              ? 'border-brand-500 text-white bg-ink-800/60 dark:border-lav/50'
               : 'border-transparent text-slate-400 hover:text-slate-200 hover:bg-slate-800/30'
           )}
         >
-          <Cpu className="w-4 h-4 text-emerald-400" />
+          <Cpu className="w-4 h-4 text-emerald-400 dark:text-lime-soft" />
           <span>Skill Gap Engine</span>
         </button>
 
@@ -74,7 +74,7 @@ export function InteractivePlatformPreview() {
           className={cn(
             'flex items-center gap-2 px-5 py-3 text-xs font-semibold transition-all border-b-2',
             activeTab === 'roadmap'
-              ? 'border-brand-500 text-white bg-slate-800/60'
+              ? 'border-brand-500 text-white bg-ink-800/60 dark:border-lav/50'
               : 'border-transparent text-slate-400 hover:text-slate-200 hover:bg-slate-800/30'
           )}
         >
@@ -87,11 +87,11 @@ export function InteractivePlatformPreview() {
           className={cn(
             'flex items-center gap-2 px-5 py-3 text-xs font-semibold transition-all border-b-2',
             activeTab === 'diff'
-              ? 'border-brand-500 text-white bg-slate-800/60'
+              ? 'border-brand-500 text-white bg-ink-800/60 dark:border-lav/50'
               : 'border-transparent text-slate-400 hover:text-slate-200 hover:bg-slate-800/30'
           )}
         >
-          <FileText className="w-4 h-4 text-brand-400" />
+          <FileText className="w-4 h-4 text-brand-400 dark:text-lav-light" />
           <span>Anti-Fabrication Diff</span>
         </button>
       </div>
@@ -101,16 +101,16 @@ export function InteractivePlatformPreview() {
         {/* Tab 1: Readiness Score */}
         {activeTab === 'readiness' && (
           <div className="space-y-6 animate-in fade-in duration-200">
-            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 p-4 rounded-xl bg-slate-800/50 border border-slate-700/60">
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 p-4 rounded-xl bg-ink-800/50 border border-white/15">
               <div className="flex items-center gap-4">
                 <div className="h-16 w-16 rounded-2xl bg-gradient-to-tr from-purple-600 to-indigo-600 flex flex-col items-center justify-center font-bold shadow-lg">
                   <span className="text-2xl leading-none">78%</span>
-                  <span className="text-[9px] uppercase tracking-wider text-purple-200 font-mono mt-0.5">Index</span>
+                  <span className="text-[9px] uppercase tracking-wider text-purple-200 font-mono mt-0.5 dark:text-lav-light">Index</span>
                 </div>
                 <div>
                   <h4 className="text-base font-bold text-white flex items-center gap-2">
                     Market Competency Calibrated
-                    <span className="text-[10px] font-mono px-2 py-0.5 rounded-full bg-emerald-500/20 text-emerald-300 border border-emerald-500/30">
+                    <span className="text-[10px] font-mono px-2 py-0.5 rounded-full bg-emerald-500/20 text-emerald-300 border border-emerald-500/30 dark:bg-lime/20 dark:text-lime-soft dark:border-lime/50">
                       Tier 1 Qualified
                     </span>
                   </h4>
@@ -128,22 +128,22 @@ export function InteractivePlatformPreview() {
 
             {/* 4 Constituent Pillars Grid */}
             <div className="grid grid-cols-2 md:grid-cols-4 gap-3 text-xs">
-              <div className="p-3.5 rounded-xl bg-slate-800/40 border border-slate-700/50">
+              <div className="p-3.5 rounded-xl bg-ink-800/40 border border-white/15">
                 <div className="text-[11px] text-slate-400">Skill Verification (35%)</div>
-                <div className="text-lg font-bold text-emerald-400 mt-1">82%</div>
+                <div className="text-lg font-bold text-emerald-400 mt-1 dark:text-lime-soft">82%</div>
                 <div className="text-[10px] text-slate-400 mt-1">TypeScript & PostgreSQL verified</div>
               </div>
-              <div className="p-3.5 rounded-xl bg-slate-800/40 border border-slate-700/50">
+              <div className="p-3.5 rounded-xl bg-ink-800/40 border border-white/15">
                 <div className="text-[11px] text-slate-400">Project Evidence (25%)</div>
-                <div className="text-lg font-bold text-indigo-400 mt-1">75%</div>
+                <div className="text-lg font-bold text-indigo-400 mt-1 dark:text-lav-light">75%</div>
                 <div className="text-[10px] text-slate-400 mt-1">2 verified portfolio projects</div>
               </div>
-              <div className="p-3.5 rounded-xl bg-slate-800/40 border border-slate-700/50">
+              <div className="p-3.5 rounded-xl bg-ink-800/40 border border-white/15">
                 <div className="text-[11px] text-slate-400">Market Relevance (25%)</div>
-                <div className="text-lg font-bold text-purple-400 mt-1">85%</div>
+                <div className="text-lg font-bold text-purple-400 mt-1 dark:text-lav-light">85%</div>
                 <div className="text-[10px] text-slate-400 mt-1">Stripe, Linear 90%+ match</div>
               </div>
-              <div className="p-3.5 rounded-xl bg-slate-800/40 border border-slate-700/50">
+              <div className="p-3.5 rounded-xl bg-ink-800/40 border border-white/15">
                 <div className="text-[11px] text-slate-400">Interview Fluency (15%)</div>
                 <div className="text-lg font-bold text-amber-400 mt-1">70%</div>
                 <div className="text-[10px] text-slate-400 mt-1">Idempotency STAR ready</div>
@@ -161,41 +161,41 @@ export function InteractivePlatformPreview() {
 
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
               {/* Verified Strengths */}
-              <div className="space-y-2 p-3.5 rounded-xl bg-slate-800/40 border border-emerald-500/20">
-                <div className="flex items-center gap-1.5 text-xs font-bold text-emerald-400 uppercase tracking-wider">
+              <div className="space-y-2 p-3.5 rounded-xl bg-ink-800/40 border border-emerald-500/20 dark:border-lime/50">
+                <div className="flex items-center gap-1.5 text-xs font-bold text-emerald-400 uppercase tracking-wider dark:text-lime-soft">
                   <CheckCircle2 className="w-3.5 h-3.5" /> Verified Strengths
                 </div>
                 <div className="space-y-1.5 pt-1">
-                  <div className="flex justify-between items-center text-xs p-2 rounded-lg bg-slate-800/70">
+                  <div className="flex justify-between items-center text-xs p-2 rounded-lg bg-ink-800/70">
                     <span className="font-semibold text-white">TypeScript</span>
-                    <span className="font-mono text-emerald-400 font-bold">92%</span>
+                    <span className="font-mono text-emerald-400 font-bold dark:text-lime-soft">92%</span>
                   </div>
-                  <div className="flex justify-between items-center text-xs p-2 rounded-lg bg-slate-800/70">
+                  <div className="flex justify-between items-center text-xs p-2 rounded-lg bg-ink-800/70">
                     <span className="font-semibold text-white">React 18 / Next.js</span>
-                    <span className="font-mono text-emerald-400 font-bold">88%</span>
+                    <span className="font-mono text-emerald-400 font-bold dark:text-lime-soft">88%</span>
                   </div>
-                  <div className="flex justify-between items-center text-xs p-2 rounded-lg bg-slate-800/70">
+                  <div className="flex justify-between items-center text-xs p-2 rounded-lg bg-ink-800/70">
                     <span className="font-semibold text-white">PostgreSQL & SQL Tuning</span>
-                    <span className="font-mono text-emerald-400 font-bold">84%</span>
+                    <span className="font-mono text-emerald-400 font-bold dark:text-lime-soft">84%</span>
                   </div>
                 </div>
               </div>
 
               {/* Developing */}
-              <div className="space-y-2 p-3.5 rounded-xl bg-slate-800/40 border border-amber-500/20">
+              <div className="space-y-2 p-3.5 rounded-xl bg-ink-800/40 border border-amber-500/20">
                 <div className="flex items-center gap-1.5 text-xs font-bold text-amber-400 uppercase tracking-wider">
                   <Clock className="w-3.5 h-3.5" /> Developing Skills
                 </div>
                 <div className="space-y-1.5 pt-1">
-                  <div className="flex justify-between items-center text-xs p-2 rounded-lg bg-slate-800/70">
+                  <div className="flex justify-between items-center text-xs p-2 rounded-lg bg-ink-800/70">
                     <span className="font-semibold text-white">Redis Caching</span>
                     <span className="font-mono text-amber-400 font-bold">65%</span>
                   </div>
-                  <div className="flex justify-between items-center text-xs p-2 rounded-lg bg-slate-800/70">
+                  <div className="flex justify-between items-center text-xs p-2 rounded-lg bg-ink-800/70">
                     <span className="font-semibold text-white">Distributed Architecture</span>
                     <span className="font-mono text-amber-400 font-bold">60%</span>
                   </div>
-                  <div className="flex justify-between items-center text-xs p-2 rounded-lg bg-slate-800/70">
+                  <div className="flex justify-between items-center text-xs p-2 rounded-lg bg-ink-800/70">
                     <span className="font-semibold text-white">GraphQL APIs</span>
                     <span className="font-mono text-amber-400 font-bold">58%</span>
                   </div>
@@ -203,22 +203,22 @@ export function InteractivePlatformPreview() {
               </div>
 
               {/* Identified Gaps */}
-              <div className="space-y-2 p-3.5 rounded-xl bg-slate-800/40 border border-rose-500/20">
-                <div className="flex items-center gap-1.5 text-xs font-bold text-rose-400 uppercase tracking-wider">
+              <div className="space-y-2 p-3.5 rounded-xl bg-ink-800/40 border border-rose-500/20 dark:border-crimson/50">
+                <div className="flex items-center gap-1.5 text-xs font-bold text-rose-400 uppercase tracking-wider dark:text-crimson-tint">
                   <AlertCircle className="w-3.5 h-3.5" /> Identified Market Gaps
                 </div>
                 <div className="space-y-1.5 pt-1">
-                  <div className="flex justify-between items-center text-xs p-2 rounded-lg bg-slate-800/70">
+                  <div className="flex justify-between items-center text-xs p-2 rounded-lg bg-ink-800/70">
                     <span className="font-semibold text-white">Kubernetes Orchestration</span>
-                    <span className="font-mono text-rose-400 font-bold">Gap</span>
+                    <span className="font-mono text-rose-400 font-bold dark:text-crimson-tint">Gap</span>
                   </div>
-                  <div className="flex justify-between items-center text-xs p-2 rounded-lg bg-slate-800/70">
+                  <div className="flex justify-between items-center text-xs p-2 rounded-lg bg-ink-800/70">
                     <span className="font-semibold text-white">Distributed Tracing (OTel)</span>
-                    <span className="font-mono text-rose-400 font-bold">Gap</span>
+                    <span className="font-mono text-rose-400 font-bold dark:text-crimson-tint">Gap</span>
                   </div>
-                  <div className="flex justify-between items-center text-xs p-2 rounded-lg bg-slate-800/70">
+                  <div className="flex justify-between items-center text-xs p-2 rounded-lg bg-ink-800/70">
                     <span className="font-semibold text-white">Apache Kafka Streams</span>
-                    <span className="font-mono text-rose-400 font-bold">Gap</span>
+                    <span className="font-mono text-rose-400 font-bold dark:text-crimson-tint">Gap</span>
                   </div>
                 </div>
               </div>
@@ -230,15 +230,15 @@ export function InteractivePlatformPreview() {
         {activeTab === 'roadmap' && (
           <div className="space-y-4 animate-in fade-in duration-200">
             <div className="flex items-center justify-between text-xs">
-              <span className="font-semibold text-purple-400 uppercase tracking-wider text-[11px]">
+              <span className="font-semibold text-purple-400 uppercase tracking-wider text-[11px] dark:text-lav-light">
                 Phase 1: High-Performance Caching & Data Consistency (75% Complete)
               </span>
               <span className="text-slate-400">Weeks 1 – 3</span>
             </div>
 
             <div className="space-y-2.5">
-              <div className="p-3 rounded-xl bg-slate-800/50 border border-emerald-500/30 flex items-start gap-3">
-                <CheckCircle2 className="w-4 h-4 text-emerald-400 mt-0.5 shrink-0" />
+              <div className="p-3 rounded-xl bg-ink-800/50 border border-emerald-500/30 flex items-start gap-3 dark:border-lime/50">
+                <CheckCircle2 className="w-4 h-4 text-emerald-400 mt-0.5 shrink-0 dark:text-lime-soft" />
                 <div className="flex-1 text-xs">
                   <div className="font-semibold text-white">Master Cache-Aside and Write-Through Strategies</div>
                   <p className="text-slate-400 mt-0.5 text-[11px]">
@@ -248,8 +248,8 @@ export function InteractivePlatformPreview() {
                 <Badge variant="verified" size="sm">Completed</Badge>
               </div>
 
-              <div className="p-3 rounded-xl bg-slate-800/50 border border-emerald-500/30 flex items-start gap-3">
-                <CheckCircle2 className="w-4 h-4 text-emerald-400 mt-0.5 shrink-0" />
+              <div className="p-3 rounded-xl bg-ink-800/50 border border-emerald-500/30 flex items-start gap-3 dark:border-lime/50">
+                <CheckCircle2 className="w-4 h-4 text-emerald-400 mt-0.5 shrink-0 dark:text-lime-soft" />
                 <div className="flex-1 text-xs">
                   <div className="font-semibold text-white">Build Distributed Rate Limiter with Sliding Window</div>
                   <p className="text-slate-400 mt-0.5 text-[11px]">
@@ -259,7 +259,7 @@ export function InteractivePlatformPreview() {
                 <Badge variant="verified" size="sm">Completed</Badge>
               </div>
 
-              <div className="p-3 rounded-xl bg-slate-800/80 border border-amber-500/40 flex items-start gap-3">
+              <div className="p-3 rounded-xl bg-ink-800/80 border border-amber-500/40 flex items-start gap-3">
                 <Clock className="w-4 h-4 text-amber-400 mt-0.5 shrink-0 animate-pulse" />
                 <div className="flex-1 text-xs">
                   <div className="font-semibold text-white">Take Redis Architecture Diagnostic Assessment</div>
@@ -276,33 +276,33 @@ export function InteractivePlatformPreview() {
         {/* Tab 4: Anti-Fabrication Diff */}
         {activeTab === 'diff' && (
           <div className="space-y-4 animate-in fade-in duration-200">
-            <div className="flex items-center justify-between text-xs pb-1 border-b border-slate-800">
+            <div className="flex items-center justify-between text-xs pb-1 border-b border-white/10">
               <div className="flex items-center gap-2">
-                <ShieldCheck className="w-4 h-4 text-emerald-400" />
+                <ShieldCheck className="w-4 h-4 text-emerald-400 dark:text-lime-soft" />
                 <span className="font-bold text-white">Two-Pass Grounded Resume Optimization</span>
               </div>
-              <span className="font-mono text-purple-400 text-[11px]">+12% Match Score Boost</span>
+              <span className="font-mono text-purple-400 text-[11px] dark:text-lav-light">+12% Match Score Boost</span>
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-3 text-xs font-mono">
-              <div className="p-3 rounded-xl bg-rose-950/20 border border-rose-900/50">
-                <div className="text-[10px] text-rose-400 font-bold uppercase mb-1">Original Bullet</div>
+              <div className="p-3 rounded-xl bg-rose-950/20 border border-rose-900/50 dark:bg-crimson dark:border-crimson/50">
+                <div className="text-[10px] text-rose-400 font-bold uppercase mb-1 dark:text-crimson-tint">Original Bullet</div>
                 <div className="text-slate-300 leading-relaxed">
                   &ldquo;Worked on backend services and database queries for webhooks, fixing slow queries when traffic spiked.&rdquo;
                 </div>
               </div>
 
-              <div className="p-3 rounded-xl bg-emerald-950/20 border border-emerald-900/50">
-                <div className="text-[10px] text-emerald-400 font-bold uppercase mb-1">Tailored Bullet (Evidence-Backed)</div>
-                <div className="text-emerald-200 font-medium leading-relaxed">
+              <div className="p-3 rounded-xl bg-emerald-950/20 border border-emerald-900/50 dark:bg-lime dark:border-lime/50">
+                <div className="text-[10px] text-emerald-400 font-bold uppercase mb-1 dark:text-lime-soft">Tailored Bullet (Evidence-Backed)</div>
+                <div className="text-emerald-200 font-medium leading-relaxed dark:text-lime-soft">
                   &ldquo;Architected asynchronous webhook ingestion engine handling 250,000+ daily events, tuning PostgreSQL B-tree indices to eliminate query bottlenecks and sustain 99.98% uptime.&rdquo;
                 </div>
               </div>
             </div>
 
-            <div className="p-3 rounded-xl bg-slate-800/60 border border-slate-700/50 text-xs flex items-center justify-between">
+            <div className="p-3 rounded-xl bg-ink-800/60 border border-white/15 text-xs flex items-center justify-between">
               <div className="flex items-center gap-2 text-slate-300">
-                <Sparkles className="w-3.5 h-3.5 text-purple-400 shrink-0" />
+                <Sparkles className="w-3.5 h-3.5 text-purple-400 shrink-0 dark:text-lav-light" />
                 <span>
                   <strong>Evidence Grounding:</strong> Verified by Project QueryLens & Assessment PostgreSQL Indexing (84%).
                 </span>
@@ -314,7 +314,7 @@ export function InteractivePlatformPreview() {
       </div>
 
       {/* Footer bar */}
-      <div className="p-4 bg-slate-950/80 border-t border-slate-800 flex flex-col sm:flex-row items-center justify-between gap-3 text-xs">
+      <div className="p-4 bg-ink-900/80 border-t border-white/10 flex flex-col sm:flex-row items-center justify-between gap-3 text-xs">
         <span className="text-slate-400">
           Ready to experience your own personalized career graph?
         </span>

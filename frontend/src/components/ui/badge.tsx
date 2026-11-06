@@ -10,14 +10,14 @@ export function Badge({ className, variant = 'default', size = 'md', children, .
   const baseStyles = 'inline-flex items-center font-medium rounded-full';
 
   const variants = {
-    default: 'bg-slate-100 text-slate-700 dark:bg-slate-800 dark:text-slate-300',
-    brand: 'bg-indigo-50 text-indigo-700 border border-indigo-200/80 dark:bg-indigo-950/40 dark:text-indigo-300 dark:border-indigo-800',
-    verified: 'bg-emerald-50 text-emerald-700 border border-emerald-200/80 dark:bg-emerald-950/40 dark:text-emerald-300 dark:border-emerald-800',
-    intelligence: 'bg-purple-50 text-purple-700 border border-purple-200/80 dark:bg-purple-950/40 dark:text-purple-300 dark:border-purple-800',
+    default: 'bg-slate-100 text-slate-700 dark:bg-white/[0.07] dark:text-ink-fg/80',
+    brand: 'bg-indigo-50 text-indigo-700 border border-indigo-200/80 dark:bg-lav/10 dark:text-lav-light dark:border-lav/30',
+    verified: 'bg-emerald-50 text-emerald-700 border border-emerald-200/80 dark:bg-lime/10 dark:text-lime-soft dark:border-lime/30',
+    intelligence: 'bg-purple-50 text-purple-700 border border-purple-200/80 dark:bg-lav/10 dark:text-lav-light dark:border-lav/30',
     action: 'bg-amber-50 text-amber-800 border border-amber-200/80 dark:bg-amber-950/40 dark:text-amber-300 dark:border-amber-800',
-    gap: 'bg-rose-50 text-rose-700 border border-rose-200/80 dark:bg-rose-950/40 dark:text-rose-300 dark:border-rose-800',
-    secondary: 'bg-slate-200 text-slate-800 dark:bg-slate-700 dark:text-slate-200',
-    outline: 'border border-slate-300 text-slate-600 bg-transparent dark:border-slate-700 dark:text-slate-400',
+    gap: 'bg-rose-50 text-rose-700 border border-rose-200/80 dark:bg-crimson/10 dark:text-crimson-tint dark:border-crimson/30',
+    secondary: 'bg-slate-200 text-slate-800 dark:bg-white/10 dark:text-ink-fg',
+    outline: 'border border-slate-300 text-slate-600 bg-transparent dark:border-white/15 dark:text-ink-muted',
   };
 
   const sizes = {

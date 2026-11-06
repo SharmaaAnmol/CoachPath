@@ -69,15 +69,15 @@ export function JobMatchCard({
   const getFreshnessBadge = (status: string) => {
     switch (status.toLowerCase()) {
       case 'active':
-        return { label: 'Active', color: 'text-emerald-600 bg-emerald-50 dark:bg-emerald-950/50 dark:text-emerald-400' };
+        return { label: 'Active', color: 'text-emerald-600 bg-emerald-50 dark:bg-lime/10 dark:text-lime' };
       case 'needs_refresh':
         return { label: 'Review Needed', color: 'text-amber-600 bg-amber-50 dark:bg-amber-950/50 dark:text-amber-400' };
       case 'expired':
-        return { label: 'Expired', color: 'text-slate-500 bg-slate-100 dark:bg-slate-800 dark:text-slate-400' };
+        return { label: 'Expired', color: 'text-slate-500 bg-slate-100 dark:bg-white/[0.07] dark:text-ink-muted' };
       case 'closed':
-        return { label: 'Listing Closed', color: 'text-rose-600 bg-rose-50 dark:bg-rose-950/50 dark:text-rose-400' };
+        return { label: 'Listing Closed', color: 'text-rose-600 bg-rose-50 dark:bg-crimson/10 dark:text-crimson-soft' };
       default:
-        return { label: status, color: 'text-slate-500 bg-slate-100 dark:bg-slate-800 dark:text-slate-400' };
+        return { label: status, color: 'text-slate-500 bg-slate-100 dark:bg-white/[0.07] dark:text-ink-muted' };
     }
   };
 
@@ -92,7 +92,7 @@ export function JobMatchCard({
   return (
     <Card
       className={cn(
-        'p-5 space-y-4 hover:border-brand-300/80 dark:hover:border-brand-800/80 transition-all cursor-pointer group hover:shadow-subtle',
+        'p-5 space-y-4 hover:border-brand-300/80 dark:hover:border-lav/30 transition-all cursor-pointer group hover:shadow-subtle',
         match.is_stale && 'border-amber-200 dark:border-amber-900/50',
         className
       )}
@@ -102,7 +102,7 @@ export function JobMatchCard({
       <div className="flex flex-col sm:flex-row sm:items-start justify-between gap-3">
         <div className="space-y-1.5 flex-1 min-w-0">
           <div className="flex flex-wrap items-center gap-2">
-            <h3 className="text-base sm:text-lg font-bold text-slate-900 dark:text-white group-hover:text-brand-600 dark:group-hover:text-brand-400 transition-colors truncate">
+            <h3 className="text-base sm:text-lg font-bold text-slate-900 dark:text-white group-hover:text-brand-600 dark:group-hover:text-lav transition-colors truncate">
               {job.title}
             </h3>
 
@@ -111,24 +111,24 @@ export function JobMatchCard({
               className={cn(
                 'rounded-full px-2.5 py-0.5 text-[11px] font-semibold uppercase tracking-wider',
                 job.remote_type === 'remote'
-                  ? 'bg-emerald-100 text-emerald-800 dark:bg-emerald-950 dark:text-emerald-300'
+                  ? 'bg-emerald-100 text-emerald-800 dark:bg-lime/10 dark:text-lime-soft'
                   : job.remote_type === 'hybrid'
-                  ? 'bg-blue-100 text-blue-800 dark:bg-blue-950 dark:text-blue-300'
-                  : 'bg-slate-100 text-slate-800 dark:bg-slate-800 dark:text-slate-300'
+                  ? 'bg-blue-100 text-blue-800 dark:bg-lav/10 dark:text-lav-light'
+                  : 'bg-slate-100 text-slate-800 dark:bg-white/[0.07] dark:text-ink-fg/80'
               )}
             >
               {job.remote_type}
             </span>
 
             {/* Experience level */}
-            <span className="rounded-full px-2 py-0.5 text-[11px] font-medium bg-slate-100 text-slate-700 dark:bg-slate-800 dark:text-slate-300 capitalize">
+            <span className="rounded-full px-2 py-0.5 text-[11px] font-medium bg-slate-100 text-slate-700 dark:bg-white/[0.07] dark:text-ink-fg/80 capitalize">
               {job.experience_level.replace('_', ' ')}
             </span>
           </div>
 
           {/* Company, Location, Salary */}
-          <div className="flex flex-wrap items-center gap-y-1 gap-x-3 text-xs text-slate-500 dark:text-slate-400">
-            <span className="flex items-center gap-1 font-semibold text-slate-800 dark:text-slate-200">
+          <div className="flex flex-wrap items-center gap-y-1 gap-x-3 text-xs text-slate-500 dark:text-ink-muted">
+            <span className="flex items-center gap-1 font-semibold text-slate-800 dark:text-ink-fg">
               <Building2 className="w-3.5 h-3.5 text-slate-400" />
               {job.company_name}
             </span>
@@ -137,7 +137,7 @@ export function JobMatchCard({
               {job.location}
             </span>
             {salaryDisplay && (
-              <span className="flex items-center gap-1 text-emerald-700 dark:text-emerald-400 font-semibold">
+              <span className="flex items-center gap-1 text-emerald-700 dark:text-lime font-semibold">
                 <DollarSign className="w-3.5 h-3.5" />
                 {salaryDisplay}
               </span>
@@ -170,7 +170,7 @@ export function JobMatchCard({
 
       {/* Summary Narrative Snippet */}
       {match.explanation?.summary && (
-        <p className="text-xs text-slate-600 dark:text-slate-300 leading-relaxed line-clamp-2">
+        <p className="text-xs text-slate-600 dark:text-ink-fg/80 leading-relaxed line-clamp-2">
           {match.explanation.summary}
         </p>
       )}
@@ -180,8 +180,8 @@ export function JobMatchCard({
         {/* Matched Required Skills */}
         {matchedRequired.length > 0 && (
           <div className="flex flex-wrap items-center gap-1.5">
-            <span className="text-[10px] font-bold text-emerald-700 dark:text-emerald-400 uppercase tracking-wider flex items-center gap-1 mr-1">
-              <CheckCircle2 className="w-3 h-3 text-emerald-600" /> Matched Required:
+            <span className="text-[10px] font-bold text-emerald-700 dark:text-lime uppercase tracking-wider flex items-center gap-1 mr-1">
+              <CheckCircle2 className="w-3 h-3 text-emerald-600 dark:text-lime" /> Matched Required:
             </span>
             {matchedRequired.slice(0, 4).map((s) => (
               <Badge key={s} variant="verified" size="sm" className="font-medium text-[11px]">
@@ -199,8 +199,8 @@ export function JobMatchCard({
         {/* Missing Required Skills */}
         {missingRequired.length > 0 && (
           <div className="flex flex-wrap items-center gap-1.5">
-            <span className="text-[10px] font-bold text-rose-700 dark:text-rose-400 uppercase tracking-wider flex items-center gap-1 mr-1">
-              <XCircle className="w-3 h-3 text-rose-500" /> Missing Required:
+            <span className="text-[10px] font-bold text-rose-700 dark:text-crimson-soft uppercase tracking-wider flex items-center gap-1 mr-1">
+              <XCircle className="w-3 h-3 text-rose-500 dark:text-crimson-soft" /> Missing Required:
             </span>
             {missingRequired.slice(0, 3).map((s) => (
               <Badge key={s} variant="gap" size="sm" className="font-medium text-[11px]">
@@ -217,14 +217,14 @@ export function JobMatchCard({
 
         {/* Preferred Skills */}
         {(matchedPreferred.length > 0 || unknownSkills.length > 0) && (
-          <div className="flex flex-wrap items-center gap-1.5 text-slate-500 dark:text-slate-400">
+          <div className="flex flex-wrap items-center gap-1.5 text-slate-500 dark:text-ink-muted">
             <span className="text-[10px] font-bold uppercase tracking-wider mr-1">
               Preferred:
             </span>
             {matchedPreferred.slice(0, 2).map((s) => (
               <span
                 key={s}
-                className="px-2 py-0.5 rounded-full text-[11px] font-medium bg-emerald-50 text-emerald-700 border border-emerald-200 dark:bg-emerald-950/40 dark:text-emerald-300"
+                className="px-2 py-0.5 rounded-full text-[11px] font-medium bg-emerald-50 text-emerald-700 border border-emerald-200 dark:bg-lime/10 dark:text-lime-soft dark:border-lime/30"
               >
                 ✓ {s}
               </span>
@@ -232,7 +232,7 @@ export function JobMatchCard({
             {unknownSkills.slice(0, 2).map((s) => (
               <span
                 key={s}
-                className="px-2 py-0.5 rounded-full text-[11px] font-normal bg-slate-100 text-slate-600 border border-slate-200 dark:bg-slate-800 dark:text-slate-400 dark:border-slate-700"
+                className="px-2 py-0.5 rounded-full text-[11px] font-normal bg-slate-100 text-slate-600 border border-slate-200 dark:bg-white/[0.07] dark:text-ink-muted dark:border-white/15"
               >
                 ? {s}
               </span>
@@ -242,7 +242,7 @@ export function JobMatchCard({
       </div>
 
       {/* Card Footer with Explanatory Actions */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between pt-3 border-t border-slate-100 dark:border-slate-800 text-xs gap-2">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between pt-3 border-t border-slate-100 dark:border-white/10 text-xs gap-2">
         <div className="flex items-center gap-2 text-slate-400 text-[11px]">
           <span
             className={cn(
@@ -279,7 +279,7 @@ export function JobMatchCard({
               onSelectBreakdown(job, match);
             }}
           >
-            <Sparkles className="w-3.5 h-3.5 text-brand-200" />
+            <Sparkles className="w-3.5 h-3.5 text-brand-200 dark:text-lav-light" />
             Match Breakdown <ArrowRight className="w-3.5 h-3.5 ml-0.5" />
           </Button>
         </div>

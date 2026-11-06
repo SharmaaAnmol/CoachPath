@@ -24,10 +24,10 @@ export default function ApplicationsPage() {
   const [applications, setApplications] = React.useState<ApplicationItem[]>(mockApplications);
 
   const columns: { stage: ApplicationStage; title: string; color: string }[] = [
-    { stage: 'saved', title: 'Saved Opportunities', color: 'border-slate-300 bg-slate-50/50 dark:bg-slate-900/40' },
-    { stage: 'applied', title: 'Submitted Applications', color: 'border-blue-300 bg-blue-50/20 dark:bg-blue-950/20' },
-    { stage: 'interviewing', title: 'Active Interviewing', color: 'border-purple-300 bg-purple-50/20 dark:bg-purple-950/20' },
-    { stage: 'offered', title: 'Offers Extended', color: 'border-emerald-300 bg-emerald-50/20 dark:bg-emerald-950/20' },
+    { stage: 'saved', title: 'Saved Opportunities', color: 'border-slate-300 bg-slate-50/50 dark:bg-white/[0.04]' },
+    { stage: 'applied', title: 'Submitted Applications', color: 'border-blue-300 bg-blue-50/20 dark:bg-lav/10 dark:border-lav/50' },
+    { stage: 'interviewing', title: 'Active Interviewing', color: 'border-purple-300 bg-purple-50/20 dark:bg-lav/10 dark:border-lav/50' },
+    { stage: 'offered', title: 'Offers Extended', color: 'border-emerald-300 bg-emerald-50/20 dark:bg-lime/10 dark:border-lime/50' },
   ];
 
   const moveStage = (appId: string, direction: 'next' | 'prev') => {
@@ -53,10 +53,10 @@ export default function ApplicationsPage() {
       {/* Header */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
-          <h2 className="text-2xl font-bold text-slate-900 dark:text-white">
+          <h1 className="font-display text-3xl font-semibold tracking-[-0.035em] text-slate-900 dark:text-ink-fg [text-wrap:balance] md:text-4xl">
             Application Pipeline & Status Tracker
-          </h2>
-          <p className="text-xs text-slate-500 dark:text-slate-400 mt-1">
+          </h1>
+          <p className="text-xs text-slate-500 dark:text-ink-muted mt-1">
             Track active opportunities, interview scheduling, and next-action deadlines across target companies.
           </p>
         </div>
@@ -83,10 +83,10 @@ export default function ApplicationsPage() {
               {/* Column Header */}
               <div className="flex items-center justify-between px-2 py-1">
                 <div className="flex items-center gap-2">
-                  <h3 className="text-xs font-bold uppercase tracking-wider text-slate-700 dark:text-slate-300">
+                  <h3 className="text-xs font-bold uppercase tracking-wider text-slate-700 dark:text-ink-fg/80">
                     {col.title}
                   </h3>
-                  <span className="rounded-full px-2 py-0.5 text-[10px] font-bold bg-slate-200 dark:bg-slate-800 text-slate-700 dark:text-slate-300">
+                  <span className="rounded-full px-2 py-0.5 text-[10px] font-bold bg-slate-200 dark:bg-white/[0.07] text-slate-700 dark:text-ink-fg/80">
                     {items.length}
                   </span>
                 </div>
@@ -95,7 +95,7 @@ export default function ApplicationsPage() {
               {/* Column Body Cards */}
               <div className={`p-3 rounded-2xl border min-h-[450px] space-y-3 ${col.color}`}>
                 {items.map((app) => (
-                  <Card key={app.id} className="p-4 space-y-3 bg-white dark:bg-slate-900 shadow-subtle hover:shadow-card transition-all">
+                  <Card key={app.id} className="p-4 space-y-3 bg-white dark:bg-white/[0.04] shadow-subtle hover:shadow-card transition-all">
                     <div className="space-y-1">
                       <div className="flex items-start justify-between gap-2">
                         <span className="text-xs font-bold text-slate-900 dark:text-white leading-tight">
@@ -106,7 +106,7 @@ export default function ApplicationsPage() {
                         </Badge>
                       </div>
 
-                      <div className="flex items-center gap-2 text-xs font-semibold text-purple-700 dark:text-purple-300">
+                      <div className="flex items-center gap-2 text-xs font-semibold text-purple-700 dark:text-lav-light">
                         <Building2 className="w-3.5 h-3.5" />
                         <span>{app.company}</span>
                         <span className="text-slate-400 font-normal">&bull; {app.salary}</span>
@@ -114,20 +114,20 @@ export default function ApplicationsPage() {
                     </div>
 
                     {app.nextStep && (
-                      <div className="p-2.5 rounded-lg bg-purple-50 dark:bg-purple-950/40 border border-purple-200 dark:border-purple-800 text-[11px] text-purple-900 dark:text-purple-300 flex items-start gap-1.5">
-                        <Clock className="w-3.5 h-3.5 shrink-0 mt-0.5 text-purple-600" />
+                      <div className="p-2.5 rounded-lg bg-purple-50 dark:bg-lav/10 border border-purple-200 dark:border-lav/30 text-[11px] text-purple-900 dark:text-lav-light flex items-start gap-1.5">
+                        <Clock className="w-3.5 h-3.5 shrink-0 mt-0.5 text-purple-600 dark:text-lav" />
                         <span className="leading-snug">{app.nextStep}</span>
                       </div>
                     )}
 
                     {app.notes && (
-                      <p className="text-[11px] text-slate-500 dark:text-slate-400 line-clamp-2">
+                      <p className="text-[11px] text-slate-500 dark:text-ink-muted line-clamp-2">
                         {app.notes}
                       </p>
                     )}
 
                     {/* Move controls */}
-                    <div className="pt-2 border-t border-slate-100 dark:border-slate-800 flex items-center justify-between text-xs">
+                    <div className="pt-2 border-t border-slate-100 dark:border-white/10 flex items-center justify-between text-xs">
                       {col.stage !== 'saved' ? (
                         <button
                           onClick={() => moveStage(app.id, 'prev')}
@@ -140,19 +140,19 @@ export default function ApplicationsPage() {
                       {col.stage !== 'offered' ? (
                         <button
                           onClick={() => moveStage(app.id, 'next')}
-                          className="text-[11px] text-brand-600 font-bold hover:underline"
+                          className="text-[11px] text-brand-600 font-bold hover:underline dark:text-lav"
                         >
                           Advance &rarr;
                         </button>
                       ) : (
-                        <span className="text-[11px] font-bold text-emerald-600">Offer Active!</span>
+                        <span className="text-[11px] font-bold text-emerald-600 dark:text-lime">Offer Active!</span>
                       )}
                     </div>
                   </Card>
                 ))}
 
                 {items.length === 0 && (
-                  <div className="h-32 flex items-center justify-center text-xs text-slate-400 border border-dashed border-slate-300 dark:border-slate-700 rounded-xl">
+                  <div className="h-32 flex items-center justify-center text-xs text-slate-400 border border-dashed border-slate-300 dark:border-white/15 rounded-xl">
                     No active applications
                   </div>
                 )}

@@ -26,14 +26,14 @@ export function MatchScoreBadge({
       return {
         label: 'Strong Fit',
         classes:
-          'bg-emerald-50 text-emerald-700 border-emerald-200/90 dark:bg-emerald-950/40 dark:text-emerald-300 dark:border-emerald-800',
+          'bg-emerald-50 text-emerald-700 border-emerald-200/90 dark:bg-lime/10 dark:text-lime-soft dark:border-lime/30',
         ring: 'ring-emerald-500/20',
       };
     } else if (s >= 60) {
       return {
         label: 'Good Fit',
         classes:
-          'bg-sky-50 text-sky-700 border-sky-200/90 dark:bg-sky-950/40 dark:text-sky-300 dark:border-sky-800',
+          'bg-sky-50 text-sky-700 border-sky-200/90 dark:bg-lav/10 dark:text-lav-light dark:border-lav/30',
         ring: 'ring-sky-500/20',
       };
     } else if (s >= 40) {
@@ -47,7 +47,7 @@ export function MatchScoreBadge({
       return {
         label: 'Developing',
         classes:
-          'bg-slate-100 text-slate-700 border-slate-200 dark:bg-slate-800 dark:text-slate-300 dark:border-slate-700',
+          'bg-slate-100 text-slate-700 border-slate-200 dark:bg-white/[0.07] dark:text-ink-fg/80 dark:border-white/15',
         ring: 'ring-slate-500/20',
       };
     }

@@ -357,9 +357,9 @@ export default function RoadmapPage() {
     <div className="space-y-6 max-w-7xl mx-auto pb-16">
       {/* Toast Notification */}
       {successToast && (
-        <div className="p-3.5 rounded-xl bg-emerald-50 dark:bg-emerald-950/50 border border-emerald-200 dark:border-emerald-800 text-xs text-emerald-900 dark:text-emerald-100 flex items-center justify-between shadow-sm animate-in fade-in-50">
+        <div className="p-3.5 rounded-xl bg-emerald-50 dark:bg-lime/10 border border-emerald-200 dark:border-lime/30 text-xs text-emerald-900 dark:text-lime-soft flex items-center justify-between shadow-sm animate-in fade-in-50">
           <div className="flex items-center gap-2.5">
-            <CheckCircle2 className="w-4 h-4 text-emerald-600 dark:text-emerald-400 shrink-0" />
+            <CheckCircle2 className="w-4 h-4 text-emerald-600 dark:text-lime shrink-0" />
             <span className="font-medium">{successToast}</span>
           </div>
         </div>
@@ -439,15 +439,15 @@ export default function RoadmapPage() {
           <div className="space-y-3 pt-2">
             <div className="flex items-center justify-between">
               <div>
-                <h3 className="text-base font-bold text-slate-900 dark:text-white tracking-tight">
+                <h3 className="text-base font-bold dark:font-display dark:font-semibold dark:tracking-[-0.02em] text-slate-900 dark:text-white tracking-tight">
                   Curriculum Phases & Milestones
                 </h3>
-                <p className="text-xs text-slate-500 dark:text-slate-400">
+                <p className="text-xs text-slate-500 dark:text-ink-muted">
                   Step-by-step sequential learning phases tailored to your skill gaps. Milestone locks enforce prerequisite mastery.
                 </p>
               </div>
 
-              <span className="text-xs text-slate-500 dark:text-slate-400 font-mono">
+              <span className="text-xs text-slate-500 dark:text-ink-muted font-mono">
                 {roadmap.completed_tasks} / {roadmap.total_tasks} milestones completed
               </span>
             </div>

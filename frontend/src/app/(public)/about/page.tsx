@@ -13,16 +13,16 @@ export default function AboutPage() {
         <h1 className="text-4xl font-extrabold text-slate-900 dark:text-white tracking-tight">
           Bringing Truth & Calm to Technical Careers
         </h1>
-        <p className="text-base text-slate-600 dark:text-slate-300 leading-relaxed">
+        <p className="text-base text-slate-600 dark:text-ink-fg/80 leading-relaxed">
           We believe engineers deserve a system grounded in actual competence, verifiable evidence, and transparent feedback—not empty hype or fabricated AI resumes.
         </p>
       </div>
 
       {/* Story */}
-      <div className="space-y-6 text-sm sm:text-base text-slate-700 dark:text-slate-300 leading-relaxed">
+      <div className="space-y-6 text-sm sm:text-base text-slate-700 dark:text-ink-fg/80 leading-relaxed">
         <Card className="p-8 space-y-4 border-slate-200/80">
           <h2 className="text-xl font-bold text-slate-900 dark:text-white flex items-center gap-2">
-            <HeartHandshake className="w-5 h-5 text-purple-600" />
+            <HeartHandshake className="w-5 h-5 text-purple-600 dark:text-lav" />
             Why We Built CoachPath
           </h2>
           <p>
@@ -38,32 +38,32 @@ export default function AboutPage() {
 
         {/* Core Values Grid */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6 pt-6">
-          <div className="p-6 rounded-2xl bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 space-y-3">
-            <div className="w-10 h-10 rounded-xl bg-purple-50 dark:bg-purple-950/50 text-purple-600 flex items-center justify-center font-bold">
+          <div className="p-6 rounded-2xl bg-white dark:bg-white/[0.07] border border-slate-200 dark:border-white/15 space-y-3">
+            <div className="w-10 h-10 rounded-xl bg-purple-50 dark:bg-lav/10 text-purple-600 flex items-center justify-center font-bold dark:text-lav">
               <Shield className="w-5 h-5" />
             </div>
-            <h3 className="text-base font-bold text-slate-900 dark:text-white">Truth Over Hype</h3>
-            <p className="text-xs text-slate-500 dark:text-slate-400 leading-relaxed">
+            <h3 className="text-base font-bold dark:font-display dark:font-semibold dark:tracking-[-0.02em] text-slate-900 dark:text-white">Truth Over Hype</h3>
+            <p className="text-xs text-slate-500 dark:text-ink-muted leading-relaxed">
               We never fabricate bullet points. Every optimization is verified against real diagnostic tests or project deliverables before you accept it.
             </p>
           </div>
 
-          <div className="p-6 rounded-2xl bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 space-y-3">
-            <div className="w-10 h-10 rounded-xl bg-emerald-50 dark:bg-emerald-950/50 text-emerald-600 flex items-center justify-center font-bold">
+          <div className="p-6 rounded-2xl bg-white dark:bg-white/[0.07] border border-slate-200 dark:border-white/15 space-y-3">
+            <div className="w-10 h-10 rounded-xl bg-emerald-50 dark:bg-lime/10 text-emerald-600 flex items-center justify-center font-bold dark:text-lime">
               <Code2 className="w-5 h-5" />
             </div>
-            <h3 className="text-base font-bold text-slate-900 dark:text-white">Deterministic First</h3>
-            <p className="text-xs text-slate-500 dark:text-slate-400 leading-relaxed">
+            <h3 className="text-base font-bold dark:font-display dark:font-semibold dark:tracking-[-0.02em] text-slate-900 dark:text-white">Deterministic First</h3>
+            <p className="text-xs text-slate-500 dark:text-ink-muted leading-relaxed">
               We separate LLM reasoning from business-critical decisions. Scoring, grading, and roadmaps are anchored in deterministic logic.
             </p>
           </div>
 
-          <div className="p-6 rounded-2xl bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 space-y-3">
+          <div className="p-6 rounded-2xl bg-white dark:bg-white/[0.07] border border-slate-200 dark:border-white/15 space-y-3">
             <div className="w-10 h-10 rounded-xl bg-amber-50 dark:bg-amber-950/50 text-amber-600 flex items-center justify-center font-bold">
               <Users className="w-5 h-5" />
             </div>
-            <h3 className="text-base font-bold text-slate-900 dark:text-white">Human Agency</h3>
-            <p className="text-xs text-slate-500 dark:text-slate-400 leading-relaxed">
+            <h3 className="text-base font-bold dark:font-display dark:font-semibold dark:tracking-[-0.02em] text-slate-900 dark:text-white">Human Agency</h3>
+            <p className="text-xs text-slate-500 dark:text-ink-muted leading-relaxed">
               You own your career. CoachPath never auto-applies or messages recruiters without your explicit review and copy action.
             </p>
           </div>

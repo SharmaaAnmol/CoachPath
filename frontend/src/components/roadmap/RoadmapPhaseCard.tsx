@@ -45,10 +45,10 @@ export function RoadmapPhaseCard({
       <Card
         className={`p-4 sm:p-5 border cursor-pointer select-none transition-all ${
           isPhaseCompleted
-            ? 'bg-emerald-950/15 border-emerald-800/60 dark:bg-emerald-950/20'
+            ? 'bg-emerald-950/15 border-emerald-800/60 dark:bg-lime/10 dark:border-lime/50'
             : phase.status === 'in_progress'
             ? 'bg-slate-900 text-white border-slate-700 shadow-lg'
-            : 'bg-white dark:bg-slate-900 border-slate-200 dark:border-slate-800'
+            : 'bg-white dark:bg-white/[0.04] border-slate-200 dark:border-white/10'
         }`}
         onClick={() => setIsOpen(!isOpen)}
       >
@@ -58,10 +58,10 @@ export function RoadmapPhaseCard({
               <span
                 className={`font-mono text-xs px-2.5 py-0.5 rounded-full font-bold border ${
                   phase.status === 'in_progress'
-                    ? 'bg-brand-500/30 text-brand-300 border-brand-500/40'
+                    ? 'bg-brand-500/30 text-brand-300 border-brand-500/40 dark:bg-lav-violet dark:text-lav-light dark:border-lav/50'
                     : isPhaseCompleted
-                    ? 'bg-emerald-500/20 text-emerald-400 border-emerald-500/30'
-                    : 'bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 border-slate-200 dark:border-slate-700'
+                    ? 'bg-emerald-500/20 text-emerald-400 border-emerald-500/30 dark:bg-lime/20 dark:text-lime-soft dark:border-lime/50'
+                    : 'bg-slate-100 dark:bg-white/[0.07] text-slate-600 dark:text-ink-fg/80 border-slate-200 dark:border-white/15'
                 }`}
               >
                 Phase {phase.order_index}
@@ -78,7 +78,7 @@ export function RoadmapPhaseCard({
 
               <span
                 className={`text-xs ${
-                  phase.status === 'in_progress' ? 'text-slate-400' : 'text-slate-500 dark:text-slate-400'
+                  phase.status === 'in_progress' ? 'text-slate-400' : 'text-slate-500 dark:text-ink-muted'
                 }`}
               >
                 &bull; {phase.estimated_hours} hrs total
@@ -96,7 +96,7 @@ export function RoadmapPhaseCard({
             {phase.objective && (
               <p
                 className={`text-xs leading-relaxed max-w-2xl ${
-                  phase.status === 'in_progress' ? 'text-slate-300' : 'text-slate-600 dark:text-slate-300'
+                  phase.status === 'in_progress' ? 'text-slate-300' : 'text-slate-600 dark:text-ink-fg/80'
                 }`}
               >
                 {phase.objective}
@@ -113,7 +113,7 @@ export function RoadmapPhaseCard({
                 </span>
                 <span
                   className={`font-bold ${
-                    phase.status === 'in_progress' ? 'text-brand-300' : 'text-slate-900 dark:text-white'
+                    phase.status === 'in_progress' ? 'text-brand-300 dark:text-lav-light' : 'text-slate-900 dark:text-white'
                   }`}
                 >
                   {phaseProgressPct}%
@@ -127,7 +127,7 @@ export function RoadmapPhaseCard({
               />
             </div>
 
-            <div className="text-slate-400 hover:text-slate-600 dark:hover:text-slate-200">
+            <div className="text-slate-400 hover:text-slate-600 dark:hover:text-ink-fg">
               {isOpen ? <ChevronUp className="w-5 h-5" /> : <ChevronDown className="w-5 h-5" />}
             </div>
           </div>
@@ -136,7 +136,7 @@ export function RoadmapPhaseCard({
 
       {/* Task List */}
       {isOpen && (
-        <div className="space-y-3 pl-2 sm:pl-4 border-l-2 border-slate-200 dark:border-slate-800 ml-2 sm:ml-4">
+        <div className="space-y-3 pl-2 sm:pl-4 border-l-2 border-slate-200 dark:border-white/10 ml-2 sm:ml-4">
           {phase.tasks.map((task) => (
             <RoadmapTaskCard
               key={task.id}

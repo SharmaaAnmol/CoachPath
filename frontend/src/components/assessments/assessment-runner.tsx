@@ -152,15 +152,15 @@ export function AssessmentRunner({
   return (
     <div className="space-y-6 max-w-4xl mx-auto">
       {/* Top Header Card */}
-      <Card className="p-5 shadow-sm border-slate-200 dark:border-slate-800">
+      <Card className="p-5 shadow-sm border-slate-200 dark:border-white/10">
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
           <div>
             <div className="flex items-center gap-2">
-              <span className="text-xs font-semibold text-brand-600 dark:text-brand-400 uppercase tracking-wider">
+              <span className="text-xs font-semibold text-brand-600 dark:text-lav uppercase tracking-wider">
                 {session.skill_name}
               </span>
-              <span className="text-slate-300 dark:text-slate-700">&bull;</span>
-              <span className="text-xs text-slate-500 dark:text-slate-400">
+              <span className="text-slate-300 dark:text-ink-dim">&bull;</span>
+              <span className="text-xs text-slate-500 dark:text-ink-muted">
                 Diagnostic Assessment
               </span>
             </div>
@@ -174,8 +174,8 @@ export function AssessmentRunner({
             <div
               className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg border font-mono text-xs font-semibold ${
                 timeRemainingSeconds < 300
-                  ? 'border-rose-300 bg-rose-50 text-rose-700 dark:bg-rose-950/40 dark:text-rose-300 animate-pulse'
-                  : 'border-slate-200 bg-slate-50 text-slate-700 dark:bg-slate-800 dark:border-slate-700 dark:text-slate-300'
+                  ? 'border-rose-300 bg-rose-50 text-rose-700 dark:bg-crimson/10 dark:text-crimson-tint animate-pulse dark:border-crimson/50'
+                  : 'border-slate-200 bg-slate-50 text-slate-700 dark:bg-white/[0.07] dark:border-white/15 dark:text-ink-fg/80'
               }`}
             >
               <Clock className="w-3.5 h-3.5" />
@@ -190,22 +190,22 @@ export function AssessmentRunner({
 
         {/* Progress Tracker */}
         <div className="mt-5 space-y-2">
-          <div className="flex justify-between text-xs text-slate-500 dark:text-slate-400 font-medium">
+          <div className="flex justify-between text-xs text-slate-500 dark:text-ink-muted font-medium">
             <span>
               Progress: <strong className="text-slate-900 dark:text-white">{answeredCount}</strong> of {totalQuestions} answered ({progressPercentage}%)
             </span>
             <span>Question {currentIdx + 1} of {totalQuestions}</span>
           </div>
-          <div className="w-full bg-slate-100 dark:bg-slate-800 rounded-full h-2 overflow-hidden">
+          <div className="w-full bg-slate-100 dark:bg-white/[0.07] rounded-full h-2 overflow-hidden">
             <div
-              className="bg-brand-600 h-2 rounded-full transition-all duration-300"
+              className="bg-brand-600 h-2 rounded-full transition-all duration-300 dark:bg-lav-violet"
               style={{ width: `${progressPercentage}%` }}
             />
           </div>
         </div>
 
         {/* Question Jump Palette (1 to 20) */}
-        <div className="mt-4 pt-4 border-t border-slate-100 dark:border-slate-800/80">
+        <div className="mt-4 pt-4 border-t border-slate-100 dark:border-white/10">
           <div className="flex flex-wrap gap-1.5 sm:gap-2">
             {questions.map((q, idx) => {
               const isAnswered = answers[q.id] !== undefined;
@@ -218,10 +218,10 @@ export function AssessmentRunner({
                   onClick={() => setCurrentIdx(idx)}
                   className={`w-7 h-7 sm:w-8 sm:h-8 rounded-lg text-xs font-semibold transition-all flex items-center justify-center ${
                     isCurrent
-                      ? 'bg-brand-600 text-white ring-2 ring-brand-400 ring-offset-1 dark:ring-offset-slate-900 shadow-sm'
+                      ? 'bg-brand-600 text-white ring-2 ring-brand-400 ring-offset-1 dark:ring-offset-slate-900 shadow-sm dark:bg-lav-violet'
                       : isAnswered
-                      ? 'bg-emerald-100 text-emerald-800 dark:bg-emerald-950/60 dark:text-emerald-300 border border-emerald-300 dark:border-emerald-800'
-                      : 'bg-slate-50 text-slate-600 dark:bg-slate-800 dark:text-slate-400 border border-slate-200 dark:border-slate-700 hover:border-slate-300'
+                      ? 'bg-emerald-100 text-emerald-800 dark:bg-lime/10 dark:text-lime-soft border border-emerald-300 dark:border-lime/30'
+                      : 'bg-slate-50 text-slate-600 dark:bg-white/[0.07] dark:text-ink-muted border border-slate-200 dark:border-white/15 hover:border-slate-300'
                   }`}
                   title={`Question ${idx + 1}: ${q.topic} (${q.difficulty})`}
                 >
@@ -235,14 +235,14 @@ export function AssessmentRunner({
 
       {/* Error Alert */}
       {errorMessage && (
-        <div className="p-4 rounded-xl bg-rose-50 border border-rose-200 text-rose-800 dark:bg-rose-950/40 dark:border-rose-800 dark:text-rose-200 text-xs sm:text-sm flex items-center gap-2">
-          <AlertCircle className="w-4 h-4 shrink-0 text-rose-600" />
+        <div className="p-4 rounded-xl bg-rose-50 border border-rose-200 text-rose-800 dark:bg-crimson/10 dark:border-crimson/30 dark:text-crimson-tint text-xs sm:text-sm flex items-center gap-2">
+          <AlertCircle className="w-4 h-4 shrink-0 text-rose-600 dark:text-crimson-soft" />
           <span>{errorMessage}</span>
         </div>
       )}
 
       {/* Question Card */}
-      <Card className="p-6 space-y-6 shadow-sm border-slate-200 dark:border-slate-800">
+      <Card className="p-6 space-y-6 shadow-sm border-slate-200 dark:border-white/10">
         {/* Question Meta */}
         <div className="flex items-center justify-between gap-3">
           <div className="flex items-center gap-2">
@@ -288,15 +288,15 @@ export function AssessmentRunner({
                 onClick={() => handleSelectOption(optIdx)}
                 className={`w-full p-4 rounded-xl border text-left text-xs sm:text-sm transition-all flex items-start gap-3.5 ${
                   isSelected
-                    ? 'border-brand-600 bg-brand-50/80 text-brand-950 dark:bg-brand-950/40 dark:text-brand-100 font-medium ring-1 ring-brand-500'
-                    : 'border-slate-200 hover:border-slate-300 hover:bg-slate-50/60 dark:border-slate-800 dark:hover:bg-slate-850 text-slate-700 dark:text-slate-300'
+                    ? 'border-brand-600 bg-brand-50/80 text-brand-950 dark:bg-lav/10 dark:text-lav-light font-medium ring-1 ring-brand-500 dark:border-lav/50'
+                    : 'border-slate-200 hover:border-slate-300 hover:bg-slate-50/60 dark:border-white/10 dark:hover:bg-white/20 text-slate-700 dark:text-ink-fg/80'
                 }`}
               >
                 <div
                   className={`w-6 h-6 rounded-full flex items-center justify-center font-mono font-bold text-xs shrink-0 transition-colors ${
                     isSelected
-                      ? 'bg-brand-600 text-white'
-                      : 'bg-slate-100 dark:bg-slate-800 text-slate-500'
+                      ? 'bg-brand-600 text-white dark:bg-lav-violet'
+                      : 'bg-slate-100 dark:bg-white/[0.07] text-slate-500'
                   }`}
                 >
                   {String.fromCharCode(65 + optIdx)}
@@ -308,7 +308,7 @@ export function AssessmentRunner({
         </div>
 
         {/* Bottom Navigation Toolbar */}
-        <div className="pt-6 border-t border-slate-100 dark:border-slate-800 flex items-center justify-between gap-3">
+        <div className="pt-6 border-t border-slate-100 dark:border-white/10 flex items-center justify-between gap-3">
           <Button
             size="sm"
             variant="outline"

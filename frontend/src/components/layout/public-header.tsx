@@ -3,7 +3,7 @@
 import * as React from 'react';
 import Link from 'next/link';
 import { Button } from '@/components/ui/button';
-import { Sparkles, Menu, X, ArrowRight } from 'lucide-react';
+import { Menu, X, ArrowRight } from 'lucide-react';
 import { useAuth } from '@/hooks/use-auth';
 
 export function PublicHeader() {
@@ -11,35 +11,33 @@ export function PublicHeader() {
   const { isAuthenticated } = useAuth();
 
   return (
-    <header className="sticky top-0 z-50 bg-white/90 dark:bg-slate-900/90 backdrop-blur-md border-b border-slate-200/80 dark:border-slate-800">
+    <header className="sticky top-0 z-50 bg-white/90 dark:bg-white/[0.04] backdrop-blur-md border-b border-slate-200/80 dark:border-white/10">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
         {/* Brand Logo */}
         <Link href="/" className="flex items-center gap-2.5">
-          <div className="h-9 w-9 rounded-xl bg-gradient-to-tr from-brand-600 to-purple-500 flex items-center justify-center text-white shadow-md">
-            <Sparkles className="h-5 w-5" />
-          </div>
+          <span className="grid h-8 w-8 place-items-center rounded-lg bg-gradient-to-b from-lav-light to-lav text-sm font-bold text-lav-ink">C</span>
           <div className="flex flex-col">
             <span className="font-bold text-slate-900 dark:text-white text-base tracking-tight leading-none">
               CoachPath
             </span>
-            <span className="text-[10px] text-purple-600 dark:text-purple-400 font-mono tracking-wider uppercase mt-1">
+            <span className="text-[10px] text-purple-600 dark:text-lav font-mono tracking-wider uppercase mt-1">
               Career Intelligence
             </span>
           </div>
         </Link>
 
         {/* Desktop Nav Links */}
-        <nav className="hidden md:flex items-center gap-8 text-sm font-medium text-slate-600 dark:text-slate-300">
-          <Link href="/how-it-works" className="hover:text-brand-600 dark:hover:text-brand-400 transition-colors">
+        <nav className="hidden md:flex items-center gap-8 text-sm font-medium text-slate-600 dark:text-ink-fg/80">
+          <Link href="/how-it-works" className="hover:text-brand-600 dark:hover:text-lav transition-colors">
             How It Works
           </Link>
-          <Link href="/features" className="hover:text-brand-600 dark:hover:text-brand-400 transition-colors">
+          <Link href="/features" className="hover:text-brand-600 dark:hover:text-lav transition-colors">
             Features
           </Link>
-          <Link href="/about" className="hover:text-brand-600 dark:hover:text-brand-400 transition-colors">
+          <Link href="/about" className="hover:text-brand-600 dark:hover:text-lav transition-colors">
             About Us
           </Link>
-          <Link href="/privacy" className="hover:text-brand-600 dark:hover:text-brand-400 transition-colors">
+          <Link href="/privacy" className="hover:text-brand-600 dark:hover:text-lav transition-colors">
             Privacy & Trust
           </Link>
         </nav>
@@ -71,7 +69,7 @@ export function PublicHeader() {
         {/* Mobile Hamburger */}
         <button
           onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-          className="md:hidden p-2 text-slate-600 hover:text-slate-900 dark:text-slate-300 dark:hover:text-white"
+          className="md:hidden p-2 text-slate-600 hover:text-slate-900 dark:text-ink-fg/80 dark:hover:text-white"
           aria-label="Toggle menu"
         >
           {mobileMenuOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
@@ -80,36 +78,36 @@ export function PublicHeader() {
 
       {/* Mobile Menu Dropdown */}
       {mobileMenuOpen && (
-        <div className="md:hidden border-b border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 px-4 py-4 space-y-3">
+        <div className="md:hidden border-b border-slate-200 dark:border-white/10 bg-white dark:bg-white/[0.04] px-4 py-4 space-y-3">
           <Link
             href="/how-it-works"
             onClick={() => setMobileMenuOpen(false)}
-            className="block py-2 text-sm font-medium text-slate-700 dark:text-slate-200"
+            className="block py-2 text-sm font-medium text-slate-700 dark:text-ink-fg"
           >
             How It Works
           </Link>
           <Link
             href="/features"
             onClick={() => setMobileMenuOpen(false)}
-            className="block py-2 text-sm font-medium text-slate-700 dark:text-slate-200"
+            className="block py-2 text-sm font-medium text-slate-700 dark:text-ink-fg"
           >
             Features
           </Link>
           <Link
             href="/about"
             onClick={() => setMobileMenuOpen(false)}
-            className="block py-2 text-sm font-medium text-slate-700 dark:text-slate-200"
+            className="block py-2 text-sm font-medium text-slate-700 dark:text-ink-fg"
           >
             About Us
           </Link>
           <Link
             href="/privacy"
             onClick={() => setMobileMenuOpen(false)}
-            className="block py-2 text-sm font-medium text-slate-700 dark:text-slate-200"
+            className="block py-2 text-sm font-medium text-slate-700 dark:text-ink-fg"
           >
             Privacy & Trust
           </Link>
-          <div className="pt-3 border-t border-slate-100 dark:border-slate-800 flex flex-col gap-2">
+          <div className="pt-3 border-t border-slate-100 dark:border-white/10 flex flex-col gap-2">
             {isAuthenticated ? (
               <Link href="/dashboard" onClick={() => setMobileMenuOpen(false)}>
                 <Button variant="primary" size="sm" className="w-full">

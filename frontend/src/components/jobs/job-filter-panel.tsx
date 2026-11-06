@@ -125,13 +125,13 @@ export function JobFilterPanel({
             placeholder="Search jobs by title, company, or keyword (e.g. Stripe, Backend, Python)..."
             value={searchInput}
             onChange={(e) => setSearchInput(e.target.value)}
-            className="w-full pl-10 pr-9 py-2 text-xs sm:text-sm rounded-xl border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-900 text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-brand-500 shadow-sm"
+            className="w-full pl-10 pr-9 py-2 text-xs sm:text-sm rounded-xl border border-slate-300 dark:border-white/15 bg-white dark:bg-white/[0.04] text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-brand-500 shadow-sm"
           />
           {searchInput && (
             <button
               type="button"
               onClick={handleClearSearch}
-              className="absolute right-3 top-2.5 text-slate-400 hover:text-slate-600 dark:hover:text-slate-200"
+              className="absolute right-3 top-2.5 text-slate-400 hover:text-slate-600 dark:hover:text-ink-fg"
               aria-label="Clear search text"
             >
               <X className="w-4 h-4" />
@@ -153,7 +153,7 @@ export function JobFilterPanel({
           <SlidersHorizontal className="w-3.5 h-3.5" />
           <span className="hidden sm:inline">Filters</span>
           {activeFilterCount > 0 && (
-            <span className="rounded-full bg-brand-600 text-white text-[10px] w-4 h-4 flex items-center justify-center font-bold">
+            <span className="rounded-full bg-brand-600 text-white text-[10px] w-4 h-4 flex items-center justify-center font-bold dark:bg-lav-violet">
               {activeFilterCount}
             </span>
           )}
@@ -174,8 +174,8 @@ export function JobFilterPanel({
               onClick={() => onQueryChange({ remote_type: t.id || undefined, page: 1 })}
               className={`px-3 py-1.5 rounded-lg font-medium transition-all text-xs shrink-0 ${
                 (query.remote_type || '') === t.id
-                  ? 'bg-slate-900 text-white dark:bg-white dark:text-slate-900 font-semibold shadow-xs'
-                  : 'bg-slate-100 text-slate-600 hover:bg-slate-200 dark:bg-slate-800 dark:text-slate-300 dark:hover:bg-slate-700'
+                  ? 'bg-slate-900 text-white dark:bg-lav dark:text-lav-ink font-semibold shadow-xs'
+                  : 'bg-slate-100 text-slate-600 hover:bg-slate-200 dark:bg-white/[0.07] dark:text-ink-fg/80 dark:hover:bg-white/10'
               }`}
             >
               {t.label}
@@ -189,7 +189,7 @@ export function JobFilterPanel({
           <select
             value={query.role_id || ''}
             onChange={(e) => onQueryChange({ role_id: e.target.value || undefined, page: 1 })}
-            className="px-2.5 py-1.5 rounded-lg border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-900 text-slate-800 dark:text-slate-200 font-medium focus:outline-none focus:ring-1 focus:ring-brand-500 text-xs"
+            className="px-2.5 py-1.5 rounded-lg border border-slate-300 dark:border-white/15 bg-white dark:bg-white/[0.04] text-slate-800 dark:text-ink-fg font-medium focus:outline-none focus:ring-1 focus:ring-brand-500 text-xs"
           >
             {CANONICAL_ROLES.map((r) => (
               <option key={r.id} value={r.id}>
@@ -207,7 +207,7 @@ export function JobFilterPanel({
                 page: 1,
               })
             }
-            className="px-2.5 py-1.5 rounded-lg border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-900 text-slate-800 dark:text-slate-200 font-medium focus:outline-none focus:ring-1 focus:ring-brand-500 text-xs"
+            className="px-2.5 py-1.5 rounded-lg border border-slate-300 dark:border-white/15 bg-white dark:bg-white/[0.04] text-slate-800 dark:text-ink-fg font-medium focus:outline-none focus:ring-1 focus:ring-brand-500 text-xs"
           >
             <option value="newest">Newest Postings</option>
             <option value="salary_high">Highest Salary</option>
@@ -219,11 +219,11 @@ export function JobFilterPanel({
 
       {/* Advanced Collapsible Filter Drawer */}
       {isAdvancedOpen && (
-        <div className="pt-3 border-t border-slate-100 dark:border-slate-800 space-y-4 animate-in fade-in text-xs">
+        <div className="pt-3 border-t border-slate-100 dark:border-white/10 space-y-4 animate-in fade-in text-xs">
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
             {/* Seniority Filter */}
             <div className="space-y-1.5">
-              <label className="text-[11px] font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wider block">
+              <label className="text-[11px] font-semibold text-slate-500 dark:text-ink-muted uppercase tracking-wider block">
                 Seniority Level
               </label>
               <select
@@ -231,7 +231,7 @@ export function JobFilterPanel({
                 onChange={(e) =>
                   onQueryChange({ experience_level: e.target.value || undefined, page: 1 })
                 }
-                className="w-full px-2.5 py-1.5 rounded-lg border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-900 text-slate-800 dark:text-slate-200 text-xs"
+                className="w-full px-2.5 py-1.5 rounded-lg border border-slate-300 dark:border-white/15 bg-white dark:bg-white/[0.04] text-slate-800 dark:text-ink-fg text-xs"
               >
                 {EXPERIENCE_LEVELS.map((el) => (
                   <option key={el.id} value={el.id}>
@@ -243,7 +243,7 @@ export function JobFilterPanel({
 
             {/* Minimum Salary Threshold */}
             <div className="space-y-1.5">
-              <label className="text-[11px] font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wider block">
+              <label className="text-[11px] font-semibold text-slate-500 dark:text-ink-muted uppercase tracking-wider block">
                 Minimum Annual Salary
               </label>
               <select
@@ -254,7 +254,7 @@ export function JobFilterPanel({
                     page: 1,
                   })
                 }
-                className="w-full px-2.5 py-1.5 rounded-lg border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-900 text-slate-800 dark:text-slate-200 text-xs"
+                className="w-full px-2.5 py-1.5 rounded-lg border border-slate-300 dark:border-white/15 bg-white dark:bg-white/[0.04] text-slate-800 dark:text-ink-fg text-xs"
               >
                 {SALARY_THRESHOLDS.map((st, i) => (
                   <option key={i} value={st.value || ''}>
@@ -266,7 +266,7 @@ export function JobFilterPanel({
 
             {/* Canonical Skill Quick Selector */}
             <div className="space-y-1.5">
-              <label className="text-[11px] font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wider block">
+              <label className="text-[11px] font-semibold text-slate-500 dark:text-ink-muted uppercase tracking-wider block">
                 Canonical Skill Tag
               </label>
               <select
@@ -274,7 +274,7 @@ export function JobFilterPanel({
                 onChange={(e) =>
                   onQueryChange({ skill_id: e.target.value || undefined, page: 1 })
                 }
-                className="w-full px-2.5 py-1.5 rounded-lg border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-900 text-slate-800 dark:text-slate-200 text-xs"
+                className="w-full px-2.5 py-1.5 rounded-lg border border-slate-300 dark:border-white/15 bg-white dark:bg-white/[0.04] text-slate-800 dark:text-ink-fg text-xs"
               >
                 <option value="">All Skills</option>
                 {POPULAR_SKILLS.map((sk) => (
@@ -306,8 +306,8 @@ export function JobFilterPanel({
                     }
                     className={`px-2.5 py-1 rounded-md text-[11px] transition-all font-medium ${
                       isSelected
-                        ? 'bg-brand-600 text-white font-semibold'
-                        : 'bg-slate-100 text-slate-600 hover:bg-slate-200 dark:bg-slate-800 dark:text-slate-300'
+                        ? 'bg-brand-600 text-white font-semibold dark:bg-lav-violet'
+                        : 'bg-slate-100 text-slate-600 hover:bg-slate-200 dark:bg-white/[0.07] dark:text-ink-fg/80'
                     }`}
                   >
                     {s.label}
@@ -321,7 +321,7 @@ export function JobFilterPanel({
 
       {/* Active Filter Chips & Reset Bar */}
       {activeFilterCount > 0 && (
-        <div className="flex flex-wrap items-center justify-between gap-2 pt-2 border-t border-slate-100 dark:border-slate-800 text-xs">
+        <div className="flex flex-wrap items-center justify-between gap-2 pt-2 border-t border-slate-100 dark:border-white/10 text-xs">
           <div className="flex flex-wrap items-center gap-1.5">
             <span className="text-slate-400 font-semibold text-[11px]">Active:</span>
 
@@ -401,7 +401,7 @@ export function JobFilterPanel({
           <button
             type="button"
             onClick={onResetFilters}
-            className="flex items-center gap-1 text-[11px] font-semibold text-rose-600 hover:text-rose-700 dark:text-rose-400 transition-colors"
+            className="flex items-center gap-1 text-[11px] font-semibold text-rose-600 hover:text-rose-700 dark:text-crimson-soft transition-colors dark:hover:text-crimson-soft"
           >
             <RotateCcw className="w-3 h-3" /> Reset All Filters
           </button>

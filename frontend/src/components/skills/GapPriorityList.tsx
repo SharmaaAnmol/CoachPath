@@ -24,12 +24,12 @@ interface GapPriorityListProps {
 export function GapPriorityList({ gaps, roleTitle }: GapPriorityListProps) {
   if (gaps.length === 0) {
     return (
-      <Card className="p-6 text-center space-y-2 border-emerald-200 bg-emerald-50/20 dark:bg-emerald-950/20">
-        <CheckCircle2 className="w-8 h-8 text-emerald-600 mx-auto" />
+      <Card className="p-6 text-center space-y-2 border-emerald-200 bg-emerald-50/20 dark:bg-lime/10 dark:border-lime/30">
+        <CheckCircle2 className="w-8 h-8 text-emerald-600 mx-auto dark:text-lime" />
         <h4 className="text-sm font-bold text-slate-900 dark:text-white">
           No Outstanding Benchmark Gaps!
         </h4>
-        <p className="text-xs text-slate-600 dark:text-slate-400 max-w-md mx-auto">
+        <p className="text-xs text-slate-600 dark:text-ink-muted max-w-md mx-auto">
           All required skills for {roleTitle} currently meet or exceed required competency thresholds.
         </p>
       </Card>
@@ -40,7 +40,7 @@ export function GapPriorityList({ gaps, roleTitle }: GapPriorityListProps) {
     switch (priority) {
       case 'CRITICAL':
         return (
-          <span className="px-2 py-0.5 rounded text-[10px] font-bold uppercase tracking-wider bg-rose-100 text-rose-800 border border-rose-300 dark:bg-rose-950 dark:text-rose-300 dark:border-rose-800">
+          <span className="px-2 py-0.5 rounded text-[10px] font-bold uppercase tracking-wider bg-rose-100 text-rose-800 border border-rose-300 dark:bg-crimson/10 dark:text-crimson-tint dark:border-crimson/30">
             Critical Priority
           </span>
         );
@@ -52,13 +52,13 @@ export function GapPriorityList({ gaps, roleTitle }: GapPriorityListProps) {
         );
       case 'MEDIUM':
         return (
-          <span className="px-2 py-0.5 rounded text-[10px] font-semibold uppercase tracking-wider bg-sky-100 text-sky-800 border border-sky-300 dark:bg-sky-950 dark:text-sky-300 dark:border-sky-800">
+          <span className="px-2 py-0.5 rounded text-[10px] font-semibold uppercase tracking-wider bg-sky-100 text-sky-800 border border-sky-300 dark:bg-lav/10 dark:text-lav-light dark:border-lav/30">
             Medium Priority
           </span>
         );
       default:
         return (
-          <span className="px-2 py-0.5 rounded text-[10px] font-medium uppercase tracking-wider bg-slate-100 text-slate-700 border border-slate-200 dark:bg-slate-800 dark:text-slate-300 dark:border-slate-700">
+          <span className="px-2 py-0.5 rounded text-[10px] font-medium uppercase tracking-wider bg-slate-100 text-slate-700 border border-slate-200 dark:bg-white/[0.07] dark:text-ink-fg/80 dark:border-white/15">
             Low Priority
           </span>
         );
@@ -68,13 +68,13 @@ export function GapPriorityList({ gaps, roleTitle }: GapPriorityListProps) {
   const getActionBadge = (actionType: string) => {
     if (actionType === 'TAKE_ASSESSMENT') {
       return (
-        <span className="px-2 py-0.5 rounded text-[10px] font-bold tracking-wider bg-purple-50 text-purple-700 border border-purple-200 dark:bg-purple-950/40 dark:text-purple-300 flex items-center gap-1">
+        <span className="px-2 py-0.5 rounded text-[10px] font-bold tracking-wider bg-purple-50 text-purple-700 border border-purple-200 dark:bg-lav/10 dark:text-lav-light flex items-center gap-1 dark:border-lav/30">
           <ClipboardCheck className="w-3 h-3" /> ASSESS FIRST
         </span>
       );
     }
     return (
-      <span className="px-2 py-0.5 rounded text-[10px] font-bold tracking-wider bg-indigo-50 text-indigo-700 border border-indigo-200 dark:bg-indigo-950/40 dark:text-indigo-300 flex items-center gap-1">
+      <span className="px-2 py-0.5 rounded text-[10px] font-bold tracking-wider bg-indigo-50 text-indigo-700 border border-indigo-200 dark:bg-lav/10 dark:text-lav-light flex items-center gap-1 dark:border-lav/30">
         <BookOpen className="w-3 h-3" /> LEARN & IMPROVE
       </span>
     );
@@ -84,10 +84,10 @@ export function GapPriorityList({ gaps, roleTitle }: GapPriorityListProps) {
     <div className="space-y-3">
       <div className="flex items-center justify-between">
         <div>
-          <h3 className="text-sm font-bold text-slate-900 dark:text-white uppercase tracking-wider">
+          <h3 className="text-sm font-bold dark:font-display dark:font-semibold dark:tracking-[-0.02em] text-slate-900 dark:text-white uppercase tracking-wider">
             Prioritized Remedial Action Plan
           </h3>
-          <p className="text-xs text-slate-500 dark:text-slate-400">
+          <p className="text-xs text-slate-500 dark:text-ink-muted">
             Deterministically ranked by requirement weight, deficit severity, and assessment readiness.
           </p>
         </div>
@@ -103,11 +103,11 @@ export function GapPriorityList({ gaps, roleTitle }: GapPriorityListProps) {
           return (
             <Card
               key={`${gap.rank}-${gap.skill_id}`}
-              className="p-4 border-slate-200 dark:border-slate-800 hover:border-slate-300 dark:hover:border-slate-700 transition-all bg-white dark:bg-slate-900 shadow-sm space-y-3"
+              className="p-4 border-slate-200 dark:border-white/10 hover:border-slate-300 dark:hover:border-white/15 transition-all bg-white dark:bg-white/[0.04] shadow-sm space-y-3"
             >
               <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
                 <div className="flex items-center gap-2.5">
-                  <span className="w-6 h-6 rounded-full bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 text-xs font-black flex items-center justify-center shrink-0">
+                  <span className="w-6 h-6 rounded-full bg-slate-100 dark:bg-white/[0.07] text-slate-700 dark:text-ink-fg/80 text-xs font-black flex items-center justify-center shrink-0">
                     {gap.rank}
                   </span>
                   <div className="flex items-center gap-2">
@@ -120,7 +120,7 @@ export function GapPriorityList({ gaps, roleTitle }: GapPriorityListProps) {
                 </div>
 
                 <div className="text-xs font-medium text-slate-500 self-end sm:self-center">
-                  Level {gap.current_level} <span className="text-slate-300 dark:text-slate-700 mx-1">→</span> Level {gap.required_level} Required
+                  Level {gap.current_level} <span className="text-slate-300 dark:text-ink-dim mx-1">→</span> Level {gap.required_level} Required
                 </div>
               </div>
 
@@ -130,7 +130,7 @@ export function GapPriorityList({ gaps, roleTitle }: GapPriorityListProps) {
                   <span className="text-[11px] font-semibold text-slate-400 uppercase tracking-wider">
                     Why This Matters for {roleTitle}:
                   </span>
-                  <p className="text-slate-600 dark:text-slate-300 leading-relaxed">
+                  <p className="text-slate-600 dark:text-ink-fg/80 leading-relaxed">
                     {gap.reason}
                   </p>
                 </div>
@@ -139,16 +139,16 @@ export function GapPriorityList({ gaps, roleTitle }: GapPriorityListProps) {
                   <span className="text-[11px] font-semibold text-slate-400 uppercase tracking-wider">
                     Recommended Action:
                   </span>
-                  <p className="text-slate-700 dark:text-slate-200 font-medium">
+                  <p className="text-slate-700 dark:text-ink-fg font-medium">
                     {gap.action_description}
                   </p>
                 </div>
               </div>
 
               {/* CTA footer */}
-              <div className="pt-2 border-t border-slate-100 dark:border-slate-800 flex items-center justify-between">
+              <div className="pt-2 border-t border-slate-100 dark:border-white/10 flex items-center justify-between">
                 <span className="text-[11px] text-slate-400 capitalize">
-                  Requirement Tier: <strong className="text-slate-700 dark:text-slate-300">{gap.importance}</strong>
+                  Requirement Tier: <strong className="text-slate-700 dark:text-ink-fg/80">{gap.importance}</strong>
                 </span>
 
                 <Link href="/assessments">

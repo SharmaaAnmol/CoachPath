@@ -678,9 +678,9 @@ export default function CareerProfilePage() {
             </div>
             <div className="space-y-1">
               <div className="flex flex-wrap items-center gap-2">
-                <h2 className="text-2xl font-bold text-slate-900 dark:text-white">
+                <h1 className="font-display text-3xl font-semibold tracking-[-0.035em] text-slate-900 dark:text-ink-fg [text-wrap:balance] md:text-4xl">
                   {profile.full_name}
-                </h2>
+                </h1>
                 <Badge variant="verified" size="sm">
                   <ShieldCheck className="w-3.5 h-3.5 mr-1" /> Profile Active
                 </Badge>
@@ -688,13 +688,13 @@ export default function CareerProfilePage() {
                   {profile.completeness_score.toFixed(0)}% Complete
                 </Badge>
               </div>
-              <p className="text-sm font-medium text-slate-600 dark:text-slate-300">
+              <p className="text-sm font-medium text-slate-600 dark:text-ink-fg/80">
                 {profile.headline || 'Career Profile Candidate'}
                 {profile.location ? ` • ${profile.location}` : ''}
               </p>
-              <div className="flex flex-wrap items-center gap-2 pt-1 text-xs text-slate-500 dark:text-slate-400">
+              <div className="flex flex-wrap items-center gap-2 pt-1 text-xs text-slate-500 dark:text-ink-muted">
                 <span>Target Role:</span>
-                <span className="font-bold text-purple-700 dark:text-purple-300 bg-purple-50 dark:bg-purple-950/40 px-2 py-0.5 rounded border border-purple-200 dark:border-purple-800">
+                <span className="font-bold text-purple-700 dark:text-lav-light bg-purple-50 dark:bg-lav/10 px-2 py-0.5 rounded border border-purple-200 dark:border-lav/30">
                   {profile.primary_role?.title || 'Target Role Not Set'}
                 </span>
                 <span>• {profile.years_of_experience} YOE</span>
@@ -730,13 +730,13 @@ export default function CareerProfilePage() {
         </div>
 
         {/* Completeness Engine Progress Bar */}
-        <div className="mt-6 pt-5 border-t border-slate-100 dark:border-slate-800 space-y-2">
+        <div className="mt-6 pt-5 border-t border-slate-100 dark:border-white/10 space-y-2">
           <div className="flex items-center justify-between text-xs">
-            <span className="font-semibold text-slate-700 dark:text-slate-300 flex items-center gap-1.5">
-              <Sparkles className="w-3.5 h-3.5 text-purple-600" />
+            <span className="font-semibold text-slate-700 dark:text-ink-fg/80 flex items-center gap-1.5">
+              <Sparkles className="w-3.5 h-3.5 text-purple-600 dark:text-lav" />
               Deterministic Profile Completeness Engine
             </span>
-            <span className="font-bold text-purple-700 dark:text-purple-300 font-mono">
+            <span className="font-bold text-purple-700 dark:text-lav-light font-mono">
               {profile.completeness_score.toFixed(0)}%
             </span>
           </div>
@@ -745,28 +745,28 @@ export default function CareerProfilePage() {
             variant="intelligence"
             size="md"
           />
-          <div className="flex flex-wrap items-center gap-2 text-[11px] text-slate-500 dark:text-slate-400 pt-1">
-            <span className={profile.headline && profile.location ? 'text-emerald-600 font-semibold' : ''}>
+          <div className="flex flex-wrap items-center gap-2 text-[11px] text-slate-500 dark:text-ink-muted pt-1">
+            <span className={profile.headline && profile.location ? 'text-emerald-600 font-semibold dark:text-lime' : ''}>
               ✓ Details (20%)
             </span>
             <span>•</span>
-            <span className={profile.primary_role ? 'text-emerald-600 font-semibold' : ''}>
+            <span className={profile.primary_role ? 'text-emerald-600 font-semibold dark:text-lime' : ''}>
               ✓ Goals (20%)
             </span>
             <span>•</span>
-            <span className={profile.education.length > 0 ? 'text-emerald-600 font-semibold' : ''}>
+            <span className={profile.education.length > 0 ? 'text-emerald-600 font-semibold dark:text-lime' : ''}>
               {profile.education.length > 0 ? '✓' : '○'} Education (20%)
             </span>
             <span>•</span>
-            <span className={profile.experience.length > 0 ? 'text-emerald-600 font-semibold' : ''}>
+            <span className={profile.experience.length > 0 ? 'text-emerald-600 font-semibold dark:text-lime' : ''}>
               {profile.experience.length > 0 ? '✓' : '○'} Experience (20%)
             </span>
             <span>•</span>
-            <span className={profile.projects.length > 0 ? 'text-emerald-600 font-semibold' : ''}>
+            <span className={profile.projects.length > 0 ? 'text-emerald-600 font-semibold dark:text-lime' : ''}>
               {profile.projects.length > 0 ? '✓' : '○'} Projects (15%)
             </span>
             <span>•</span>
-            <span className={profile.certifications.length > 0 ? 'text-emerald-600 font-semibold' : ''}>
+            <span className={profile.certifications.length > 0 ? 'text-emerald-600 font-semibold dark:text-lime' : ''}>
               {profile.certifications.length > 0 ? '✓' : '○'} Certs (5%)
             </span>
           </div>
@@ -785,14 +785,14 @@ export default function CareerProfilePage() {
             {/* Bio & Summary */}
             <Card className="p-6 space-y-3">
               <div className="flex items-center justify-between">
-                <h3 className="text-base font-bold text-slate-900 dark:text-white">
+                <h3 className="text-base font-bold dark:font-display dark:font-semibold dark:tracking-[-0.02em] text-slate-900 dark:text-white">
                   Executive Bio & Professional Narrative
                 </h3>
                 <Button variant="ghost" size="sm" onClick={openPersonalModal}>
                   <Edit3 className="w-3.5 h-3.5 mr-1" /> Edit
                 </Button>
               </div>
-              <p className="text-sm text-slate-600 dark:text-slate-300 leading-relaxed whitespace-pre-line">
+              <p className="text-sm text-slate-600 dark:text-ink-fg/80 leading-relaxed whitespace-pre-line">
                 {profile.bio ||
                   'No professional biography added yet. Click "Edit" to summarize your technical background, career trajectory, and engineering philosophy.'}
               </p>
@@ -802,7 +802,7 @@ export default function CareerProfilePage() {
             <Card className="p-6 space-y-4">
               <div className="flex items-center justify-between">
                 <div>
-                  <h3 className="text-base font-bold text-slate-900 dark:text-white">
+                  <h3 className="text-base font-bold dark:font-display dark:font-semibold dark:tracking-[-0.02em] text-slate-900 dark:text-white">
                     Benchmark Target Roles & Trajectory
                   </h3>
                   <p className="text-xs text-slate-500">
@@ -815,40 +815,40 @@ export default function CareerProfilePage() {
               </div>
 
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-1">
-                <div className="p-4 rounded-xl bg-purple-50/50 dark:bg-purple-950/20 border border-purple-200/60 dark:border-purple-800/60 space-y-1.5">
-                  <span className="text-[11px] font-semibold uppercase tracking-wider text-purple-700 dark:text-purple-300">
+                <div className="p-4 rounded-xl bg-purple-50/50 dark:bg-lav/10 border border-purple-200/60 dark:border-lav/30 space-y-1.5">
+                  <span className="text-[11px] font-semibold uppercase tracking-wider text-purple-700 dark:text-lav-light">
                     Primary Target Benchmark
                   </span>
                   <p className="text-sm font-bold text-slate-900 dark:text-white">
                     {profile.primary_role?.title || 'Target Role Not Set'}
                   </p>
-                  <p className="text-xs text-slate-600 dark:text-slate-400">
+                  <p className="text-xs text-slate-600 dark:text-ink-muted">
                     {profile.primary_role?.description ||
                       'Configure your target career goal in Career Goals to personalize your roadmap.'}
                   </p>
                 </div>
 
-                <div className="p-4 rounded-xl bg-slate-50 dark:bg-slate-800/40 border border-slate-200/80 dark:border-slate-800 space-y-1.5">
+                <div className="p-4 rounded-xl bg-slate-50 dark:bg-white/[0.07] border border-slate-200/80 dark:border-white/10 space-y-1.5">
                   <span className="text-[11px] font-semibold uppercase tracking-wider text-slate-500">
                     Secondary Target Trajectory
                   </span>
                   <p className="text-sm font-bold text-slate-900 dark:text-white">
                     {profile.secondary_role?.title || 'None Specified'}
                   </p>
-                  <p className="text-xs text-slate-600 dark:text-slate-400">
+                  <p className="text-xs text-slate-600 dark:text-ink-muted">
                     {profile.secondary_role?.description ||
                       'Select a secondary benchmark role to compare skill alignments across disciplines.'}
                   </p>
                 </div>
               </div>
 
-              <div className="pt-2 text-xs space-y-1 text-slate-600 dark:text-slate-400">
+              <div className="pt-2 text-xs space-y-1 text-slate-600 dark:text-ink-muted">
                 <div className="flex gap-2">
-                  <span className="font-semibold text-slate-700 dark:text-slate-300">Target Locations:</span>
+                  <span className="font-semibold text-slate-700 dark:text-ink-fg/80">Target Locations:</span>
                   <span>{profile.target_locations.join(', ') || 'Remote'}</span>
                 </div>
                 <div className="flex gap-2">
-                  <span className="font-semibold text-slate-700 dark:text-slate-300">Work Preference:</span>
+                  <span className="font-semibold text-slate-700 dark:text-ink-fg/80">Work Preference:</span>
                   <span className="capitalize">{profile.work_preference}</span>
                 </div>
               </div>
@@ -856,32 +856,32 @@ export default function CareerProfilePage() {
 
             {/* Social & Contact Links */}
             <Card className="p-6 space-y-4">
-              <h3 className="text-base font-bold text-slate-900 dark:text-white">
+              <h3 className="text-base font-bold dark:font-display dark:font-semibold dark:tracking-[-0.02em] text-slate-900 dark:text-white">
                 Contact & Professional Profiles
               </h3>
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 text-xs">
-                <div className="flex items-center gap-2.5 p-3 rounded-lg bg-slate-50 dark:bg-slate-800/50">
+                <div className="flex items-center gap-2.5 p-3 rounded-lg bg-slate-50 dark:bg-white/[0.07]">
                   <Mail className="w-4 h-4 text-slate-400" />
                   <div className="truncate">
                     <span className="text-slate-400 block text-[10px]">Email</span>
-                    <span className="font-medium text-slate-800 dark:text-slate-200 truncate">{profile.email}</span>
+                    <span className="font-medium text-slate-800 dark:text-ink-fg truncate">{profile.email}</span>
                   </div>
                 </div>
 
-                <div className="flex items-center gap-2.5 p-3 rounded-lg bg-slate-50 dark:bg-slate-800/50">
+                <div className="flex items-center gap-2.5 p-3 rounded-lg bg-slate-50 dark:bg-white/[0.07]">
                   <Phone className="w-4 h-4 text-slate-400" />
                   <div className="truncate">
                     <span className="text-slate-400 block text-[10px]">Phone</span>
-                    <span className="font-medium text-slate-800 dark:text-slate-200">{profile.phone_number || 'Not provided'}</span>
+                    <span className="font-medium text-slate-800 dark:text-ink-fg">{profile.phone_number || 'Not provided'}</span>
                   </div>
                 </div>
 
-                <div className="flex items-center gap-2.5 p-3 rounded-lg bg-slate-50 dark:bg-slate-800/50">
-                  <Linkedin className="w-4 h-4 text-brand-600" />
+                <div className="flex items-center gap-2.5 p-3 rounded-lg bg-slate-50 dark:bg-white/[0.07]">
+                  <Linkedin className="w-4 h-4 text-brand-600 dark:text-lav" />
                   <div className="truncate">
                     <span className="text-slate-400 block text-[10px]">LinkedIn</span>
                     {profile.linkedin_url ? (
-                      <a href={profile.linkedin_url} target="_blank" rel="noopener noreferrer" className="font-medium text-brand-600 hover:underline truncate block">
+                      <a href={profile.linkedin_url} target="_blank" rel="noopener noreferrer" className="font-medium text-brand-600 hover:underline truncate block dark:text-lav">
                         {profile.linkedin_url.replace(/^https?:\/\//, '')}
                       </a>
                     ) : (
@@ -890,12 +890,12 @@ export default function CareerProfilePage() {
                   </div>
                 </div>
 
-                <div className="flex items-center gap-2.5 p-3 rounded-lg bg-slate-50 dark:bg-slate-800/50">
-                  <Github className="w-4 h-4 text-slate-800 dark:text-slate-200" />
+                <div className="flex items-center gap-2.5 p-3 rounded-lg bg-slate-50 dark:bg-white/[0.07]">
+                  <Github className="w-4 h-4 text-slate-800 dark:text-ink-fg" />
                   <div className="truncate">
                     <span className="text-slate-400 block text-[10px]">GitHub</span>
                     {profile.github_url ? (
-                      <a href={profile.github_url} target="_blank" rel="noopener noreferrer" className="font-medium text-brand-600 hover:underline truncate block">
+                      <a href={profile.github_url} target="_blank" rel="noopener noreferrer" className="font-medium text-brand-600 hover:underline truncate block dark:text-lav">
                         {profile.github_url.replace(/^https?:\/\//, '')}
                       </a>
                     ) : (
@@ -905,11 +905,11 @@ export default function CareerProfilePage() {
                 </div>
 
                 {profile.portfolio_url && (
-                  <div className="sm:col-span-2 flex items-center gap-2.5 p-3 rounded-lg bg-slate-50 dark:bg-slate-800/50">
-                    <Globe className="w-4 h-4 text-emerald-600" />
+                  <div className="sm:col-span-2 flex items-center gap-2.5 p-3 rounded-lg bg-slate-50 dark:bg-white/[0.07]">
+                    <Globe className="w-4 h-4 text-emerald-600 dark:text-lime" />
                     <div className="truncate">
                       <span className="text-slate-400 block text-[10px]">Portfolio Website</span>
-                      <a href={profile.portfolio_url} target="_blank" rel="noopener noreferrer" className="font-medium text-brand-600 hover:underline truncate block">
+                      <a href={profile.portfolio_url} target="_blank" rel="noopener noreferrer" className="font-medium text-brand-600 hover:underline truncate block dark:text-lav">
                         {profile.portfolio_url}
                       </a>
                     </div>
@@ -922,37 +922,37 @@ export default function CareerProfilePage() {
           {/* Right Column: Evidence Summary & Metadata */}
           <div className="space-y-6">
             <Card className="p-6 space-y-4">
-              <h3 className="text-base font-bold text-slate-900 dark:text-white">
+              <h3 className="text-base font-bold dark:font-display dark:font-semibold dark:tracking-[-0.02em] text-slate-900 dark:text-white">
                 Career Evidence Graph
               </h3>
-              <div className="space-y-3 text-xs text-slate-600 dark:text-slate-300">
-                <div className="flex justify-between py-1.5 border-b border-slate-100 dark:border-slate-800">
+              <div className="space-y-3 text-xs text-slate-600 dark:text-ink-fg/80">
+                <div className="flex justify-between py-1.5 border-b border-slate-100 dark:border-white/10">
                   <span className="text-slate-400">Work Positions:</span>
-                  <span className="font-bold text-slate-800 dark:text-slate-200">
+                  <span className="font-bold text-slate-800 dark:text-ink-fg">
                     {profile.experience.length} Entries
                   </span>
                 </div>
-                <div className="flex justify-between py-1.5 border-b border-slate-100 dark:border-slate-800">
+                <div className="flex justify-between py-1.5 border-b border-slate-100 dark:border-white/10">
                   <span className="text-slate-400">Technical Projects:</span>
-                  <span className="font-bold text-slate-800 dark:text-slate-200">
+                  <span className="font-bold text-slate-800 dark:text-ink-fg">
                     {profile.projects.length} Repositories
                   </span>
                 </div>
-                <div className="flex justify-between py-1.5 border-b border-slate-100 dark:border-slate-800">
+                <div className="flex justify-between py-1.5 border-b border-slate-100 dark:border-white/10">
                   <span className="text-slate-400">Academic Degrees:</span>
-                  <span className="font-bold text-slate-800 dark:text-slate-200">
+                  <span className="font-bold text-slate-800 dark:text-ink-fg">
                     {profile.education.length} Credentials
                   </span>
                 </div>
-                <div className="flex justify-between py-1.5 border-b border-slate-100 dark:border-slate-800">
+                <div className="flex justify-between py-1.5 border-b border-slate-100 dark:border-white/10">
                   <span className="text-slate-400">Certifications:</span>
-                  <span className="font-bold text-slate-800 dark:text-slate-200">
+                  <span className="font-bold text-slate-800 dark:text-ink-fg">
                     {profile.certifications.length} Certified
                   </span>
                 </div>
-                <div className="flex justify-between py-1.5 border-b border-slate-100 dark:border-slate-800">
+                <div className="flex justify-between py-1.5 border-b border-slate-100 dark:border-white/10">
                   <span className="text-slate-400">Verified Skills:</span>
-                  <span className="font-bold text-emerald-600">
+                  <span className="font-bold text-emerald-600 dark:text-lime">
                     {profile.verified_skills_count} Verified
                   </span>
                 </div>
@@ -963,12 +963,12 @@ export default function CareerProfilePage() {
               </div>
             </Card>
 
-            <Card className="p-6 space-y-3 bg-purple-50/30 dark:bg-purple-950/20 border-purple-200/60 dark:border-purple-900/40">
-              <div className="flex items-center gap-2 text-purple-700 dark:text-purple-300 font-bold text-sm">
+            <Card className="p-6 space-y-3 bg-purple-50/30 dark:bg-lav/10 border-purple-200/60 dark:border-lav/30">
+              <div className="flex items-center gap-2 text-purple-700 dark:text-lav-light font-bold text-sm">
                 <ShieldCheck className="w-4 h-4" />
                 <span>Deterministic Ground Truth</span>
               </div>
-              <p className="text-xs text-slate-600 dark:text-slate-400 leading-relaxed">
+              <p className="text-xs text-slate-600 dark:text-ink-muted leading-relaxed">
                 CoachPath guarantees zero hallucinations: resume bullets and job match algorithms
                 strictly derive their claims from the verified credentials and project evidence
                 recorded here.
@@ -985,7 +985,7 @@ export default function CareerProfilePage() {
         <div className="space-y-4">
           <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
             <div>
-              <h3 className="text-base font-bold text-slate-900 dark:text-white">
+              <h3 className="text-base font-bold dark:font-display dark:font-semibold dark:tracking-[-0.02em] text-slate-900 dark:text-white">
                 Professional Experience ({profile.experience.length})
               </h3>
               <p className="text-xs text-slate-500">
@@ -1016,13 +1016,13 @@ export default function CareerProfilePage() {
                       <h4 className="text-base font-bold text-slate-900 dark:text-white">
                         {exp.role_title}
                       </h4>
-                      <p className="text-xs font-semibold text-purple-700 dark:text-purple-300">
+                      <p className="text-xs font-semibold text-purple-700 dark:text-lav-light">
                         {exp.company_name}
                         {exp.location ? ` • ${exp.location}` : ''}
                       </p>
                     </div>
                     <div className="flex items-center gap-2 self-start sm:self-auto">
-                      <span className="text-xs font-mono text-slate-500 bg-slate-100 dark:bg-slate-800 px-2.5 py-1 rounded-md">
+                      <span className="text-xs font-mono text-slate-500 bg-slate-100 dark:bg-white/[0.07] px-2.5 py-1 rounded-md">
                         {exp.start_date} – {exp.is_current ? 'Present' : exp.end_date || 'N/A'}
                       </span>
                       <Button
@@ -1044,7 +1044,7 @@ export default function CareerProfilePage() {
                             title: `${exp.role_title} at ${exp.company_name}`,
                           })
                         }
-                        className="text-rose-600 hover:text-rose-700 hover:bg-rose-50 dark:hover:bg-rose-950/30"
+                        className="text-rose-600 hover:text-rose-700 hover:bg-rose-50 dark:hover:bg-crimson/10 dark:text-crimson-soft dark:hover:text-crimson-soft"
                         aria-label="Delete position"
                       >
                         <Trash2 className="w-3.5 h-3.5" />
@@ -1053,7 +1053,7 @@ export default function CareerProfilePage() {
                   </div>
 
                   {exp.bullet_points && exp.bullet_points.length > 0 && (
-                    <ul className="list-disc list-inside space-y-1.5 text-xs text-slate-600 dark:text-slate-300 leading-relaxed pt-1">
+                    <ul className="list-disc list-inside space-y-1.5 text-xs text-slate-600 dark:text-ink-fg/80 leading-relaxed pt-1">
                       {exp.bullet_points.map((bullet, idx) => (
                         <li key={idx}>{bullet}</li>
                       ))}
@@ -1073,7 +1073,7 @@ export default function CareerProfilePage() {
         <div className="space-y-4">
           <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
             <div>
-              <h3 className="text-base font-bold text-slate-900 dark:text-white">
+              <h3 className="text-base font-bold dark:font-display dark:font-semibold dark:tracking-[-0.02em] text-slate-900 dark:text-white">
                 Technical Projects & Evidence Artifacts ({profile.projects.length})
               </h3>
               <p className="text-xs text-slate-500">
@@ -1124,7 +1124,7 @@ export default function CareerProfilePage() {
                               title: proj.title,
                             })
                           }
-                          className="text-rose-600 hover:text-rose-700 hover:bg-rose-50 dark:hover:bg-rose-950/30"
+                          className="text-rose-600 hover:text-rose-700 hover:bg-rose-50 dark:hover:bg-crimson/10 dark:text-crimson-soft dark:hover:text-crimson-soft"
                           aria-label="Delete project"
                         >
                           <Trash2 className="w-3.5 h-3.5" />
@@ -1132,7 +1132,7 @@ export default function CareerProfilePage() {
                       </div>
                     </div>
 
-                    <p className="text-xs text-slate-600 dark:text-slate-300 leading-relaxed">
+                    <p className="text-xs text-slate-600 dark:text-ink-fg/80 leading-relaxed">
                       {proj.description}
                     </p>
 
@@ -1141,7 +1141,7 @@ export default function CareerProfilePage() {
                         {proj.technologies.map((t) => (
                           <span
                             key={t}
-                            className="rounded px-2 py-0.5 text-[11px] font-mono bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300"
+                            className="rounded px-2 py-0.5 text-[11px] font-mono bg-slate-100 dark:bg-white/[0.07] text-slate-700 dark:text-ink-fg/80"
                           >
                             {t}
                           </span>
@@ -1158,13 +1158,13 @@ export default function CareerProfilePage() {
                     )}
                   </div>
 
-                  <div className="flex items-center gap-4 pt-3 border-t border-slate-100 dark:border-slate-800 text-xs">
+                  <div className="flex items-center gap-4 pt-3 border-t border-slate-100 dark:border-white/10 text-xs">
                     {proj.github_url && (
                       <a
                         href={proj.github_url}
                         target="_blank"
                         rel="noopener noreferrer"
-                        className="flex items-center gap-1 font-semibold text-slate-700 dark:text-slate-300 hover:text-brand-600"
+                        className="flex items-center gap-1 font-semibold text-slate-700 dark:text-ink-fg/80 hover:text-brand-600 dark:hover:text-lav"
                       >
                         <Github className="w-3.5 h-3.5" /> Source Code
                       </a>
@@ -1174,7 +1174,7 @@ export default function CareerProfilePage() {
                         href={proj.live_url}
                         target="_blank"
                         rel="noopener noreferrer"
-                        className="flex items-center gap-1 font-semibold text-brand-600 hover:underline"
+                        className="flex items-center gap-1 font-semibold text-brand-600 hover:underline dark:text-lav"
                       >
                         <ExternalLink className="w-3.5 h-3.5" /> Live Demo
                       </a>
@@ -1194,9 +1194,9 @@ export default function CareerProfilePage() {
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           {/* Education Column */}
           <Card className="p-6 space-y-4">
-            <div className="flex items-center justify-between pb-2 border-b border-slate-100 dark:border-slate-800">
+            <div className="flex items-center justify-between pb-2 border-b border-slate-100 dark:border-white/10">
               <div className="flex items-center gap-2 font-bold text-slate-900 dark:text-white">
-                <GraduationCap className="w-5 h-5 text-purple-600" />
+                <GraduationCap className="w-5 h-5 text-purple-600 dark:text-lav" />
                 <h3>Academic Education ({profile.education.length})</h3>
               </div>
               <Button size="sm" variant="outline" onClick={openAddEducation}>
@@ -1217,7 +1217,7 @@ export default function CareerProfilePage() {
                 {profile.education.map((edu) => (
                   <div
                     key={edu.id}
-                    className="p-3.5 rounded-xl bg-slate-50 dark:bg-slate-800/40 border border-slate-200/80 dark:border-slate-800 space-y-1.5 text-xs"
+                    className="p-3.5 rounded-xl bg-slate-50 dark:bg-white/[0.07] border border-slate-200/80 dark:border-white/10 space-y-1.5 text-xs"
                   >
                     <div className="flex items-start justify-between">
                       <div className="text-sm font-bold text-slate-900 dark:text-white">
@@ -1243,14 +1243,14 @@ export default function CareerProfilePage() {
                               title: `${edu.degree} at ${edu.institution_name}`,
                             })
                           }
-                          className="text-rose-600 hover:text-rose-700 hover:bg-rose-50 dark:hover:bg-rose-950/30"
+                          className="text-rose-600 hover:text-rose-700 hover:bg-rose-50 dark:hover:bg-crimson/10 dark:text-crimson-soft dark:hover:text-crimson-soft"
                           aria-label="Delete education"
                         >
                           <Trash2 className="w-3.5 h-3.5" />
                         </Button>
                       </div>
                     </div>
-                    <div className="text-purple-700 dark:text-purple-300 font-medium">
+                    <div className="text-purple-700 dark:text-lav-light font-medium">
                       {edu.degree} &bull; {edu.field_of_study}
                     </div>
                     <div className="text-slate-400 flex items-center justify-between">
@@ -1258,7 +1258,7 @@ export default function CareerProfilePage() {
                         {edu.start_date} – {edu.is_current ? 'Present' : edu.end_date || 'N/A'}
                       </span>
                       {edu.gpa !== null && edu.gpa !== undefined && (
-                        <span className="font-mono font-semibold text-slate-600 dark:text-slate-300">
+                        <span className="font-mono font-semibold text-slate-600 dark:text-ink-fg/80">
                           GPA: {edu.gpa.toFixed(2)}
                         </span>
                       )}
@@ -1271,7 +1271,7 @@ export default function CareerProfilePage() {
 
           {/* Certifications Column */}
           <Card className="p-6 space-y-4">
-            <div className="flex items-center justify-between pb-2 border-b border-slate-100 dark:border-slate-800">
+            <div className="flex items-center justify-between pb-2 border-b border-slate-100 dark:border-white/10">
               <div className="flex items-center gap-2 font-bold text-slate-900 dark:text-white">
                 <Award className="w-5 h-5 text-amber-600" />
                 <h3>Verified Certifications ({profile.certifications.length})</h3>
@@ -1294,7 +1294,7 @@ export default function CareerProfilePage() {
                 {profile.certifications.map((cert) => (
                   <div
                     key={cert.id}
-                    className="p-3.5 rounded-xl bg-slate-50 dark:bg-slate-800/40 border border-slate-200/80 dark:border-slate-800 space-y-1.5 text-xs"
+                    className="p-3.5 rounded-xl bg-slate-50 dark:bg-white/[0.07] border border-slate-200/80 dark:border-white/10 space-y-1.5 text-xs"
                   >
                     <div className="flex items-start justify-between">
                       <div className="text-sm font-bold text-slate-900 dark:text-white">
@@ -1320,7 +1320,7 @@ export default function CareerProfilePage() {
                               title: cert.name,
                             })
                           }
-                          className="text-rose-600 hover:text-rose-700 hover:bg-rose-50 dark:hover:bg-rose-950/30"
+                          className="text-rose-600 hover:text-rose-700 hover:bg-rose-50 dark:hover:bg-crimson/10 dark:text-crimson-soft dark:hover:text-crimson-soft"
                           aria-label="Delete cert"
                         >
                           <Trash2 className="w-3.5 h-3.5" />
@@ -1339,7 +1339,7 @@ export default function CareerProfilePage() {
                           href={cert.credential_url}
                           target="_blank"
                           rel="noopener noreferrer"
-                          className="text-brand-600 hover:underline flex items-center gap-1"
+                          className="text-brand-600 hover:underline flex items-center gap-1 dark:text-lav"
                         >
                           <ExternalLink className="w-3 h-3" /> Verify
                         </a>
@@ -1444,11 +1444,11 @@ export default function CareerProfilePage() {
       >
         <form onSubmit={handleSaveGoals} className="space-y-4">
           <div className="space-y-1.5">
-            <label className="block text-xs font-semibold uppercase tracking-wider text-slate-700 dark:text-slate-300">
+            <label className="block text-xs font-semibold uppercase tracking-wider text-slate-700 dark:text-ink-fg/80">
               Primary Target Role
             </label>
             <select
-              className="flex h-10 w-full rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm text-slate-900 focus:border-brand-500 focus:outline-none dark:border-slate-700 dark:bg-slate-900 dark:text-slate-100"
+              className="flex h-10 w-full rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm text-slate-900 focus:border-brand-500 focus:outline-none dark:border-white/15 dark:bg-white/[0.04] dark:text-ink-fg dark:focus:border-lav/50"
               value={goalsForm.primary_role_id}
               onChange={(e) => setGoalsForm({ ...goalsForm, primary_role_id: e.target.value })}
               required
@@ -1462,11 +1462,11 @@ export default function CareerProfilePage() {
           </div>
 
           <div className="space-y-1.5">
-            <label className="block text-xs font-semibold uppercase tracking-wider text-slate-700 dark:text-slate-300">
+            <label className="block text-xs font-semibold uppercase tracking-wider text-slate-700 dark:text-ink-fg/80">
               Secondary Target Role (Optional)
             </label>
             <select
-              className="flex h-10 w-full rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm text-slate-900 focus:border-brand-500 focus:outline-none dark:border-slate-700 dark:bg-slate-900 dark:text-slate-100"
+              className="flex h-10 w-full rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm text-slate-900 focus:border-brand-500 focus:outline-none dark:border-white/15 dark:bg-white/[0.04] dark:text-ink-fg dark:focus:border-lav/50"
               value={goalsForm.secondary_role_id || ''}
               onChange={(e) => setGoalsForm({ ...goalsForm, secondary_role_id: e.target.value })}
             >
@@ -1483,11 +1483,11 @@ export default function CareerProfilePage() {
 
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
             <div className="space-y-1.5">
-              <label className="block text-xs font-semibold uppercase tracking-wider text-slate-700 dark:text-slate-300">
+              <label className="block text-xs font-semibold uppercase tracking-wider text-slate-700 dark:text-ink-fg/80">
                 Career Stage
               </label>
               <select
-                className="flex h-10 w-full rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm text-slate-900 focus:border-brand-500 focus:outline-none dark:border-slate-700 dark:bg-slate-900 dark:text-slate-100"
+                className="flex h-10 w-full rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm text-slate-900 focus:border-brand-500 focus:outline-none dark:border-white/15 dark:bg-white/[0.04] dark:text-ink-fg dark:focus:border-lav/50"
                 value={goalsForm.career_stage}
                 onChange={(e) => setGoalsForm({ ...goalsForm, career_stage: e.target.value })}
               >
@@ -1498,11 +1498,11 @@ export default function CareerProfilePage() {
             </div>
 
             <div className="space-y-1.5">
-              <label className="block text-xs font-semibold uppercase tracking-wider text-slate-700 dark:text-slate-300">
+              <label className="block text-xs font-semibold uppercase tracking-wider text-slate-700 dark:text-ink-fg/80">
                 Work Preference
               </label>
               <select
-                className="flex h-10 w-full rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm text-slate-900 focus:border-brand-500 focus:outline-none dark:border-slate-700 dark:bg-slate-900 dark:text-slate-100"
+                className="flex h-10 w-full rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm text-slate-900 focus:border-brand-500 focus:outline-none dark:border-white/15 dark:bg-white/[0.04] dark:text-ink-fg dark:focus:border-lav/50"
                 value={goalsForm.work_preference}
                 onChange={(e) => setGoalsForm({ ...goalsForm, work_preference: e.target.value })}
               >
@@ -1612,9 +1612,9 @@ export default function CareerProfilePage() {
               id="exp_is_current"
               checked={expForm.is_current}
               onChange={(e) => setExpForm({ ...expForm, is_current: e.target.checked })}
-              className="rounded border-slate-300 text-brand-600 focus:ring-brand-500"
+              className="rounded border-slate-300 text-brand-600 focus:ring-brand-500 dark:text-lav"
             />
-            <label htmlFor="exp_is_current" className="text-xs font-medium text-slate-700 dark:text-slate-300">
+            <label htmlFor="exp_is_current" className="text-xs font-medium text-slate-700 dark:text-ink-fg/80">
               I currently work here
             </label>
           </div>
@@ -1763,9 +1763,9 @@ export default function CareerProfilePage() {
               id="edu_is_current"
               checked={eduForm.is_current}
               onChange={(e) => setEduForm({ ...eduForm, is_current: e.target.checked })}
-              className="rounded border-slate-300 text-brand-600 focus:ring-brand-500"
+              className="rounded border-slate-300 text-brand-600 focus:ring-brand-500 dark:text-lav"
             />
-            <label htmlFor="edu_is_current" className="text-xs font-medium text-slate-700 dark:text-slate-300">
+            <label htmlFor="edu_is_current" className="text-xs font-medium text-slate-700 dark:text-ink-fg/80">
               Currently enrolled
             </label>
           </div>
@@ -1870,8 +1870,8 @@ export default function CareerProfilePage() {
         description="Are you sure you want to remove this record from your career profile? This will update your completeness score."
       >
         <div className="space-y-4">
-          <p className="text-sm font-semibold text-slate-800 dark:text-slate-200">
-            Deleting: <span className="text-rose-600">{deleteModal.title}</span>
+          <p className="text-sm font-semibold text-slate-800 dark:text-ink-fg">
+            Deleting: <span className="text-rose-600 dark:text-crimson-soft">{deleteModal.title}</span>
           </p>
           <div className="flex justify-end gap-2 pt-2">
             <Button
@@ -1905,9 +1905,9 @@ export default function CareerProfilePage() {
         title="Upload Resume for AI Ingestion"
         description="Upload an updated PDF or Markdown resume. Our parser will extract entities without overwriting verified assessment grades."
       >
-        <div className="p-8 border-2 border-dashed border-slate-300 dark:border-slate-700 rounded-xl text-center space-y-3">
+        <div className="p-8 border-2 border-dashed border-slate-300 dark:border-white/15 rounded-xl text-center space-y-3">
           <Upload className="w-10 h-10 text-slate-400 mx-auto" />
-          <div className="text-sm font-medium text-slate-700 dark:text-slate-300">
+          <div className="text-sm font-medium text-slate-700 dark:text-ink-fg/80">
             Drag and drop your updated PDF resume here, or click to browse
           </div>
           <p className="text-xs text-slate-400">

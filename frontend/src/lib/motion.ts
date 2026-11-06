@@ -78,3 +78,29 @@ export const buttonTapProps = {
   whileHover: { scale: 1.01 },
   whileTap: { scale: 0.98 },
 };
+
+/* ---------- Redesign (Look D) motion tokens ---------- */
+
+/** One easing for the whole redesign: fast out, soft landing. */
+export const easeOutExpo = [0.16, 1, 0.3, 1] as const;
+
+export const durations = {
+  press: 0.12,
+  hover: 0.18,
+  layout: 0.28,
+  reveal: 0.45,
+} as const;
+
+/** Buttons step up on hover and press down on click. */
+export const pressProps = {
+  whileHover: { y: -2, transition: { duration: durations.hover, ease: easeOutExpo } },
+  whileTap: { y: 0, scale: 0.97, transition: { duration: durations.press } },
+};
+
+/** Linked cards lift 2px. */
+export const liftProps = {
+  whileHover: { y: -2, transition: { duration: durations.hover, ease: easeOutExpo } },
+};
+
+/** Shared-layout transitions (sidebar highlight, tabs) via layoutId. */
+export const layoutTransition: Transition = { type: 'spring', stiffness: 420, damping: 36, mass: 0.8 };

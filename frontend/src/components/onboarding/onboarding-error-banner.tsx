@@ -50,7 +50,7 @@ export function OnboardingErrorBanner({
         'rounded-xl p-4 border transition-all animate-shake-subtle',
         is503
           ? 'bg-amber-50 dark:bg-amber-950/40 border-amber-200 dark:border-amber-800 text-amber-900 dark:text-amber-200'
-          : 'bg-rose-50 dark:bg-rose-950/40 border-rose-200 dark:border-rose-800 text-rose-900 dark:text-rose-200',
+          : 'bg-rose-50 dark:bg-crimson/10 border-rose-200 dark:border-crimson/30 text-rose-900 dark:text-crimson-tint',
         className
       )}
     >
@@ -59,7 +59,7 @@ export function OnboardingErrorBanner({
           <Icon
             className={cn(
               'w-5 h-5 shrink-0 mt-0.5',
-              is503 ? 'text-amber-600 dark:text-amber-400' : 'text-rose-600 dark:text-rose-400'
+              is503 ? 'text-amber-600 dark:text-amber-400' : 'text-rose-600 dark:text-crimson-soft'
             )}
           />
           <div className="space-y-1">
@@ -79,7 +79,7 @@ export function OnboardingErrorBanner({
                 'h-7 px-2.5 text-xs',
                 is503
                   ? 'border-amber-300 dark:border-amber-700 hover:bg-amber-100 dark:hover:bg-amber-900/40'
-                  : 'border-rose-300 dark:border-rose-700 hover:bg-rose-100 dark:hover:bg-rose-900/40'
+                  : 'border-rose-300 dark:border-crimson/50 hover:bg-rose-100 dark:hover:bg-crimson/10'
               )}
             >
               <RotateCcw className="w-3 h-3 mr-1" />
@@ -91,7 +91,7 @@ export function OnboardingErrorBanner({
             <button
               type="button"
               onClick={onDismiss}
-              className="p-1 rounded-md text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 transition-colors"
+              className="p-1 rounded-md text-slate-400 hover:text-slate-600 dark:hover:text-ink-fg transition-colors"
               aria-label="Dismiss error"
             >
               <X className="w-4 h-4" />

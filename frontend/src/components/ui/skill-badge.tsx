@@ -21,10 +21,10 @@ export function SkillBadge({
   const statusStyles = {
     verified: {
       container:
-        'bg-emerald-50/80 border-emerald-200/90 text-emerald-800 dark:bg-emerald-950/30 dark:border-emerald-800 dark:text-emerald-300',
-      icon: <CheckCircle2 className="w-3.5 h-3.5 text-emerald-600 dark:text-emerald-400 shrink-0" />,
+        'bg-emerald-50/80 border-emerald-200/90 text-emerald-800 dark:bg-lime/10 dark:border-lime/30 dark:text-lime-soft',
+      icon: <CheckCircle2 className="w-3.5 h-3.5 text-emerald-600 dark:text-lime shrink-0" />,
       tag: 'Verified',
-      bar: 'bg-emerald-500',
+      bar: 'bg-emerald-500 dark:bg-lime/20',
     },
     developing: {
       container:
@@ -35,10 +35,10 @@ export function SkillBadge({
     },
     missing: {
       container:
-        'bg-rose-50/80 border-rose-200/90 text-rose-800 dark:bg-rose-950/30 dark:border-rose-800 dark:text-rose-300',
-      icon: <AlertCircle className="w-3.5 h-3.5 text-rose-600 dark:text-rose-400 shrink-0" />,
+        'bg-rose-50/80 border-rose-200/90 text-rose-800 dark:bg-crimson/10 dark:border-crimson/30 dark:text-crimson-tint',
+      icon: <AlertCircle className="w-3.5 h-3.5 text-rose-600 dark:text-crimson-soft shrink-0" />,
       tag: 'Skill Gap',
-      bar: 'bg-rose-500',
+      bar: 'bg-rose-500 dark:bg-crimson',
     },
   };
 
@@ -58,13 +58,13 @@ export function SkillBadge({
       <span className="font-semibold text-slate-900 dark:text-white">{skill.name}</span>
 
       {showConfidence && (
-        <span className="ml-1 text-[11px] font-mono text-slate-500 dark:text-slate-400">
+        <span className="ml-1 text-[11px] font-mono text-slate-500 dark:text-ink-muted">
           {skill.confidenceScore}%
         </span>
       )}
 
       {showEvidence && (
-        <span className="ml-1 rounded px-1.5 py-0.5 text-[10px] bg-white/70 dark:bg-slate-800/80 border border-slate-200 dark:border-slate-700 text-slate-600 dark:text-slate-300">
+        <span className="ml-1 rounded px-1.5 py-0.5 text-[10px] bg-white/70 dark:bg-white/[0.07] border border-slate-200 dark:border-white/15 text-slate-600 dark:text-ink-fg/80">
           {skill.evidenceSource}
         </span>
       )}

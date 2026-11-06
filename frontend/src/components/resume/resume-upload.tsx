@@ -130,7 +130,7 @@ export function ResumeUpload({
           <h3 className="text-base font-semibold text-slate-900 dark:text-white">
             Upload Master Resume
           </h3>
-          <p className="text-xs text-slate-500 dark:text-slate-400 mt-0.5">
+          <p className="text-xs text-slate-500 dark:text-ink-muted mt-0.5">
             Supported formats: PDF (.pdf) or Word (.docx) &bull; Maximum file size: 10 MB
           </p>
         </div>
@@ -149,8 +149,8 @@ export function ResumeUpload({
         className={cn(
           'relative border-2 border-dashed rounded-xl p-8 text-center transition-all cursor-pointer flex flex-col items-center justify-center gap-3',
           isDragging
-            ? 'border-brand-500 bg-brand-50/50 dark:bg-brand-950/20'
-            : 'border-slate-200 dark:border-slate-800 hover:border-brand-400 dark:hover:border-brand-600 bg-slate-50/50 dark:bg-slate-900/50',
+            ? 'border-brand-500 bg-brand-50/50 dark:bg-lav/10 dark:border-lav/50'
+            : 'border-slate-200 dark:border-white/10 hover:border-brand-400 dark:hover:border-lav/50 bg-slate-50/50 dark:bg-white/[0.04]',
           disabled && 'opacity-50 cursor-not-allowed pointer-events-none'
         )}
       >
@@ -165,32 +165,32 @@ export function ResumeUpload({
 
         {!selectedFile ? (
           <>
-            <div className="w-12 h-12 rounded-full bg-brand-100 dark:bg-brand-950/60 text-brand-600 dark:text-brand-400 flex items-center justify-center">
+            <div className="w-12 h-12 rounded-full bg-brand-100 dark:bg-lav/10 text-brand-600 dark:text-lav flex items-center justify-center">
               <UploadCloud className="w-6 h-6" />
             </div>
             <div>
-              <p className="text-sm font-medium text-slate-800 dark:text-slate-200">
-                <span className="text-brand-600 dark:text-brand-400 underline underline-offset-2">
+              <p className="text-sm font-medium text-slate-800 dark:text-ink-fg">
+                <span className="text-brand-600 dark:text-lav underline underline-offset-2">
                   Click to choose a file
                 </span>{' '}
                 or drag and drop here
               </p>
-              <p className="text-xs text-slate-400 dark:text-slate-500 mt-1">
+              <p className="text-xs text-slate-400 dark:text-ink-dim mt-1">
                 Your original document is securely preserved. Extracted draft requires your confirmation.
               </p>
             </div>
           </>
         ) : (
-          <div className="w-full max-w-md bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg p-4 flex items-center justify-between gap-3 shadow-sm">
+          <div className="w-full max-w-md bg-white dark:bg-white/[0.07] border border-slate-200 dark:border-white/15 rounded-lg p-4 flex items-center justify-between gap-3 shadow-sm">
             <div className="flex items-center gap-3 min-w-0">
-              <div className="w-10 h-10 rounded-lg bg-brand-50 dark:bg-brand-950/40 text-brand-600 dark:text-brand-400 flex items-center justify-center shrink-0">
+              <div className="w-10 h-10 rounded-lg bg-brand-50 dark:bg-lav/10 text-brand-600 dark:text-lav flex items-center justify-center shrink-0">
                 <FileText className="w-5 h-5" />
               </div>
               <div className="min-w-0 text-left">
                 <p className="text-sm font-medium text-slate-900 dark:text-white truncate">
                   {selectedFile.name}
                 </p>
-                <p className="text-xs text-slate-500 dark:text-slate-400">
+                <p className="text-xs text-slate-500 dark:text-ink-muted">
                   {(selectedFile.size / 1024).toFixed(1)} KB &bull;{' '}
                   {selectedFile.name.endsWith('.pdf') ? 'PDF Document' : 'Word Document'}
                 </p>
@@ -201,7 +201,7 @@ export function ResumeUpload({
               <Button
                 variant="ghost"
                 size="sm"
-                className="h-8 w-8 p-0 text-slate-400 hover:text-slate-600 dark:hover:text-slate-200"
+                className="h-8 w-8 p-0 text-slate-400 hover:text-slate-600 dark:hover:text-ink-fg"
                 onClick={(e) => {
                   e.stopPropagation();
                   clearSelectedFile();

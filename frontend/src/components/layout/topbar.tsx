@@ -3,7 +3,7 @@
 import * as React from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { Menu, Search, Bell, Sparkles, Shield, User, LogOut } from 'lucide-react';
+import { Menu, Bell, Sparkles, Shield, User, LogOut } from 'lucide-react';
 import { useAuth } from '@/hooks/use-auth';
 import { profileClient } from '@/lib/profile-client';
 
@@ -81,87 +81,68 @@ export function Topbar({ onMobileMenuToggle }: TopbarProps) {
     }
   };
 
+  const menuItem =
+    'flex h-10 items-center gap-2 rounded-xl px-3 text-sm text-ink-muted transition-colors hover:bg-white/5 hover:text-ink-fg';
+
   return (
-    <header className="sticky top-0 z-20 h-16 bg-white/90 dark:bg-slate-900/90 backdrop-blur-md border-b border-slate-200/80 dark:border-slate-800 flex items-center justify-between px-4 sm:px-6">
-      {/* Left: Hamburger & Page Breadcrumb */}
-      <div className="flex items-center gap-3">
+    <header className="sticky top-0 z-20 flex h-16 items-center justify-between gap-3 border-b border-white/[0.08] bg-black/60 px-4 backdrop-blur-xl sm:px-6 md:border-none md:bg-transparent md:backdrop-blur-none">
+      {/* Left: menu button and page context */}
+      <div className="flex min-w-0 items-center gap-2">
         <button
           onClick={onMobileMenuToggle}
-          className="md:hidden p-2 text-slate-500 hover:text-slate-800 dark:hover:text-slate-200 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors"
-          aria-label="Toggle navigation menu"
+          className="grid h-11 w-11 shrink-0 place-items-center rounded-full text-ink-fg transition-colors hover:bg-white/5 md:hidden"
+          aria-label="Open navigation menu"
         >
-          <Menu className="w-5 h-5" />
+          <Menu className="h-5 w-5" />
         </button>
-
-        <div>
-          <h1 className="text-base font-bold text-slate-900 dark:text-white leading-tight">
-            {getPageTitle(pathname || '')}
-          </h1>
-          <p className="hidden sm:block text-[11px] text-slate-500 dark:text-slate-400">
-            {displayName} {targetRole ? `• Target: ${targetRole}` : '• Career Intelligence'}
+        <div className="min-w-0">
+          <p className="truncate text-sm font-medium text-ink-fg">{getPageTitle(pathname || '')}</p>
+          <p className="hidden truncate text-xs text-ink-dim sm:block">
+            {displayName} {targetRole ? `· Target: ${targetRole}` : '· Career Intelligence'}
           </p>
         </div>
       </div>
 
-      {/* Right Controls */}
-      <div className="flex items-center gap-3">
-        {/* Global Search Bar Placeholder */}
-        <div className="hidden lg:flex items-center gap-2 bg-slate-100 dark:bg-slate-800 px-3 py-1.5 rounded-xl text-slate-400 text-xs w-64 border border-transparent focus-within:border-brand-500 focus-within:bg-white dark:focus-within:bg-slate-800 transition-all">
-          <Search className="w-3.5 h-3.5 shrink-0" />
-          <input
-            type="text"
-            placeholder="Search skills, jobs, tasks..."
-            className="bg-transparent border-none outline-none text-xs text-slate-800 dark:text-slate-200 w-full placeholder:text-slate-400"
-          />
-          <kbd className="hidden xl:inline text-[10px] font-mono bg-white dark:bg-slate-700 px-1.5 py-0.5 rounded border border-slate-200 dark:border-slate-600">
-            ⌘K
-          </kbd>
-        </div>
-
-        {/* Readiness Pill Shortcut */}
+      {/* Right controls */}
+      <div className="flex shrink-0 items-center gap-2">
         <Link
           href="/career-readiness"
-          className="flex items-center gap-1.5 bg-purple-50 dark:bg-purple-950/40 text-purple-700 dark:text-purple-300 border border-purple-200/80 dark:border-purple-800/60 px-3 py-1.5 rounded-full text-xs font-semibold hover:bg-purple-100 dark:hover:bg-purple-900/40 transition-colors"
+          className="hidden h-9 items-center gap-1.5 rounded-full border border-lav/30 bg-lav/10 px-3.5 text-[13px] font-medium text-lav transition-colors hover:bg-lav/15 sm:flex"
         >
-          <Sparkles className="w-3.5 h-3.5 text-purple-600 dark:text-purple-400" />
-          <span>Readiness Hub</span>
+          <Sparkles className="h-3.5 w-3.5" />
+          Readiness Hub
         </Link>
 
-        {/* Notification Bell */}
         <div className="relative">
           <button
             onClick={() => {
               setShowNotifications(!showNotifications);
               setShowUserMenu(false);
             }}
-            className="relative p-2 text-slate-500 hover:text-slate-800 dark:hover:text-slate-200 rounded-xl hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors"
+            className="relative grid h-10 w-10 place-items-center rounded-full text-ink-muted transition-colors hover:bg-white/5 hover:text-ink-fg"
             aria-label="Notifications"
+            aria-expanded={showNotifications}
           >
-            <Bell className="w-5 h-5" />
-            <span className="absolute top-1.5 right-1.5 w-2 h-2 rounded-full bg-brand-600 ring-2 ring-white dark:ring-slate-900" />
+            <Bell className="h-5 w-5" />
+            <span className="absolute right-2 top-2 h-2 w-2 rounded-full bg-lime ring-2 ring-black" aria-hidden />
           </button>
 
-          {/* Notifications Popover */}
           {showNotifications && (
-            <div className="absolute right-0 mt-2 w-80 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 shadow-modal p-4 z-50 text-xs">
-              <div className="flex items-center justify-between pb-2 border-b border-slate-100 dark:border-slate-800 font-bold text-slate-900 dark:text-white">
-                <span>Recent Updates</span>
-                <span className="text-[10px] text-brand-600 dark:text-brand-400 font-medium">All caught up</span>
+            <div className="liquid-glass absolute right-0 z-50 mt-2 w-80 rounded-2xl p-4 text-sm text-ink-fg">
+              <div className="flex items-center justify-between border-b border-white/10 pb-2 font-medium">
+                <span>Recent updates</span>
+                <span className="text-xs text-ink-dim">All caught up</span>
               </div>
-              <div className="py-2 space-y-2">
-                <div className="p-2.5 rounded-xl bg-purple-50/70 dark:bg-purple-950/30 border border-purple-100 dark:border-purple-900/40">
-                  <div className="font-semibold text-purple-900 dark:text-purple-300">
-                    AI Career Discovery
-                  </div>
-                  <p className="text-slate-600 dark:text-slate-400 mt-0.5">
+              <div className="space-y-2 py-2">
+                <div className="rounded-xl border border-lav/25 bg-lav/[0.08] p-3">
+                  <p className="font-medium text-lav">AI Career Discovery</p>
+                  <p className="mt-0.5 text-xs text-ink-muted">
                     Complete your onboarding conversation to calibrate your skill baseline.
                   </p>
                 </div>
-                <div className="p-2.5 rounded-xl bg-emerald-50/70 dark:bg-emerald-950/30 border border-emerald-100 dark:border-emerald-900/40">
-                  <div className="font-semibold text-emerald-900 dark:text-emerald-300">
-                    Diagnostic Benchmarks
-                  </div>
-                  <p className="text-slate-600 dark:text-slate-400 mt-0.5">
+                <div className="rounded-xl border border-lime/25 bg-lime/[0.06] p-3">
+                  <p className="font-medium text-lime">Diagnostic Benchmarks</p>
+                  <p className="mt-0.5 text-xs text-ink-muted">
                     Assessments available to verify proficiency in system architecture and backend foundations.
                   </p>
                 </div>
@@ -170,43 +151,33 @@ export function Topbar({ onMobileMenuToggle }: TopbarProps) {
           )}
         </div>
 
-        {/* User Profile Avatar & Dropdown */}
         <div className="relative">
           <button
             onClick={() => {
               setShowUserMenu(!showUserMenu);
               setShowNotifications(false);
             }}
-            className="flex items-center gap-2 p-0.5 rounded-full hover:ring-2 hover:ring-brand-500/30 transition-all"
+            className="grid h-10 w-10 place-items-center rounded-full transition-colors hover:bg-white/5"
             aria-label="User menu"
+            aria-expanded={showUserMenu}
           >
-            <div className="h-8 w-8 rounded-full bg-gradient-to-tr from-brand-600 to-indigo-600 text-white flex items-center justify-center font-bold text-xs shadow-sm">
-              {initials}
-            </div>
+            <span className="grid h-8 w-8 place-items-center rounded-full bg-lav/15 text-xs font-semibold text-lav">{initials}</span>
           </button>
 
           {showUserMenu && (
-            <div className="absolute right-0 mt-2 w-56 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 shadow-modal p-2 z-50 text-xs">
-              <div className="px-3 py-2.5 border-b border-slate-100 dark:border-slate-800">
-                <p className="font-semibold text-slate-900 dark:text-white truncate">{displayName}</p>
-                <p className="text-slate-400 text-[11px] truncate">{displayEmail}</p>
+            <div className="liquid-glass absolute right-0 z-50 mt-2 w-60 rounded-2xl p-2 text-sm">
+              <div className="border-b border-white/10 px-3 py-2.5">
+                <p className="truncate font-medium text-ink-fg">{displayName}</p>
+                <p className="truncate text-xs text-ink-dim">{displayEmail}</p>
               </div>
               <div className="py-1">
-                <Link
-                  href="/career-profile"
-                  onClick={() => setShowUserMenu(false)}
-                  className="flex items-center gap-2 px-3 py-2 text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-xl transition-colors"
-                >
-                  <User className="w-4 h-4 text-slate-400" />
-                  <span>Edit Profile</span>
+                <Link href="/career-profile" onClick={() => setShowUserMenu(false)} className={menuItem}>
+                  <User className="h-4 w-4" />
+                  Edit Profile
                 </Link>
-                <Link
-                  href="/settings"
-                  onClick={() => setShowUserMenu(false)}
-                  className="flex items-center gap-2 px-3 py-2 text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-xl transition-colors"
-                >
-                  <Shield className="w-4 h-4 text-slate-400" />
-                  <span>Privacy & Security</span>
+                <Link href="/settings" onClick={() => setShowUserMenu(false)} className={menuItem}>
+                  <Shield className="h-4 w-4" />
+                  Privacy & Security
                 </Link>
                 <button
                   type="button"
@@ -217,10 +188,10 @@ export function Topbar({ onMobileMenuToggle }: TopbarProps) {
                     await logout();
                     setIsLoggingOut(false);
                   }}
-                  className="w-full flex items-center gap-2 px-3 py-2 text-rose-600 hover:bg-rose-50 dark:hover:bg-rose-950/30 rounded-xl text-left disabled:opacity-50 transition-colors"
+                  className="flex h-10 w-full items-center gap-2 rounded-xl px-3 text-left text-sm text-crimson-soft transition-colors hover:bg-crimson/10 disabled:opacity-50"
                 >
-                  <LogOut className="w-4 h-4 text-rose-500" />
-                  <span>{isLoggingOut ? 'Signing out...' : 'Sign Out'}</span>
+                  <LogOut className="h-4 w-4" />
+                  {isLoggingOut ? 'Signing out...' : 'Sign Out'}
                 </button>
               </div>
             </div>

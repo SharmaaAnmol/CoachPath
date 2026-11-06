@@ -169,24 +169,24 @@ export function ResumeTailoringWizard({
   return (
     <div className="space-y-8 max-w-5xl">
       {/* Wizard Header / Hero */}
-      <div className="p-6 rounded-2xl bg-gradient-to-r from-purple-50/70 via-indigo-50/40 to-brand-50/40 dark:from-purple-950/20 dark:via-indigo-950/10 dark:to-brand-950/10 border border-purple-200/80 dark:border-purple-800/60 space-y-3">
-        <div className="flex items-center gap-2 text-xs font-semibold uppercase tracking-wider text-purple-700 dark:text-purple-300">
+      <div className="p-6 rounded-2xl bg-gradient-to-r from-purple-50/70 via-indigo-50/40 to-brand-50/40 dark:from-lav/10 dark:via-lav/10 dark:to-lav/10 border border-purple-200/80 dark:border-lav/30 space-y-3">
+        <div className="flex items-center gap-2 text-xs font-semibold uppercase tracking-wider text-purple-700 dark:text-lav-light">
           <Sparkles className="w-4 h-4" />
           <span>Tailoring Studio &bull; Grounded Anti-Fabrication</span>
         </div>
         <h2 className="text-xl font-bold text-slate-900 dark:text-white">
           Optimize Your Resume for a Specific Job Opportunity
         </h2>
-        <p className="text-xs text-slate-600 dark:text-slate-300 max-w-3xl leading-relaxed">
+        <p className="text-xs text-slate-600 dark:text-ink-fg/80 max-w-3xl leading-relaxed">
           CoachPath rephrases your technical bullet points to directly address the target job requirements using our two-pass grounding engine. Your master resume remains completely immutable.
         </p>
       </div>
 
       {error && (
-        <div className="p-4 rounded-xl bg-rose-50 dark:bg-rose-950/40 border border-rose-200 dark:border-rose-800 text-xs text-rose-700 dark:text-rose-300 flex items-start gap-3">
-          <AlertTriangle className="w-5 h-5 shrink-0 text-rose-600 mt-0.5" />
+        <div className="p-4 rounded-xl bg-rose-50 dark:bg-crimson/10 border border-rose-200 dark:border-crimson/30 text-xs text-rose-700 dark:text-crimson-tint flex items-start gap-3">
+          <AlertTriangle className="w-5 h-5 shrink-0 text-rose-600 mt-0.5 dark:text-crimson-soft" />
           <div>
-            <h4 className="font-bold text-rose-900 dark:text-rose-100">Generation Error</h4>
+            <h4 className="font-bold text-rose-900 dark:text-crimson-tint">Generation Error</h4>
             <p className="mt-0.5">{error}</p>
           </div>
         </div>
@@ -198,7 +198,7 @@ export function ResumeTailoringWizard({
       <Card className="p-6 space-y-4">
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-2">
-            <div className="w-7 h-7 rounded-lg bg-brand-100 dark:bg-brand-950/80 text-brand-700 dark:text-brand-300 flex items-center justify-center font-bold text-xs">
+            <div className="w-7 h-7 rounded-lg bg-brand-100 dark:bg-lav/10 text-brand-700 dark:text-lav-light flex items-center justify-center font-bold text-xs">
               1
             </div>
             <h3 className="text-sm font-bold text-slate-900 dark:text-white">
@@ -235,16 +235,16 @@ export function ResumeTailoringWizard({
                   onClick={() => onSelectResume(r.id)}
                   className={`p-4 rounded-xl border text-left cursor-pointer transition-all flex items-start justify-between gap-3 ${
                     isSelected
-                      ? 'border-brand-500 bg-brand-50/40 dark:bg-brand-950/30 shadow-subtle'
-                      : 'border-slate-200 dark:border-slate-800 hover:border-slate-300 dark:hover:border-slate-700 bg-white dark:bg-slate-900'
+                      ? 'border-brand-500 bg-brand-50/40 dark:bg-lav/10 shadow-subtle dark:border-lav/50'
+                      : 'border-slate-200 dark:border-white/10 hover:border-slate-300 dark:hover:border-white/15 bg-white dark:bg-white/[0.04]'
                   }`}
                 >
                   <div className="flex items-start gap-3 min-w-0">
                     <div
                       className={`w-9 h-9 rounded-lg flex items-center justify-center shrink-0 mt-0.5 ${
                         isSelected
-                          ? 'bg-brand-600 text-white'
-                          : 'bg-slate-100 dark:bg-slate-800 text-slate-500'
+                          ? 'bg-brand-600 text-white dark:bg-lav-violet'
+                          : 'bg-slate-100 dark:bg-white/[0.07] text-slate-500'
                       }`}
                     >
                       <FileText className="w-5 h-5" />
@@ -255,19 +255,19 @@ export function ResumeTailoringWizard({
                           {r.file_name}
                         </span>
                         {r.is_primary && (
-                          <span className="text-[10px] font-bold text-brand-700 bg-brand-100 dark:bg-brand-950 dark:text-brand-300 px-1.5 py-0.2 rounded">
+                          <span className="text-[10px] font-bold text-brand-700 bg-brand-100 dark:bg-lav/10 dark:text-lav-light px-1.5 py-0.2 rounded">
                             Primary
                           </span>
                         )}
                       </div>
-                      <p className="text-[11px] text-slate-500 dark:text-slate-400">
+                      <p className="text-[11px] text-slate-500 dark:text-ink-muted">
                         Parsed {new Date(r.created_at).toLocaleDateString()} &bull;{' '}
                         {(r.file_size_bytes / 1024).toFixed(0)} KB
                       </p>
                     </div>
                   </div>
                   {isSelected && (
-                    <CheckCircle2 className="w-5 h-5 text-brand-600 shrink-0" />
+                    <CheckCircle2 className="w-5 h-5 text-brand-600 shrink-0 dark:text-lav" />
                   )}
                 </div>
               );
@@ -282,7 +282,7 @@ export function ResumeTailoringWizard({
       <Card className="p-6 space-y-5">
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-2">
-            <div className="w-7 h-7 rounded-lg bg-indigo-100 dark:bg-indigo-950/80 text-indigo-700 dark:text-indigo-300 flex items-center justify-center font-bold text-xs">
+            <div className="w-7 h-7 rounded-lg bg-indigo-100 dark:bg-lav/10 text-indigo-700 dark:text-lav-light flex items-center justify-center font-bold text-xs">
               2
             </div>
             <h3 className="text-sm font-bold text-slate-900 dark:text-white">
@@ -291,13 +291,13 @@ export function ResumeTailoringWizard({
           </div>
 
           {/* Toggle Catalog vs Custom */}
-          <div className="flex items-center rounded-lg bg-slate-100 dark:bg-slate-800 p-0.5 text-xs">
+          <div className="flex items-center rounded-lg bg-slate-100 dark:bg-white/[0.07] p-0.5 text-xs">
             <button
               type="button"
               onClick={() => setJobMode('catalog')}
               className={`px-3 py-1.5 rounded-md font-semibold transition-all ${
                 jobMode === 'catalog'
-                  ? 'bg-white dark:bg-slate-900 text-slate-900 dark:text-white shadow-sm'
+                  ? 'bg-white dark:bg-white/[0.04] text-slate-900 dark:text-white shadow-sm'
                   : 'text-slate-500 hover:text-slate-900 dark:hover:text-white'
               }`}
             >
@@ -308,7 +308,7 @@ export function ResumeTailoringWizard({
               onClick={() => setJobMode('custom')}
               className={`px-3 py-1.5 rounded-md font-semibold transition-all ${
                 jobMode === 'custom'
-                  ? 'bg-white dark:bg-slate-900 text-slate-900 dark:text-white shadow-sm'
+                  ? 'bg-white dark:bg-white/[0.04] text-slate-900 dark:text-white shadow-sm'
                   : 'text-slate-500 hover:text-slate-900 dark:hover:text-white'
               }`}
             >
@@ -328,7 +328,7 @@ export function ResumeTailoringWizard({
                   value={jobSearchTerm}
                   onChange={(e) => setJobSearchTerm(e.target.value)}
                   placeholder="Search catalog by title, company, or tech keywords (e.g. Stripe, Python, Backend)..."
-                  className="w-full pl-9 pr-3 py-2 text-xs rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                  className="w-full pl-9 pr-3 py-2 text-xs rounded-xl border border-slate-200 dark:border-white/10 bg-white dark:bg-white/[0.04] text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-indigo-500"
                 />
               </div>
               <Button size="sm" variant="outline" type="submit">
@@ -338,7 +338,7 @@ export function ResumeTailoringWizard({
 
             {isLoadingJobs ? (
               <div className="py-8 text-center text-xs text-slate-500 flex items-center justify-center gap-2">
-                <Loader2 className="w-4 h-4 animate-spin text-indigo-600" />
+                <Loader2 className="w-4 h-4 animate-spin text-indigo-600 dark:text-lav" />
                 Loading job postings...
               </div>
             ) : catalogJobs.length === 0 ? (
@@ -355,8 +355,8 @@ export function ResumeTailoringWizard({
                       onClick={() => setSelectedJob(job)}
                       className={`p-3.5 rounded-xl border text-left cursor-pointer transition-all flex flex-col justify-between gap-2 ${
                         isSelected
-                          ? 'border-indigo-500 bg-indigo-50/40 dark:bg-indigo-950/30 shadow-subtle'
-                          : 'border-slate-200 dark:border-slate-800 hover:border-slate-300 dark:hover:border-slate-700 bg-white dark:bg-slate-900'
+                          ? 'border-indigo-500 bg-indigo-50/40 dark:bg-lav/10 shadow-subtle dark:border-lav/50'
+                          : 'border-slate-200 dark:border-white/10 hover:border-slate-300 dark:hover:border-white/15 bg-white dark:bg-white/[0.04]'
                       }`}
                     >
                       <div className="space-y-1">
@@ -365,10 +365,10 @@ export function ResumeTailoringWizard({
                             {job.title}
                           </h4>
                           {isSelected && (
-                            <CheckCircle2 className="w-4 h-4 text-indigo-600 shrink-0" />
+                            <CheckCircle2 className="w-4 h-4 text-indigo-600 shrink-0 dark:text-lav" />
                           )}
                         </div>
-                        <div className="flex items-center gap-2 text-[11px] text-slate-600 dark:text-slate-400">
+                        <div className="flex items-center gap-2 text-[11px] text-slate-600 dark:text-ink-muted">
                           <Building2 className="w-3.5 h-3.5 shrink-0 text-slate-400" />
                           <span className="font-medium truncate">{job.company_name}</span>
                           {job.location && (
@@ -382,12 +382,12 @@ export function ResumeTailoringWizard({
 
                       <div className="flex flex-wrap gap-1.5 pt-1 text-[10px]">
                         {job.remote_type && (
-                          <span className="px-2 py-0.5 rounded-md bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300">
+                          <span className="px-2 py-0.5 rounded-md bg-slate-100 dark:bg-white/[0.07] text-slate-600 dark:text-ink-fg/80">
                             {job.remote_type}
                           </span>
                         )}
                         {job.min_salary && job.max_salary && (
-                          <span className="px-2 py-0.5 rounded-md bg-emerald-50 dark:bg-emerald-950/50 text-emerald-700 dark:text-emerald-300 font-medium">
+                          <span className="px-2 py-0.5 rounded-md bg-emerald-50 dark:bg-lime/10 text-emerald-700 dark:text-lime-soft font-medium">
                             ${job.min_salary.toLocaleString()} – ${job.max_salary.toLocaleString()}
                           </span>
                         )}
@@ -405,40 +405,40 @@ export function ResumeTailoringWizard({
           <div className="space-y-4">
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
               <div>
-                <label className="text-xs font-semibold text-slate-700 dark:text-slate-300 block mb-1">
-                  Job Title <span className="text-rose-500">*</span>
+                <label className="text-xs font-semibold text-slate-700 dark:text-ink-fg/80 block mb-1">
+                  Job Title <span className="text-rose-500 dark:text-crimson-soft">*</span>
                 </label>
                 <input
                   type="text"
                   value={customTitle}
                   onChange={(e) => setCustomTitle(e.target.value)}
                   placeholder="e.g. Senior Backend Engineer"
-                  className="w-full px-3 py-2 text-xs rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                  className="w-full px-3 py-2 text-xs rounded-xl border border-slate-200 dark:border-white/10 bg-white dark:bg-white/[0.04] text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-indigo-500"
                 />
               </div>
               <div>
-                <label className="text-xs font-semibold text-slate-700 dark:text-slate-300 block mb-1">
-                  Company Name <span className="text-rose-500">*</span>
+                <label className="text-xs font-semibold text-slate-700 dark:text-ink-fg/80 block mb-1">
+                  Company Name <span className="text-rose-500 dark:text-crimson-soft">*</span>
                 </label>
                 <input
                   type="text"
                   value={customCompany}
                   onChange={(e) => setCustomCompany(e.target.value)}
                   placeholder="e.g. Stripe, Linear, Vercel"
-                  className="w-full px-3 py-2 text-xs rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                  className="w-full px-3 py-2 text-xs rounded-xl border border-slate-200 dark:border-white/10 bg-white dark:bg-white/[0.04] text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-indigo-500"
                 />
               </div>
             </div>
 
             <div>
               <div className="flex items-center justify-between mb-1">
-                <label className="text-xs font-semibold text-slate-700 dark:text-slate-300 block">
-                  Job Description Text <span className="text-rose-500">*</span>
+                <label className="text-xs font-semibold text-slate-700 dark:text-ink-fg/80 block">
+                  Job Description Text <span className="text-rose-500 dark:text-crimson-soft">*</span>
                 </label>
                 <span
                   className={`text-[10px] font-mono ${
                     customDescription.trim().length >= 50
-                      ? 'text-emerald-600 dark:text-emerald-400'
+                      ? 'text-emerald-600 dark:text-lime'
                       : 'text-slate-400'
                   }`}
                 >
@@ -450,7 +450,7 @@ export function ResumeTailoringWizard({
                 onChange={(e) => setCustomDescription(e.target.value)}
                 rows={6}
                 placeholder="Paste the full job posting, responsibilities, and required qualifications here..."
-                className="w-full px-3 py-2 text-xs rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                className="w-full px-3 py-2 text-xs rounded-xl border border-slate-200 dark:border-white/10 bg-white dark:bg-white/[0.04] text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-indigo-500"
               />
             </div>
           </div>
@@ -469,7 +469,7 @@ export function ResumeTailoringWizard({
             <h3 className="text-sm font-bold text-slate-900 dark:text-white">
               Target Emphasis & Candidate Notes (Optional)
             </h3>
-            <p className="text-xs text-slate-500 dark:text-slate-400">
+            <p className="text-xs text-slate-500 dark:text-ink-muted">
               Highlight specific technical themes or provide additional context for tailoring.
             </p>
           </div>
@@ -477,7 +477,7 @@ export function ResumeTailoringWizard({
 
         <div className="space-y-3">
           <div>
-            <label className="text-xs font-semibold text-slate-700 dark:text-slate-300 block mb-1">
+            <label className="text-xs font-semibold text-slate-700 dark:text-ink-fg/80 block mb-1">
               Key Competencies to Emphasize
             </label>
             <div className="flex gap-2">
@@ -492,7 +492,7 @@ export function ResumeTailoringWizard({
                   }
                 }}
                 placeholder="e.g. Distributed Systems, Payment Processing, PostgreSQL Indexing"
-                className="flex-1 px-3 py-2 text-xs rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-purple-500"
+                className="flex-1 px-3 py-2 text-xs rounded-xl border border-slate-200 dark:border-white/10 bg-white dark:bg-white/[0.04] text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-purple-500"
               />
               <Button
                 size="sm"
@@ -510,9 +510,9 @@ export function ResumeTailoringWizard({
                 {emphasisTags.map((tag) => (
                   <span
                     key={tag}
-                    className="inline-flex items-center gap-1 text-xs px-2.5 py-1 rounded-lg bg-purple-100 dark:bg-purple-950/60 text-purple-800 dark:text-purple-300 border border-purple-200 dark:border-purple-800 font-medium"
+                    className="inline-flex items-center gap-1 text-xs px-2.5 py-1 rounded-lg bg-purple-100 dark:bg-lav/10 text-purple-800 dark:text-lav-light border border-purple-200 dark:border-lav/30 font-medium"
                   >
-                    <Tag className="w-3 h-3 text-purple-600" />
+                    <Tag className="w-3 h-3 text-purple-600 dark:text-lav" />
                     <span>{tag}</span>
                     <button
                       type="button"
@@ -528,7 +528,7 @@ export function ResumeTailoringWizard({
           </div>
 
           <div>
-            <label className="text-xs font-semibold text-slate-700 dark:text-slate-300 block mb-1">
+            <label className="text-xs font-semibold text-slate-700 dark:text-ink-fg/80 block mb-1">
               Candidate Context / Directives
             </label>
             <textarea
@@ -537,7 +537,7 @@ export function ResumeTailoringWizard({
               maxLength={1000}
               rows={2}
               placeholder="e.g. Highlight high-throughput webhook ingestion experience over frontend work..."
-              className="w-full px-3 py-2 text-xs rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-purple-500"
+              className="w-full px-3 py-2 text-xs rounded-xl border border-slate-200 dark:border-white/10 bg-white dark:bg-white/[0.04] text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-purple-500"
             />
           </div>
         </div>
@@ -550,7 +550,7 @@ export function ResumeTailoringWizard({
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
           <div className="space-y-1">
             <h4 className="text-sm font-bold flex items-center gap-2">
-              <ShieldCheck className="w-4 h-4 text-emerald-400" />
+              <ShieldCheck className="w-4 h-4 text-emerald-400 dark:text-lime-soft" />
               <span>Evidence-Grounded Resume Reconciler Ready</span>
             </h4>
             <p className="text-xs text-slate-400">
@@ -572,7 +572,7 @@ export function ResumeTailoringWizard({
             variant="primary"
             onClick={handleStartGeneration}
             disabled={!canGenerate}
-            className="bg-purple-600 hover:bg-purple-700 shadow-elevated px-6 text-sm shrink-0"
+            className="bg-purple-600 hover:bg-purple-700 shadow-elevated px-6 text-sm shrink-0 dark:bg-lav-violet dark:hover:bg-lav-violet"
           >
             {isGenerating ? (
               <>
@@ -588,15 +588,15 @@ export function ResumeTailoringWizard({
 
         <div className="pt-2 border-t border-slate-800 text-[11px] text-slate-400 flex flex-wrap items-center gap-4">
           <span className="flex items-center gap-1.5">
-            <CheckCircle2 className="w-3.5 h-3.5 text-emerald-400" />
+            <CheckCircle2 className="w-3.5 h-3.5 text-emerald-400 dark:text-lime-soft" />
             Original Resume Remains Untouched
           </span>
           <span className="flex items-center gap-1.5">
-            <CheckCircle2 className="w-3.5 h-3.5 text-emerald-400" />
+            <CheckCircle2 className="w-3.5 h-3.5 text-emerald-400 dark:text-lime-soft" />
             Unevidenced Claims Automatically Pruned
           </span>
           <span className="flex items-center gap-1.5">
-            <CheckCircle2 className="w-3.5 h-3.5 text-emerald-400" />
+            <CheckCircle2 className="w-3.5 h-3.5 text-emerald-400 dark:text-lime-soft" />
             Human Review Required Before Use
           </span>
         </div>

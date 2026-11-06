@@ -136,16 +136,16 @@ export function ManualJobImportModal({
     >
       <form onSubmit={handleSubmit} className="space-y-4 text-xs sm:text-sm">
         {error && (
-          <div className="p-3 rounded-xl border border-rose-200 bg-rose-50 dark:border-rose-900/50 dark:bg-rose-950/30 text-rose-700 dark:text-rose-300 text-xs flex items-center gap-2">
-            <AlertCircle className="w-4 h-4 shrink-0 text-rose-500" />
+          <div className="p-3 rounded-xl border border-rose-200 bg-rose-50 dark:border-crimson/30 dark:bg-crimson/10 text-rose-700 dark:text-crimson-tint text-xs flex items-center gap-2">
+            <AlertCircle className="w-4 h-4 shrink-0 text-rose-500 dark:text-crimson-soft" />
             <span>{error}</span>
           </div>
         )}
 
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
           <div className="space-y-1">
-            <label className="text-[11px] font-semibold text-slate-700 dark:text-slate-300">
-              Job Title <span className="text-rose-500">*</span>
+            <label className="text-[11px] font-semibold text-slate-700 dark:text-ink-fg/80">
+              Job Title <span className="text-rose-500 dark:text-crimson-soft">*</span>
             </label>
             <input
               type="text"
@@ -153,13 +153,13 @@ export function ManualJobImportModal({
               placeholder="e.g. Junior Backend Engineer"
               value={formData.title}
               onChange={(e) => setFormData({ ...formData, title: e.target.value })}
-              className="w-full px-3 py-2 text-xs rounded-lg border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-900 text-slate-900 dark:text-white focus:ring-1 focus:ring-brand-500"
+              className="w-full px-3 py-2 text-xs rounded-lg border border-slate-300 dark:border-white/15 bg-white dark:bg-white/[0.04] text-slate-900 dark:text-white focus:ring-1 focus:ring-brand-500"
             />
           </div>
 
           <div className="space-y-1">
-            <label className="text-[11px] font-semibold text-slate-700 dark:text-slate-300">
-              Company Name <span className="text-rose-500">*</span>
+            <label className="text-[11px] font-semibold text-slate-700 dark:text-ink-fg/80">
+              Company Name <span className="text-rose-500 dark:text-crimson-soft">*</span>
             </label>
             <input
               type="text"
@@ -167,14 +167,14 @@ export function ManualJobImportModal({
               placeholder="e.g. Stripe, Linear, Acme Corp"
               value={formData.company_name}
               onChange={(e) => setFormData({ ...formData, company_name: e.target.value })}
-              className="w-full px-3 py-2 text-xs rounded-lg border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-900 text-slate-900 dark:text-white focus:ring-1 focus:ring-brand-500"
+              className="w-full px-3 py-2 text-xs rounded-lg border border-slate-300 dark:border-white/15 bg-white dark:bg-white/[0.04] text-slate-900 dark:text-white focus:ring-1 focus:ring-brand-500"
             />
           </div>
         </div>
 
         <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
           <div className="space-y-1">
-            <label className="text-[11px] font-semibold text-slate-700 dark:text-slate-300">
+            <label className="text-[11px] font-semibold text-slate-700 dark:text-ink-fg/80">
               Location
             </label>
             <input
@@ -182,18 +182,18 @@ export function ManualJobImportModal({
               placeholder="e.g. Remote, Seattle, WA"
               value={formData.location}
               onChange={(e) => setFormData({ ...formData, location: e.target.value })}
-              className="w-full px-3 py-2 text-xs rounded-lg border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-900 text-slate-900 dark:text-white"
+              className="w-full px-3 py-2 text-xs rounded-lg border border-slate-300 dark:border-white/15 bg-white dark:bg-white/[0.04] text-slate-900 dark:text-white"
             />
           </div>
 
           <div className="space-y-1">
-            <label className="text-[11px] font-semibold text-slate-700 dark:text-slate-300">
+            <label className="text-[11px] font-semibold text-slate-700 dark:text-ink-fg/80">
               Workplace Type
             </label>
             <select
               value={formData.remote_type}
               onChange={(e) => setFormData({ ...formData, remote_type: e.target.value })}
-              className="w-full px-3 py-2 text-xs rounded-lg border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-900 text-slate-900 dark:text-white"
+              className="w-full px-3 py-2 text-xs rounded-lg border border-slate-300 dark:border-white/15 bg-white dark:bg-white/[0.04] text-slate-900 dark:text-white"
             >
               <option value="remote">Remote</option>
               <option value="hybrid">Hybrid</option>
@@ -202,13 +202,13 @@ export function ManualJobImportModal({
           </div>
 
           <div className="space-y-1">
-            <label className="text-[11px] font-semibold text-slate-700 dark:text-slate-300">
+            <label className="text-[11px] font-semibold text-slate-700 dark:text-ink-fg/80">
               Seniority Level
             </label>
             <select
               value={formData.experience_level}
               onChange={(e) => setFormData({ ...formData, experience_level: e.target.value })}
-              className="w-full px-3 py-2 text-xs rounded-lg border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-900 text-slate-900 dark:text-white"
+              className="w-full px-3 py-2 text-xs rounded-lg border border-slate-300 dark:border-white/15 bg-white dark:bg-white/[0.04] text-slate-900 dark:text-white"
             >
               <option value="entry_level">Entry Level</option>
               <option value="junior">Junior</option>
@@ -220,13 +220,13 @@ export function ManualJobImportModal({
 
         <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
           <div className="space-y-1">
-            <label className="text-[11px] font-semibold text-slate-700 dark:text-slate-300">
+            <label className="text-[11px] font-semibold text-slate-700 dark:text-ink-fg/80">
               Benchmark Target Role
             </label>
             <select
               value={formData.role_id || ''}
               onChange={(e) => setFormData({ ...formData, role_id: e.target.value })}
-              className="w-full px-3 py-2 text-xs rounded-lg border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-900 text-slate-900 dark:text-white"
+              className="w-full px-3 py-2 text-xs rounded-lg border border-slate-300 dark:border-white/15 bg-white dark:bg-white/[0.04] text-slate-900 dark:text-white"
             >
               {CANONICAL_ROLES.map((r) => (
                 <option key={r.id} value={r.id}>
@@ -237,7 +237,7 @@ export function ManualJobImportModal({
           </div>
 
           <div className="space-y-1">
-            <label className="text-[11px] font-semibold text-slate-700 dark:text-slate-300">
+            <label className="text-[11px] font-semibold text-slate-700 dark:text-ink-fg/80">
               Min Annual Salary ($)
             </label>
             <input
@@ -250,12 +250,12 @@ export function ManualJobImportModal({
                   min_salary: e.target.value ? Number(e.target.value) : undefined,
                 })
               }
-              className="w-full px-3 py-2 text-xs rounded-lg border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-900 text-slate-900 dark:text-white"
+              className="w-full px-3 py-2 text-xs rounded-lg border border-slate-300 dark:border-white/15 bg-white dark:bg-white/[0.04] text-slate-900 dark:text-white"
             />
           </div>
 
           <div className="space-y-1">
-            <label className="text-[11px] font-semibold text-slate-700 dark:text-slate-300">
+            <label className="text-[11px] font-semibold text-slate-700 dark:text-ink-fg/80">
               Max Annual Salary ($)
             </label>
             <input
@@ -268,13 +268,13 @@ export function ManualJobImportModal({
                   max_salary: e.target.value ? Number(e.target.value) : undefined,
                 })
               }
-              className="w-full px-3 py-2 text-xs rounded-lg border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-900 text-slate-900 dark:text-white"
+              className="w-full px-3 py-2 text-xs rounded-lg border border-slate-300 dark:border-white/15 bg-white dark:bg-white/[0.04] text-slate-900 dark:text-white"
             />
           </div>
         </div>
 
         <div className="space-y-1">
-          <label className="text-[11px] font-semibold text-slate-700 dark:text-slate-300">
+          <label className="text-[11px] font-semibold text-slate-700 dark:text-ink-fg/80">
             Original Application or Careers Page URL
           </label>
           <input
@@ -282,13 +282,13 @@ export function ManualJobImportModal({
             placeholder="https://company.com/jobs/role-123"
             value={formData.application_url || ''}
             onChange={(e) => setFormData({ ...formData, application_url: e.target.value })}
-            className="w-full px-3 py-2 text-xs rounded-lg border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-900 text-slate-900 dark:text-white"
+            className="w-full px-3 py-2 text-xs rounded-lg border border-slate-300 dark:border-white/15 bg-white dark:bg-white/[0.04] text-slate-900 dark:text-white"
           />
         </div>
 
         <div className="space-y-1">
-          <label className="text-[11px] font-semibold text-slate-700 dark:text-slate-300 flex items-center justify-between">
-            <span>Job Description Content <span className="text-rose-500">*</span></span>
+          <label className="text-[11px] font-semibold text-slate-700 dark:text-ink-fg/80 flex items-center justify-between">
+            <span>Job Description Content <span className="text-rose-500 dark:text-crimson-soft">*</span></span>
             <span className="text-[10px] text-slate-400">Min 20 characters</span>
           </label>
           <textarea
@@ -297,7 +297,7 @@ export function ManualJobImportModal({
             placeholder="Paste full job description including responsibilities, requirements, and qualifications here..."
             value={formData.description_text}
             onChange={(e) => setFormData({ ...formData, description_text: e.target.value })}
-            className="w-full px-3 py-2 text-xs font-mono rounded-lg border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-900 text-slate-900 dark:text-white focus:ring-1 focus:ring-brand-500"
+            className="w-full px-3 py-2 text-xs font-mono rounded-lg border border-slate-300 dark:border-white/15 bg-white dark:bg-white/[0.04] text-slate-900 dark:text-white focus:ring-1 focus:ring-brand-500"
           />
         </div>
       </form>

@@ -19,7 +19,7 @@ export interface TabsProps {
 
 export function Tabs({ tabs, activeTab, onChange, className }: TabsProps) {
   return (
-    <div className={cn('flex space-x-1 border-b border-slate-200 dark:border-slate-800 overflow-x-auto', className)}>
+    <div className={cn('flex space-x-1 border-b border-slate-200 dark:border-white/10 overflow-x-auto', className)}>
       {tabs.map((tab) => {
         const isActive = activeTab === tab.id;
         return (
@@ -29,8 +29,8 @@ export function Tabs({ tabs, activeTab, onChange, className }: TabsProps) {
             className={cn(
               'flex items-center gap-2 whitespace-nowrap border-b-2 px-4 py-3 text-sm font-medium transition-all',
               isActive
-                ? 'border-brand-600 text-brand-600 font-semibold dark:border-brand-400 dark:text-brand-400'
-                : 'border-transparent text-slate-500 hover:border-slate-300 hover:text-slate-800 dark:text-slate-400 dark:hover:text-slate-200'
+                ? 'border-brand-600 text-brand-600 font-semibold dark:border-lav/50 dark:text-lav'
+                : 'border-transparent text-slate-500 hover:border-slate-300 hover:text-slate-800 dark:text-ink-muted dark:hover:text-ink-fg'
             )}
           >
             {tab.icon && <span className="w-4 h-4 shrink-0">{tab.icon}</span>}
@@ -40,8 +40,8 @@ export function Tabs({ tabs, activeTab, onChange, className }: TabsProps) {
                 className={cn(
                   'ml-1 rounded-full px-2 py-0.5 text-[10px] font-bold',
                   isActive
-                    ? 'bg-brand-100 text-brand-700 dark:bg-brand-950 dark:text-brand-300'
-                    : 'bg-slate-100 text-slate-600 dark:bg-slate-800 dark:text-slate-400'
+                    ? 'bg-brand-100 text-brand-700 dark:bg-lav/10 dark:text-lav-light'
+                    : 'bg-slate-100 text-slate-600 dark:bg-white/[0.07] dark:text-ink-muted'
                 )}
               >
                 {tab.badge}

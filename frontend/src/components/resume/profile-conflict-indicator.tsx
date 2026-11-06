@@ -35,7 +35,7 @@ export function ProfileConflictIndicator({
 
   return (
     <Badge variant="verified" size="sm" className={className}>
-      <Plus className="w-3 h-3 mr-1 text-emerald-600" />
+      <Plus className="w-3 h-3 mr-1 text-emerald-600 dark:text-lime" />
       {label || 'New Credential'}
     </Badge>
   );

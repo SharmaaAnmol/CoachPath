@@ -5,6 +5,7 @@ import Link from 'next/link';
 import { useSearchParams } from 'next/navigation';
 import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
+import { GlassButton, PageHeader } from '@/components/glass';
 import { Badge } from '@/components/ui/badge';
 import { Alert } from '@/components/ui/alert';
 import { Skeleton } from '@/components/ui/skeleton';
@@ -509,44 +510,30 @@ export default function ResumePage() {
       {/* ───────────────────────────────────────────────────────────── */}
       {/* PAGE HEADER & TOP NAVIGATION TABS                             */}
       {/* ───────────────────────────────────────────────────────────── */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-        <div>
-          <div className="flex items-center gap-2">
-            <h1 className="text-2xl font-bold text-slate-900 dark:text-white">
-              Resume Intelligence & Tailoring
-            </h1>
-            <Badge variant="verified" size="sm">
-              <ShieldCheck className="w-3.5 h-3.5 mr-1" /> Two-Pass Grounded AI
-            </Badge>
-          </div>
-          <p className="text-xs text-slate-500 dark:text-slate-400 mt-1">
-            Manage your master source documents, extract verified career credentials, and optimize tailored resume variants for target engineering roles.
-          </p>
-        </div>
-
-        <div className="flex items-center gap-2">
-          <Link href="/career-profile">
-            <Button variant="outline" size="sm">
-              <Briefcase className="w-3.5 h-3.5 mr-1.5" /> View Career Profile
-            </Button>
-          </Link>
-        </div>
-      </div>
+      <PageHeader
+        title="Resume optimizer"
+        description="Manage your master resume and tailor versions for each job. Every change is shown before it is saved, and each line comes from your verified profile."
+        actions={
+          <GlassButton variant="glass" size="sm" href="/career-profile">
+            <Briefcase className="h-4 w-4" /> View Career Profile
+          </GlassButton>
+        }
+      />
 
       {/* Main Feature Tabs */}
-      <div className="flex items-center rounded-xl bg-slate-100 dark:bg-slate-800/80 p-1 text-xs font-semibold w-full sm:w-fit overflow-x-auto">
+      <div className="flex items-center rounded-xl dark:rounded-full bg-slate-100 dark:bg-white/[0.06] p-1 text-xs font-semibold w-full sm:w-fit overflow-x-auto">
         <button
           type="button"
           onClick={() => setActiveTab('master')}
-          className={`flex items-center gap-2 px-4 py-2 rounded-lg transition-all ${
+          className={`flex items-center gap-2 px-4 py-2 rounded-lg dark:rounded-full transition-all ${
             activeTab === 'master'
-              ? 'bg-white dark:bg-slate-900 text-slate-900 dark:text-white shadow-sm'
-              : 'text-slate-500 hover:text-slate-900 dark:hover:text-white'
+              ? 'bg-white dark:bg-lav/15 text-slate-900 dark:text-white shadow-sm'
+              : 'text-slate-500 dark:text-ink-muted hover:text-slate-900 dark:hover:text-white'
           }`}
         >
-          <FileText className="w-4 h-4 text-brand-600" />
+          <FileText className="w-4 h-4 text-brand-600 dark:text-lav" />
           <span>Master Resumes</span>
-          <span className="text-[10px] font-mono px-1.5 py-0.2 rounded-full bg-slate-200 dark:bg-slate-700">
+          <span className="text-[10px] font-mono px-1.5 py-0.2 rounded-full bg-slate-200 dark:bg-white/10">
             {resumes.length}
           </span>
         </button>
@@ -554,31 +541,31 @@ export default function ResumePage() {
         <button
           type="button"
           onClick={() => setActiveTab('tailor')}
-          className={`flex items-center gap-2 px-4 py-2 rounded-lg transition-all ${
+          className={`flex items-center gap-2 px-4 py-2 rounded-lg dark:rounded-full transition-all ${
             activeTab === 'tailor'
-              ? 'bg-white dark:bg-slate-900 text-purple-600 dark:text-purple-400 shadow-sm'
-              : 'text-slate-500 hover:text-purple-600 dark:hover:text-purple-400'
+              ? 'bg-white dark:bg-lav/15 text-purple-600 dark:text-lav shadow-sm'
+              : 'text-slate-500 dark:text-ink-muted hover:text-purple-600 dark:hover:text-lav'
           }`}
         >
-          <Sparkles className="w-4 h-4 text-purple-600" />
+          <Sparkles className="w-4 h-4 text-purple-600 dark:text-lav" />
           <span>Job Tailoring Studio</span>
           {activeTailoredVersion && (
-            <span className="w-2 h-2 rounded-full bg-purple-500 animate-pulse" />
+            <span className="w-2 h-2 rounded-full bg-purple-500 animate-pulse dark:bg-lav-violet" />
           )}
         </button>
 
         <button
           type="button"
           onClick={() => setActiveTab('versions')}
-          className={`flex items-center gap-2 px-4 py-2 rounded-lg transition-all ${
+          className={`flex items-center gap-2 px-4 py-2 rounded-lg dark:rounded-full transition-all ${
             activeTab === 'versions'
-              ? 'bg-white dark:bg-slate-900 text-slate-900 dark:text-white shadow-sm'
-              : 'text-slate-500 hover:text-slate-900 dark:hover:text-white'
+              ? 'bg-white dark:bg-lav/15 text-slate-900 dark:text-white shadow-sm'
+              : 'text-slate-500 dark:text-ink-muted hover:text-slate-900 dark:hover:text-white'
           }`}
         >
-          <Layers className="w-4 h-4 text-indigo-600" />
+          <Layers className="w-4 h-4 text-indigo-600 dark:text-lav" />
           <span>Tailored Versions</span>
-          <span className="text-[10px] font-mono px-1.5 py-0.2 rounded-full bg-slate-200 dark:bg-slate-700">
+          <span className="text-[10px] font-mono px-1.5 py-0.2 rounded-full bg-slate-200 dark:bg-white/10">
             {tailoredVersions.length}
           </span>
         </button>
@@ -602,36 +589,36 @@ export default function ResumePage() {
 
       {/* Merge Success Banner with Direct Profile Link */}
       {mergeResult && activeTab === 'master' && (
-        <Card className="p-5 bg-emerald-50/60 dark:bg-emerald-950/30 border border-emerald-200 dark:border-emerald-800 space-y-3">
+        <Card className="p-5 bg-emerald-50/60 dark:bg-lime/10 border border-emerald-200 dark:border-lime/30 space-y-3">
           <div className="flex items-start justify-between gap-3">
             <div className="flex items-start gap-3">
-              <div className="w-10 h-10 rounded-xl bg-emerald-100 dark:bg-emerald-900/60 text-emerald-700 dark:text-emerald-300 flex items-center justify-center shrink-0">
+              <div className="w-10 h-10 rounded-xl bg-emerald-100 dark:bg-lime/10 text-emerald-700 dark:text-lime-soft flex items-center justify-center shrink-0">
                 <CheckCircle2 className="w-6 h-6" />
               </div>
               <div className="space-y-1">
-                <h3 className="text-sm font-bold text-emerald-900 dark:text-emerald-100">
+                <h3 className="text-sm font-bold text-emerald-900 dark:text-lime-soft">
                   Profile Synchronization Complete!
                 </h3>
-                <p className="text-xs text-emerald-800/90 dark:text-emerald-200/90">
+                <p className="text-xs text-emerald-800/90 dark:text-lime-soft">
                   Your approved credentials have been committed to PostgreSQL. Your updated profile completeness is{' '}
-                  <strong className="font-bold text-emerald-950 dark:text-emerald-50">
+                  <strong className="font-bold text-emerald-950 dark:text-lime-soft">
                     {mergeResult.completeness_score}%
                   </strong>.
                 </p>
-                <div className="flex flex-wrap gap-2 pt-2 text-[11px] text-emerald-900 dark:text-emerald-200 font-medium">
-                  <span className="bg-emerald-100 dark:bg-emerald-900/80 px-2.5 py-0.5 rounded-full border border-emerald-300/60">
+                <div className="flex flex-wrap gap-2 pt-2 text-[11px] text-emerald-900 dark:text-lime-soft font-medium">
+                  <span className="bg-emerald-100 dark:bg-lime/10 px-2.5 py-0.5 rounded-full border border-emerald-300/60 dark:border-lime/50">
                     +{mergeResult.merged_summary.education_added} Education
                   </span>
-                  <span className="bg-emerald-100 dark:bg-emerald-900/80 px-2.5 py-0.5 rounded-full border border-emerald-300/60">
+                  <span className="bg-emerald-100 dark:bg-lime/10 px-2.5 py-0.5 rounded-full border border-emerald-300/60 dark:border-lime/50">
                     +{mergeResult.merged_summary.experience_added} Experience
                   </span>
-                  <span className="bg-emerald-100 dark:bg-emerald-900/80 px-2.5 py-0.5 rounded-full border border-emerald-300/60">
+                  <span className="bg-emerald-100 dark:bg-lime/10 px-2.5 py-0.5 rounded-full border border-emerald-300/60 dark:border-lime/50">
                     +{mergeResult.merged_summary.projects_added} Projects
                   </span>
-                  <span className="bg-emerald-100 dark:bg-emerald-900/80 px-2.5 py-0.5 rounded-full border border-emerald-300/60">
+                  <span className="bg-emerald-100 dark:bg-lime/10 px-2.5 py-0.5 rounded-full border border-emerald-300/60 dark:border-lime/50">
                     +{mergeResult.merged_summary.certifications_added} Certifications
                   </span>
-                  <span className="bg-emerald-100 dark:bg-emerald-900/80 px-2.5 py-0.5 rounded-full border border-emerald-300/60">
+                  <span className="bg-emerald-100 dark:bg-lime/10 px-2.5 py-0.5 rounded-full border border-emerald-300/60 dark:border-lime/50">
                     +{mergeResult.merged_summary.skills_added} Skills
                   </span>
                 </div>
@@ -640,7 +627,7 @@ export default function ResumePage() {
 
             <div className="flex items-center gap-2 shrink-0">
               <Link href="/career-profile">
-                <Button variant="primary" size="sm" className="bg-emerald-600 hover:bg-emerald-700">
+                <Button variant="primary" size="sm" className="bg-emerald-600 hover:bg-emerald-700 dark:bg-lime/20 dark:hover:bg-lime/20">
                   Inspect Career Profile <ArrowRight className="w-3.5 h-3.5 ml-1" />
                 </Button>
               </Link>

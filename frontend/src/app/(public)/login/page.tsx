@@ -92,7 +92,7 @@ function LoginForm() {
   return (
     <div className="min-h-[85vh] flex items-center justify-center px-4 py-12 relative overflow-hidden bg-grid-subtle">
       {/* Ambient background glow */}
-      <div className="absolute top-1/4 left-1/2 -translate-x-1/2 -translate-y-1/2 w-96 h-96 rounded-full bg-brand-500/10 blur-3xl pointer-events-none" />
+      <div className="absolute top-1/4 left-1/2 -translate-x-1/2 -translate-y-1/2 w-96 h-96 rounded-full bg-brand-500/10 blur-3xl pointer-events-none dark:bg-lav-violet" />
 
       <motion.div
         initial="hidden"
@@ -108,7 +108,7 @@ function LoginForm() {
           <h2 className="text-2xl font-bold tracking-tight text-slate-900 dark:text-white">
             Welcome Back to CoachPath
           </h2>
-          <p className="text-xs text-slate-500 dark:text-slate-400">
+          <p className="text-xs text-slate-500 dark:text-ink-muted">
             Sign in to access your career profile, skill roadmaps, and job matches.
           </p>
         </div>
@@ -130,15 +130,15 @@ function LoginForm() {
           )}
 
           {/* Demo Helper Banner */}
-          <div className="p-3 rounded-xl bg-purple-50/70 dark:bg-purple-950/40 border border-purple-200 dark:border-purple-800 flex items-center justify-between text-xs">
-            <div className="flex items-center gap-2 text-purple-900 dark:text-purple-300">
-              <ShieldCheck className="w-4 h-4 text-purple-600 shrink-0" />
+          <div className="p-3 rounded-xl bg-purple-50/70 dark:bg-lav/10 border border-purple-200 dark:border-lav/30 flex items-center justify-between text-xs">
+            <div className="flex items-center gap-2 text-purple-900 dark:text-lav-light">
+              <ShieldCheck className="w-4 h-4 text-purple-600 shrink-0 dark:text-lav" />
               <span>Explore as Demo Candidate</span>
             </div>
             <button
               type="button"
               onClick={handleDemoFill}
-              className="text-[11px] font-bold text-brand-600 dark:text-brand-400 hover:underline shrink-0"
+              className="text-[11px] font-bold text-brand-600 dark:text-lav hover:underline shrink-0"
             >
               Auto-Fill
             </button>
@@ -161,7 +161,7 @@ function LoginForm() {
 
             <div className="space-y-1">
               <div className="flex justify-between items-center">
-                <label className="block text-xs font-semibold uppercase tracking-wider text-slate-700 dark:text-slate-300">
+                <label className="block text-xs font-semibold uppercase tracking-wider text-slate-700 dark:text-ink-fg/80">
                   Password
                 </label>
                 <Link
@@ -170,7 +170,7 @@ function LoginForm() {
                     e.preventDefault();
                     setErrorMessage('Password recovery is available via administrator or support in development.');
                   }}
-                  className="text-[11px] text-brand-600 hover:underline"
+                  className="text-[11px] text-brand-600 hover:underline dark:text-lav"
                 >
                   Forgot password?
                 </Link>
@@ -185,17 +185,17 @@ function LoginForm() {
                   if (errorMessage) setErrorMessage(null);
                 }}
                 autoComplete="current-password"
-                className="flex h-10 w-full rounded-xl border border-slate-300 bg-white px-3 py-2 text-sm text-slate-900 focus:border-brand-500 focus:outline-none focus:ring-2 focus:ring-brand-500/20 disabled:bg-slate-100 disabled:opacity-60 dark:border-slate-700 dark:bg-slate-900 dark:text-slate-100 dark:disabled:bg-slate-800 transition-colors"
+                className="flex h-10 w-full rounded-xl border border-slate-300 bg-white px-3 py-2 text-sm text-slate-900 focus:border-brand-500 focus:outline-none focus:ring-2 focus:ring-brand-500/20 disabled:bg-slate-100 disabled:opacity-60 dark:border-white/15 dark:bg-white/[0.04] dark:text-ink-fg dark:disabled:bg-white/[0.07] transition-colors dark:focus:border-lav/50"
               />
             </div>
 
-            <div className="flex items-center text-xs text-slate-600 dark:text-slate-400">
+            <div className="flex items-center text-xs text-slate-600 dark:text-ink-muted">
               <input
                 type="checkbox"
                 id="remember"
                 defaultChecked
                 disabled={isSubmitting}
-                className="rounded border-slate-300 text-brand-600 focus:ring-brand-500 mr-2"
+                className="rounded border-slate-300 text-brand-600 focus:ring-brand-500 mr-2 dark:text-lav"
               />
               <label htmlFor="remember">Keep me signed in on this device</label>
             </div>
@@ -211,9 +211,9 @@ function LoginForm() {
             </Button>
           </form>
 
-          <div className="pt-4 border-t border-slate-100 dark:border-slate-800 text-center text-xs text-slate-500">
+          <div className="pt-4 border-t border-slate-100 dark:border-white/10 text-center text-xs text-slate-500">
             Don&apos;t have an account yet?{' '}
-            <Link href="/signup" className="font-semibold text-brand-600 hover:underline">
+            <Link href="/signup" className="font-semibold text-brand-600 hover:underline dark:text-lav">
               Create an account
             </Link>
           </div>
@@ -228,7 +228,7 @@ export default function LoginPage() {
     <React.Suspense
       fallback={
         <div className="min-h-[80vh] flex items-center justify-center">
-          <div className="w-8 h-8 rounded-full border-2 border-brand-500 border-t-transparent animate-spin" />
+          <div className="w-8 h-8 rounded-full border-2 border-brand-500 border-t-transparent animate-spin dark:border-lav/50" />
         </div>
       }
     >

@@ -26,18 +26,18 @@ export function StatCard({
   className,
 }: StatCardProps) {
   const iconBg = {
-    brand: 'bg-indigo-50 text-indigo-600 dark:bg-indigo-950/50 dark:text-indigo-400',
-    verified: 'bg-emerald-50 text-emerald-600 dark:bg-emerald-950/50 dark:text-emerald-400',
-    intelligence: 'bg-purple-50 text-purple-600 dark:bg-purple-950/50 dark:text-purple-400',
+    brand: 'bg-indigo-50 text-indigo-600 dark:bg-lav/10 dark:text-lav',
+    verified: 'bg-emerald-50 text-emerald-600 dark:bg-lime/10 dark:text-lime',
+    intelligence: 'bg-purple-50 text-purple-600 dark:bg-lav/10 dark:text-lav',
     action: 'bg-amber-50 text-amber-600 dark:bg-amber-950/50 dark:text-amber-400',
-    gap: 'bg-rose-50 text-rose-600 dark:bg-rose-950/50 dark:text-rose-400',
+    gap: 'bg-rose-50 text-rose-600 dark:bg-crimson/10 dark:text-crimson-soft',
   };
 
   return (
     <Card hoverable className={cn('p-5 flex flex-col justify-between transition-all duration-200', className)}>
       <div className="flex items-start justify-between">
         <div className="space-y-1">
-          <p className="text-xs font-semibold uppercase tracking-wider text-slate-500 dark:text-slate-400">
+          <p className="text-xs font-semibold uppercase tracking-wider text-slate-500 dark:text-ink-muted">
             {title}
           </p>
           <div className="text-2xl sm:text-3xl font-extrabold tracking-tight text-slate-900 dark:text-white">
@@ -52,16 +52,16 @@ export function StatCard({
       </div>
 
       {(subtitle || trend) && (
-        <div className="mt-3 pt-3 border-t border-slate-100 dark:border-slate-800 flex items-center justify-between text-xs">
+        <div className="mt-3 pt-3 border-t border-slate-100 dark:border-white/10 flex items-center justify-between text-xs">
           {trend && (
             <div className="flex items-center gap-1 font-semibold">
-              <span className={trend.isPositive ? 'text-emerald-600' : 'text-rose-600'}>
+              <span className={trend.isPositive ? 'text-emerald-600 dark:text-lime' : 'text-rose-600 dark:text-crimson-soft'}>
                 {trend.value}
               </span>
               {trend.label && <span className="text-slate-400 font-normal">{trend.label}</span>}
             </div>
           )}
-          {subtitle && <span className="text-slate-500 dark:text-slate-400 truncate">{subtitle}</span>}
+          {subtitle && <span className="text-slate-500 dark:text-ink-muted truncate">{subtitle}</span>}
         </div>
       )}
     </Card>

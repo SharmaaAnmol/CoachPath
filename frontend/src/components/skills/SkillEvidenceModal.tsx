@@ -72,11 +72,11 @@ export function SkillEvidenceModal({
   const getSourceIcon = (source: string) => {
     switch (source) {
       case 'assessment':
-        return <ClipboardCheck className="w-4 h-4 text-emerald-600 dark:text-emerald-400" />;
+        return <ClipboardCheck className="w-4 h-4 text-emerald-600 dark:text-lime" />;
       case 'project':
-        return <FolderGit2 className="w-4 h-4 text-indigo-600 dark:text-indigo-400" />;
+        return <FolderGit2 className="w-4 h-4 text-indigo-600 dark:text-lav" />;
       case 'resume':
-        return <FileCheck className="w-4 h-4 text-sky-600 dark:text-sky-400" />;
+        return <FileCheck className="w-4 h-4 text-sky-600 dark:text-lav" />;
       default:
         return <User className="w-4 h-4 text-slate-500" />;
     }
@@ -93,13 +93,13 @@ export function SkillEvidenceModal({
       <div className="space-y-4 py-2">
         {isLoading && (
           <div className="py-8 flex flex-col items-center justify-center space-y-3">
-            <div className="w-8 h-8 rounded-full border-2 border-indigo-600 border-t-transparent animate-spin" />
+            <div className="w-8 h-8 rounded-full border-2 border-indigo-600 border-t-transparent animate-spin dark:border-lav/50" />
             <p className="text-xs text-slate-500">Retrieving calibrated evidence graph...</p>
           </div>
         )}
 
         {errorMessage && (
-          <div className="p-3.5 rounded-xl bg-rose-50 dark:bg-rose-950/40 border border-rose-200 dark:border-rose-800 text-xs text-rose-700 dark:text-rose-300 flex items-start gap-2">
+          <div className="p-3.5 rounded-xl bg-rose-50 dark:bg-crimson/10 border border-rose-200 dark:border-crimson/30 text-xs text-rose-700 dark:text-crimson-tint flex items-start gap-2">
             <AlertCircle className="w-4 h-4 shrink-0 mt-0.5" />
             <p>{errorMessage}</p>
           </div>
@@ -108,14 +108,14 @@ export function SkillEvidenceModal({
         {!isLoading && !errorMessage && evidenceData && (
           <div className="space-y-4">
             {/* Status Summary Banner */}
-            <div className="p-3 rounded-xl bg-slate-50 dark:bg-slate-800/60 border border-slate-200 dark:border-slate-700 flex items-center justify-between">
+            <div className="p-3 rounded-xl bg-slate-50 dark:bg-white/[0.07] border border-slate-200 dark:border-white/15 flex items-center justify-between">
               <div className="space-y-0.5">
                 <div className="flex items-center gap-2">
                   <span className="text-xs font-bold text-slate-900 dark:text-white">
                     Level {evidenceData.current_level}
                   </span>
                   <span className="text-xs text-slate-400">•</span>
-                  <span className="text-xs capitalize text-slate-600 dark:text-slate-300 font-medium">
+                  <span className="text-xs capitalize text-slate-600 dark:text-ink-fg/80 font-medium">
                     {evidenceData.current_tier}
                   </span>
                 </div>
@@ -125,7 +125,7 @@ export function SkillEvidenceModal({
               </div>
 
               {evidenceData.is_verified ? (
-                <Badge variant="outline" className="bg-emerald-50 text-emerald-700 border-emerald-300 dark:bg-emerald-950 dark:text-emerald-300 flex items-center gap-1 text-xs">
+                <Badge variant="outline" className="bg-emerald-50 text-emerald-700 border-emerald-300 dark:bg-lime/10 dark:text-lime-soft flex items-center gap-1 text-xs dark:border-lime/50">
                   <ShieldCheck className="w-3.5 h-3.5" /> Verified Competency
                 </Badge>
               ) : (
@@ -137,13 +137,13 @@ export function SkillEvidenceModal({
 
             {/* Evidence List */}
             <div className="space-y-2.5">
-              <h4 className="text-xs font-bold text-slate-700 dark:text-slate-300 uppercase tracking-wider">
+              <h4 className="text-xs font-bold text-slate-700 dark:text-ink-fg/80 uppercase tracking-wider">
                 Supporting Evidence Artifacts ({evidenceData.evidence_items.length})
               </h4>
 
               {evidenceData.evidence_items.length === 0 ? (
-                <div className="p-6 rounded-xl border border-dashed border-slate-200 dark:border-slate-800 text-center space-y-2">
-                  <p className="text-xs text-slate-500 dark:text-slate-400">
+                <div className="p-6 rounded-xl border border-dashed border-slate-200 dark:border-white/10 text-center space-y-2">
+                  <p className="text-xs text-slate-500 dark:text-ink-muted">
                     No verified assessments, profile skills, or projects have been linked to {skillName} yet.
                   </p>
                   <Link href="/assessments">
@@ -157,7 +157,7 @@ export function SkillEvidenceModal({
                   {evidenceData.evidence_items.map((item, idx) => (
                     <div
                       key={idx}
-                      className="p-3 rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 space-y-1.5 shadow-sm"
+                      className="p-3 rounded-xl border border-slate-200 dark:border-white/10 bg-white dark:bg-white/[0.04] space-y-1.5 shadow-sm"
                     >
                       <div className="flex items-center justify-between">
                         <div className="flex items-center gap-2">
@@ -171,22 +171,22 @@ export function SkillEvidenceModal({
                         </span>
                       </div>
 
-                      <p className="text-xs text-slate-600 dark:text-slate-400 leading-relaxed">
+                      <p className="text-xs text-slate-600 dark:text-ink-muted leading-relaxed">
                         {item.description}
                       </p>
 
-                      <div className="flex items-center justify-between pt-1 border-t border-slate-100 dark:border-slate-800/80 text-[11px]">
+                      <div className="flex items-center justify-between pt-1 border-t border-slate-100 dark:border-white/10 text-[11px]">
                         <span className="text-slate-500">
-                          Confidence: <strong className="text-slate-700 dark:text-slate-300">{(item.confidence_score * 100).toFixed(0)}%</strong>
+                          Confidence: <strong className="text-slate-700 dark:text-ink-fg/80">{(item.confidence_score * 100).toFixed(0)}%</strong>
                         </span>
                         <div className="flex items-center gap-2">
                           {item.score !== undefined && item.score !== null && (
-                            <span className="font-bold text-indigo-600 dark:text-indigo-400">
+                            <span className="font-bold text-indigo-600 dark:text-lav">
                               Score: {item.score.toFixed(0)}%
                             </span>
                           )}
                           {item.is_verified ? (
-                            <span className="text-emerald-600 dark:text-emerald-400 font-semibold flex items-center gap-0.5 text-[10px]">
+                            <span className="text-emerald-600 dark:text-lime font-semibold flex items-center gap-0.5 text-[10px]">
                               <CheckCircle2 className="w-3 h-3" /> Verified
                             </span>
                           ) : (

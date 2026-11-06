@@ -66,7 +66,7 @@ export function ResumeHistory({
         <h3 className="text-sm font-semibold text-slate-900 dark:text-white">
           Resume Documents ({resumes.length})
         </h3>
-        <p className="text-xs text-slate-500 dark:text-slate-400">
+        <p className="text-xs text-slate-500 dark:text-ink-muted">
           Click &ldquo;Review Draft&rdquo; on any parsed resume to inspect and merge credentials
         </p>
       </div>

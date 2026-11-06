@@ -27,22 +27,22 @@ export function ProgressBar({
   };
 
   const barVariants = {
-    brand: 'bg-brand-600',
-    verified: 'bg-emerald-500',
-    intelligence: 'bg-purple-600',
+    brand: 'bg-brand-600 dark:bg-lav-violet',
+    verified: 'bg-emerald-500 dark:bg-lime/20',
+    intelligence: 'bg-purple-600 dark:bg-lav-violet',
     action: 'bg-amber-500',
-    gap: 'bg-rose-500',
+    gap: 'bg-rose-500 dark:bg-crimson',
   };
 
   return (
     <div className={cn('w-full space-y-1', className)} {...props}>
       {showLabel && (
-        <div className="flex justify-between items-center text-xs font-semibold text-slate-600 dark:text-slate-300">
+        <div className="flex justify-between items-center text-xs font-semibold text-slate-600 dark:text-ink-fg/80">
           <span>Progress</span>
           <span>{percentage}%</span>
         </div>
       )}
-      <div className={cn('w-full overflow-hidden rounded-full bg-slate-100 dark:bg-slate-800', heights[size])}>
+      <div className={cn('w-full overflow-hidden rounded-full bg-slate-100 dark:bg-white/[0.07]', heights[size])}>
         <div
           className={cn('h-full rounded-full transition-all duration-500 ease-out', barVariants[variant])}
           style={{ width: `${percentage}%` }}

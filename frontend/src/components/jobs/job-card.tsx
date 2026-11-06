@@ -59,13 +59,13 @@ export function JobCard({ job, onSelect, className }: JobCardProps) {
   const getSourceBadge = (source: string) => {
     switch (source.toLowerCase()) {
       case 'seed':
-        return { label: 'Curated Benchmark', color: 'bg-indigo-50 text-indigo-700 border-indigo-200 dark:bg-indigo-950/60 dark:text-indigo-300 dark:border-indigo-800' };
+        return { label: 'Curated Benchmark', color: 'bg-indigo-50 text-indigo-700 border-indigo-200 dark:bg-lav/10 dark:text-lav-light dark:border-lav/30' };
       case 'manual':
-        return { label: 'User Imported', color: 'bg-emerald-50 text-emerald-700 border-emerald-200 dark:bg-emerald-950/60 dark:text-emerald-300 dark:border-emerald-800' };
+        return { label: 'User Imported', color: 'bg-emerald-50 text-emerald-700 border-emerald-200 dark:bg-lime/10 dark:text-lime-soft dark:border-lime/30' };
       case 'arbeitnow':
-        return { label: 'Arbeitnow API', color: 'bg-sky-50 text-sky-700 border-sky-200 dark:bg-sky-950/60 dark:text-sky-300 dark:border-sky-800' };
+        return { label: 'Arbeitnow API', color: 'bg-sky-50 text-sky-700 border-sky-200 dark:bg-lav/10 dark:text-lav-light dark:border-lav/30' };
       default:
-        return { label: source.toUpperCase(), color: 'bg-slate-100 text-slate-700 border-slate-200 dark:bg-slate-800 dark:text-slate-300 dark:border-slate-700' };
+        return { label: source.toUpperCase(), color: 'bg-slate-100 text-slate-700 border-slate-200 dark:bg-white/[0.07] dark:text-ink-fg/80 dark:border-white/15' };
     }
   };
 
@@ -73,15 +73,15 @@ export function JobCard({ job, onSelect, className }: JobCardProps) {
   const getFreshnessBadge = (status: string) => {
     switch (status.toLowerCase()) {
       case 'active':
-        return { label: 'Active', color: 'text-emerald-600 bg-emerald-50 dark:bg-emerald-950/50 dark:text-emerald-400' };
+        return { label: 'Active', color: 'text-emerald-600 bg-emerald-50 dark:bg-lime/10 dark:text-lime' };
       case 'needs_refresh':
         return { label: 'Review Needed', color: 'text-amber-600 bg-amber-50 dark:bg-amber-950/50 dark:text-amber-400' };
       case 'expired':
-        return { label: 'Expired', color: 'text-slate-500 bg-slate-100 dark:bg-slate-800 dark:text-slate-400' };
+        return { label: 'Expired', color: 'text-slate-500 bg-slate-100 dark:bg-white/[0.07] dark:text-ink-muted' };
       case 'closed':
-        return { label: 'Listing Closed', color: 'text-rose-600 bg-rose-50 dark:bg-rose-950/50 dark:text-rose-400' };
+        return { label: 'Listing Closed', color: 'text-rose-600 bg-rose-50 dark:bg-crimson/10 dark:text-crimson-soft' };
       default:
-        return { label: status, color: 'text-slate-500 bg-slate-100 dark:bg-slate-800 dark:text-slate-400' };
+        return { label: status, color: 'text-slate-500 bg-slate-100 dark:bg-white/[0.07] dark:text-ink-muted' };
     }
   };
 
@@ -95,7 +95,7 @@ export function JobCard({ job, onSelect, className }: JobCardProps) {
   return (
     <Card
       className={cn(
-        'p-5 space-y-4 hover:border-slate-300 dark:hover:border-slate-700 transition-all cursor-pointer group hover:shadow-subtle',
+        'p-5 space-y-4 hover:border-slate-300 dark:hover:border-white/15 transition-all cursor-pointer group hover:shadow-subtle',
         className
       )}
       onClick={() => onSelect(job)}
@@ -104,7 +104,7 @@ export function JobCard({ job, onSelect, className }: JobCardProps) {
       <div className="flex flex-col sm:flex-row sm:items-start justify-between gap-3">
         <div className="space-y-1.5 flex-1 min-w-0">
           <div className="flex flex-wrap items-center gap-2">
-            <h3 className="text-base sm:text-lg font-bold text-slate-900 dark:text-white group-hover:text-brand-600 dark:group-hover:text-brand-400 transition-colors truncate">
+            <h3 className="text-base sm:text-lg font-bold text-slate-900 dark:text-white group-hover:text-brand-600 dark:group-hover:text-lav transition-colors truncate">
               {job.title}
             </h3>
 
@@ -113,24 +113,24 @@ export function JobCard({ job, onSelect, className }: JobCardProps) {
               className={cn(
                 'rounded-full px-2.5 py-0.5 text-[11px] font-semibold uppercase tracking-wider',
                 job.remote_type === 'remote'
-                  ? 'bg-emerald-100 text-emerald-800 dark:bg-emerald-950 dark:text-emerald-300'
+                  ? 'bg-emerald-100 text-emerald-800 dark:bg-lime/10 dark:text-lime-soft'
                   : job.remote_type === 'hybrid'
-                  ? 'bg-blue-100 text-blue-800 dark:bg-blue-950 dark:text-blue-300'
-                  : 'bg-slate-100 text-slate-800 dark:bg-slate-800 dark:text-slate-300'
+                  ? 'bg-blue-100 text-blue-800 dark:bg-lav/10 dark:text-lav-light'
+                  : 'bg-slate-100 text-slate-800 dark:bg-white/[0.07] dark:text-ink-fg/80'
               )}
             >
               {job.remote_type}
             </span>
 
             {/* Seniority Badge */}
-            <span className="rounded-full px-2 py-0.5 text-[11px] font-medium bg-slate-100 text-slate-700 dark:bg-slate-800 dark:text-slate-300 capitalize">
+            <span className="rounded-full px-2 py-0.5 text-[11px] font-medium bg-slate-100 text-slate-700 dark:bg-white/[0.07] dark:text-ink-fg/80 capitalize">
               {job.experience_level.replace('_', ' ')}
             </span>
           </div>
 
           {/* Company & Location Row */}
-          <div className="flex flex-wrap items-center gap-y-1 gap-x-3 text-xs text-slate-500 dark:text-slate-400">
-            <span className="flex items-center gap-1 font-semibold text-slate-800 dark:text-slate-200">
+          <div className="flex flex-wrap items-center gap-y-1 gap-x-3 text-xs text-slate-500 dark:text-ink-muted">
+            <span className="flex items-center gap-1 font-semibold text-slate-800 dark:text-ink-fg">
               <Building2 className="w-3.5 h-3.5 text-slate-400" />
               {job.company_name}
             </span>
@@ -139,7 +139,7 @@ export function JobCard({ job, onSelect, className }: JobCardProps) {
               {job.location}
             </span>
             {salaryDisplay && (
-              <span className="flex items-center gap-1 text-emerald-700 dark:text-emerald-400 font-semibold">
+              <span className="flex items-center gap-1 text-emerald-700 dark:text-lime font-semibold">
                 <DollarSign className="w-3.5 h-3.5" />
                 {salaryDisplay}
               </span>
@@ -173,7 +173,7 @@ export function JobCard({ job, onSelect, className }: JobCardProps) {
       </div>
 
       {/* Description Snippet */}
-      <p className="text-xs text-slate-600 dark:text-slate-300 line-clamp-2 leading-relaxed">
+      <p className="text-xs text-slate-600 dark:text-ink-fg/80 line-clamp-2 leading-relaxed">
         {job.description_markdown.replace(/[#*`_]/g, '')}
       </p>
 
@@ -186,7 +186,7 @@ export function JobCard({ job, onSelect, className }: JobCardProps) {
             </span>
             {requiredSkills.slice(0, 5).map((s) => (
               <Badge key={s.skill_id} variant="verified" size="sm" className="font-medium text-[11px]">
-                <CheckCircle2 className="w-3 h-3 text-emerald-600 mr-1" />
+                <CheckCircle2 className="w-3 h-3 text-emerald-600 mr-1 dark:text-lime" />
                 {s.name}
               </Badge>
             ))}
@@ -218,7 +218,7 @@ export function JobCard({ job, onSelect, className }: JobCardProps) {
       </div>
 
       {/* Card Action Footer */}
-      <div className="flex items-center justify-between pt-2 border-t border-slate-100 dark:border-slate-800 text-xs">
+      <div className="flex items-center justify-between pt-2 border-t border-slate-100 dark:border-white/10 text-xs">
         <div className="flex items-center gap-2 text-slate-400 text-[11px]">
           {job.last_verified_at && (
             <span className="flex items-center gap-1">
@@ -232,7 +232,7 @@ export function JobCard({ job, onSelect, className }: JobCardProps) {
           <Button
             size="sm"
             variant="ghost"
-            className="text-xs group-hover:text-brand-600 dark:group-hover:text-brand-400"
+            className="text-xs group-hover:text-brand-600 dark:group-hover:text-lav"
             onClick={(e) => {
               e.stopPropagation();
               onSelect(job);

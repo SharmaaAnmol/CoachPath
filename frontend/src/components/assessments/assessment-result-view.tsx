@@ -93,7 +93,7 @@ export function AssessmentResultView({
               <span className="text-xs uppercase tracking-wider text-slate-400 font-semibold block">
                 Calibrated Score
               </span>
-              <div className="text-3xl sm:text-4xl font-black text-brand-400 mt-0.5">
+              <div className="text-3xl sm:text-4xl font-black text-brand-400 mt-0.5 dark:text-lav-light">
                 {result.score_percentage}%
               </div>
               <Badge variant={proficiencyVariant(result.proficiency_band)} size="sm" className="mt-1.5">
@@ -111,7 +111,7 @@ export function AssessmentResultView({
           </div>
           <div>
             <span className="text-slate-400 block">Correct Answers</span>
-            <span className="text-base font-bold text-emerald-400">
+            <span className="text-base font-bold text-emerald-400 dark:text-lime-soft">
               {result.correct_count} of {result.total_questions}
             </span>
           </div>
@@ -121,7 +121,7 @@ export function AssessmentResultView({
           </div>
           <div>
             <span className="text-slate-400 block">Proficiency Tier</span>
-            <span className="text-base font-bold text-indigo-300">{result.proficiency_band}</span>
+            <span className="text-base font-bold text-indigo-300 dark:text-lav-light">{result.proficiency_band}</span>
           </div>
         </div>
       </Card>
@@ -129,12 +129,12 @@ export function AssessmentResultView({
       {/* Pedagogical Feedback Summaries */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
         {/* Strengths Card */}
-        <Card className="p-5 border-emerald-200 dark:border-emerald-900/60 bg-emerald-50/40 dark:bg-emerald-950/20 space-y-3">
-          <div className="flex items-center gap-2 text-emerald-800 dark:text-emerald-300 font-bold text-sm">
-            <TrendingUp className="w-4 h-4 text-emerald-600" />
+        <Card className="p-5 border-emerald-200 dark:border-lime/30 bg-emerald-50/40 dark:bg-lime/10 space-y-3">
+          <div className="flex items-center gap-2 text-emerald-800 dark:text-lime-soft font-bold text-sm">
+            <TrendingUp className="w-4 h-4 text-emerald-600 dark:text-lime" />
             <span>Demonstrated Strengths</span>
           </div>
-          <p className="text-xs sm:text-sm text-slate-700 dark:text-slate-300 leading-relaxed">
+          <p className="text-xs sm:text-sm text-slate-700 dark:text-ink-fg/80 leading-relaxed">
             {result.strengths_summary}
           </p>
         </Card>
@@ -145,7 +145,7 @@ export function AssessmentResultView({
             <AlertTriangle className="w-4 h-4 text-amber-600" />
             <span>Targeted Focus Areas</span>
           </div>
-          <p className="text-xs sm:text-sm text-slate-700 dark:text-slate-300 leading-relaxed">
+          <p className="text-xs sm:text-sm text-slate-700 dark:text-ink-fg/80 leading-relaxed">
             {result.weaknesses_summary}
           </p>
         </Card>
@@ -155,28 +155,28 @@ export function AssessmentResultView({
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
         {/* Topic Breakdown */}
         <Card className="p-5 space-y-4">
-          <h3 className="text-sm font-bold text-slate-900 dark:text-white flex items-center gap-2">
-            <BookOpen className="w-4 h-4 text-brand-600" />
+          <h3 className="text-sm font-bold dark:font-display dark:font-semibold dark:tracking-[-0.02em] text-slate-900 dark:text-white flex items-center gap-2">
+            <BookOpen className="w-4 h-4 text-brand-600 dark:text-lav" />
             <span>Subtopic Breakdown</span>
           </h3>
 
           <div className="space-y-3">
             {result.topic_breakdown.map((t, idx) => (
               <div key={idx} className="space-y-1 text-xs">
-                <div className="flex justify-between items-center text-slate-600 dark:text-slate-300">
+                <div className="flex justify-between items-center text-slate-600 dark:text-ink-fg/80">
                   <span className="font-medium truncate max-w-[220px]">{t.topic}</span>
                   <span className="font-semibold">
                     {t.correct}/{t.total} ({Math.round(t.percentage)}%)
                   </span>
                 </div>
-                <div className="w-full bg-slate-100 dark:bg-slate-800 rounded-full h-1.5 overflow-hidden">
+                <div className="w-full bg-slate-100 dark:bg-white/[0.07] rounded-full h-1.5 overflow-hidden">
                   <div
                     className={`h-1.5 rounded-full ${
                       t.percentage >= 70
-                        ? 'bg-emerald-500'
+                        ? 'bg-emerald-500 dark:bg-lime/20'
                         : t.percentage >= 50
                         ? 'bg-amber-500'
-                        : 'bg-rose-500'
+                        : 'bg-rose-500 dark:bg-crimson'
                     }`}
                     style={{ width: `${t.percentage}%` }}
                   />
@@ -188,8 +188,8 @@ export function AssessmentResultView({
 
         {/* Difficulty Tier Performance */}
         <Card className="p-5 space-y-4">
-          <h3 className="text-sm font-bold text-slate-900 dark:text-white flex items-center gap-2">
-            <Award className="w-4 h-4 text-brand-600" />
+          <h3 className="text-sm font-bold dark:font-display dark:font-semibold dark:tracking-[-0.02em] text-slate-900 dark:text-white flex items-center gap-2">
+            <Award className="w-4 h-4 text-brand-600 dark:text-lav" />
             <span>Difficulty Breakdown</span>
           </h3>
 
@@ -197,21 +197,21 @@ export function AssessmentResultView({
             {Object.entries(result.difficulty_breakdown).map(([diff, stats]) => (
               <div key={diff} className="space-y-1.5 text-xs">
                 <div className="flex justify-between items-center">
-                  <span className="capitalize font-bold text-slate-700 dark:text-slate-300">
+                  <span className="capitalize font-bold text-slate-700 dark:text-ink-fg/80">
                     {diff} Tier ({stats.total} questions)
                   </span>
                   <span className="font-semibold text-slate-900 dark:text-white">
                     {stats.correct}/{stats.total} ({Math.round(stats.percentage)}%)
                   </span>
                 </div>
-                <div className="w-full bg-slate-100 dark:bg-slate-800 rounded-full h-2 overflow-hidden">
+                <div className="w-full bg-slate-100 dark:bg-white/[0.07] rounded-full h-2 overflow-hidden">
                   <div
                     className={`h-2 rounded-full ${
                       stats.percentage >= 70
-                        ? 'bg-emerald-500'
+                        ? 'bg-emerald-500 dark:bg-lime/20'
                         : stats.percentage >= 50
                         ? 'bg-amber-500'
-                        : 'bg-rose-500'
+                        : 'bg-rose-500 dark:bg-crimson'
                     }`}
                     style={{ width: `${stats.percentage}%` }}
                   />
@@ -223,7 +223,7 @@ export function AssessmentResultView({
       </div>
 
       {/* Action Bar */}
-      <div className="flex flex-col sm:flex-row items-center justify-between gap-4 p-4 rounded-2xl bg-slate-50 dark:bg-slate-850 border border-slate-200 dark:border-slate-800">
+      <div className="flex flex-col sm:flex-row items-center justify-between gap-4 p-4 rounded-2xl bg-slate-50 dark:bg-white/20 border border-slate-200 dark:border-white/10">
         <Button variant="outline" size="sm" onClick={onBackToCatalog}>
           <ArrowLeft className="w-4 h-4 mr-1.5" />
           Back to Assessments
@@ -245,25 +245,25 @@ export function AssessmentResultView({
 
       {/* Question Review Section */}
       <div className="space-y-4 pt-4">
-        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-2 border-b border-slate-200 dark:border-slate-800">
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-2 border-b border-slate-200 dark:border-white/10">
           <div>
-            <h3 className="text-lg font-bold text-slate-900 dark:text-white">
+            <h3 className="text-lg font-bold dark:font-display dark:font-semibold dark:tracking-[-0.02em] text-slate-900 dark:text-white">
               Pedagogical Question Review
             </h3>
-            <p className="text-xs text-slate-500 dark:text-slate-400">
+            <p className="text-xs text-slate-500 dark:text-ink-muted">
               Review your selected choices, correct answers, and underlying technical explanations.
             </p>
           </div>
 
           {/* Filter Pills */}
-          <div className="flex items-center gap-1.5 bg-slate-100 dark:bg-slate-800 p-1 rounded-xl text-xs font-semibold">
+          <div className="flex items-center gap-1.5 bg-slate-100 dark:bg-white/[0.07] p-1 rounded-xl text-xs font-semibold">
             <button
               type="button"
               onClick={() => setFilterMode('all')}
               className={`px-3 py-1 rounded-lg transition-colors ${
                 filterMode === 'all'
-                  ? 'bg-white dark:bg-slate-700 text-slate-900 dark:text-white shadow-xs'
-                  : 'text-slate-500 hover:text-slate-800 dark:hover:text-slate-200'
+                  ? 'bg-white dark:bg-white/10 text-slate-900 dark:text-white shadow-xs'
+                  : 'text-slate-500 hover:text-slate-800 dark:hover:text-ink-fg'
               }`}
             >
               All ({result.questions.length})
@@ -273,8 +273,8 @@ export function AssessmentResultView({
               onClick={() => setFilterMode('correct')}
               className={`px-3 py-1 rounded-lg transition-colors flex items-center gap-1 ${
                 filterMode === 'correct'
-                  ? 'bg-emerald-500 text-white shadow-xs'
-                  : 'text-slate-500 hover:text-emerald-700 dark:hover:text-emerald-300'
+                  ? 'bg-emerald-500 text-white shadow-xs dark:bg-lime/20'
+                  : 'text-slate-500 hover:text-emerald-700 dark:hover:text-lime-soft'
               }`}
             >
               Correct ({result.correct_count})
@@ -284,8 +284,8 @@ export function AssessmentResultView({
               onClick={() => setFilterMode('incorrect')}
               className={`px-3 py-1 rounded-lg transition-colors flex items-center gap-1 ${
                 filterMode === 'incorrect'
-                  ? 'bg-rose-500 text-white shadow-xs'
-                  : 'text-slate-500 hover:text-rose-700 dark:hover:text-rose-300'
+                  ? 'bg-rose-500 text-white shadow-xs dark:bg-crimson'
+                  : 'text-slate-500 hover:text-rose-700 dark:hover:text-crimson-tint'
               }`}
             >
               Incorrect ({result.questions.length - result.correct_count})
@@ -303,8 +303,8 @@ export function AssessmentResultView({
                 key={q.id}
                 className={`p-5 transition-all border ${
                   q.is_correct
-                    ? 'border-emerald-200/80 dark:border-emerald-900/40 bg-white dark:bg-slate-900'
-                    : 'border-rose-200/80 dark:border-rose-900/40 bg-white dark:bg-slate-900'
+                    ? 'border-emerald-200/80 dark:border-lime/30 bg-white dark:bg-white/[0.04]'
+                    : 'border-rose-200/80 dark:border-crimson/30 bg-white dark:bg-white/[0.04]'
                 }`}
               >
                 <div
@@ -314,9 +314,9 @@ export function AssessmentResultView({
                   <div className="flex items-start gap-3">
                     <div className="pt-0.5">
                       {q.is_correct ? (
-                        <CheckCircle2 className="w-5 h-5 text-emerald-600 shrink-0" />
+                        <CheckCircle2 className="w-5 h-5 text-emerald-600 shrink-0 dark:text-lime" />
                       ) : (
-                        <XCircle className="w-5 h-5 text-rose-600 shrink-0" />
+                        <XCircle className="w-5 h-5 text-rose-600 shrink-0 dark:text-crimson-soft" />
                       )}
                     </div>
                     <div className="space-y-1">
@@ -344,7 +344,7 @@ export function AssessmentResultView({
 
                 {/* Expanded Details */}
                 {isExpanded && (
-                  <div className="mt-4 pt-4 border-t border-slate-100 dark:border-slate-800 space-y-4">
+                  <div className="mt-4 pt-4 border-t border-slate-100 dark:border-white/10 space-y-4">
                     {/* Code Snippet if present */}
                     {q.code_snippet && (
                       <div className="rounded-xl bg-slate-950 text-slate-100 p-3 font-mono text-xs overflow-x-auto border border-slate-800">
@@ -359,16 +359,16 @@ export function AssessmentResultView({
                         const isCorrectOption = q.correct_option_index === optIdx;
 
                         let style =
-                          'border-slate-200 dark:border-slate-800 bg-slate-50/50 dark:bg-slate-850/50 text-slate-700 dark:text-slate-300';
+                          'border-slate-200 dark:border-white/10 bg-slate-50/50 dark:bg-white/20 text-slate-700 dark:text-ink-fg/80';
                         let badgeLabel = null;
 
                         if (isCorrectOption) {
                           style =
-                            'border-emerald-500 bg-emerald-50/80 dark:bg-emerald-950/40 text-emerald-950 dark:text-emerald-200 font-semibold ring-1 ring-emerald-500';
+                            'border-emerald-500 bg-emerald-50/80 dark:bg-lime/10 text-emerald-950 dark:text-lime-soft font-semibold ring-1 ring-emerald-500 dark:border-lime/50';
                           badgeLabel = 'Correct Answer';
                         } else if (isChosen && !isCorrectOption) {
                           style =
-                            'border-rose-400 bg-rose-50/80 dark:bg-rose-950/40 text-rose-950 dark:text-rose-200 font-medium';
+                            'border-rose-400 bg-rose-50/80 dark:bg-crimson/10 text-rose-950 dark:text-crimson-tint font-medium dark:border-crimson/50';
                           badgeLabel = 'Your Selection';
                         }
 
@@ -387,8 +387,8 @@ export function AssessmentResultView({
                               <span
                                 className={`text-[10px] font-bold uppercase tracking-wider px-2 py-0.5 rounded-full shrink-0 ${
                                   isCorrectOption
-                                    ? 'bg-emerald-200 text-emerald-900 dark:bg-emerald-800 dark:text-emerald-100'
-                                    : 'bg-rose-200 text-rose-900 dark:bg-rose-800 dark:text-rose-100'
+                                    ? 'bg-emerald-200 text-emerald-900 dark:bg-lime/15 dark:text-lime-soft'
+                                    : 'bg-rose-200 text-rose-900 dark:bg-crimson/15 dark:text-crimson-tint'
                                 }`}
                               >
                                 {badgeLabel}
@@ -400,12 +400,12 @@ export function AssessmentResultView({
                     </div>
 
                     {/* Pedagogical Explanation Box */}
-                    <div className="p-4 rounded-xl bg-slate-50 dark:bg-slate-800/60 border border-slate-200 dark:border-slate-700 space-y-1.5 text-xs">
+                    <div className="p-4 rounded-xl bg-slate-50 dark:bg-white/[0.07] border border-slate-200 dark:border-white/15 space-y-1.5 text-xs">
                       <div className="font-bold text-slate-900 dark:text-white flex items-center gap-1.5">
-                        <Sparkles className="w-3.5 h-3.5 text-brand-600" />
+                        <Sparkles className="w-3.5 h-3.5 text-brand-600 dark:text-lav" />
                         <span>Pedagogical Feedback</span>
                       </div>
-                      <p className="text-slate-600 dark:text-slate-300 leading-relaxed">
+                      <p className="text-slate-600 dark:text-ink-fg/80 leading-relaxed">
                         {q.explanation}
                       </p>
                     </div>
