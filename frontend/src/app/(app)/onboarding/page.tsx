@@ -254,7 +254,7 @@ export default function OnboardingPage() {
         <div className="flex items-center justify-between">
           <Link
             href="/dashboard"
-            className="inline-flex items-center text-xs font-semibold text-slate-500 hover:text-slate-900 dark:hover:text-ink-fg transition-colors"
+            className="inline-flex min-h-11 items-center text-xs font-semibold text-slate-500 hover:text-slate-900 dark:hover:text-ink-fg transition-colors"
           >
             <ArrowLeft className="w-3.5 h-3.5 mr-1" />
             Back to Dashboard
@@ -278,7 +278,7 @@ export default function OnboardingPage() {
         <div className="flex items-center justify-between">
           <Link
             href="/dashboard"
-            className="inline-flex items-center text-xs font-semibold text-slate-500 hover:text-slate-900 dark:hover:text-ink-fg transition-colors"
+            className="inline-flex min-h-11 items-center text-xs font-semibold text-slate-500 hover:text-slate-900 dark:hover:text-ink-fg transition-colors"
           >
             <ArrowLeft className="w-3.5 h-3.5 mr-1" />
             Save & Exit to Dashboard
@@ -336,7 +336,7 @@ export default function OnboardingPage() {
       <div className="flex items-center justify-between">
         <Link
           href="/dashboard"
-          className="inline-flex items-center text-xs font-semibold text-slate-500 hover:text-slate-900 dark:hover:text-ink-fg transition-colors"
+          className="inline-flex min-h-11 items-center text-xs font-semibold text-slate-500 hover:text-slate-900 dark:hover:text-ink-fg transition-colors"
         >
           <ArrowLeft className="w-3.5 h-3.5 mr-1" />
           Exit & Resume Later
