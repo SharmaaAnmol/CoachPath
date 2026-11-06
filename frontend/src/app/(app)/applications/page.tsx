@@ -2,165 +2,324 @@
 
 import * as React from 'react';
 import Link from 'next/link';
-import { mockApplications } from '@/lib/mock/data';
-import { ApplicationItem, ApplicationStage } from '@/types';
-import { Card } from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
-import { Badge } from '@/components/ui/badge';
-import { DemoPreviewBanner } from '@/components/ui/demo-preview-banner';
-import {
-  Kanban,
-  Building2,
-  Calendar,
-  Sparkles,
-  Plus,
-  ArrowRight,
-  MoreVertical,
-  CheckCircle2,
-  Clock,
-} from 'lucide-react';
+import { useSearchParams } from 'next/navigation';
+import { AlertCircle, Check, ExternalLink, FileText, Send } from 'lucide-react';
+import { AIThinking, GlassButton, GlassEmptyState, GlassPanel, PageHeader, StatusChip } from '@/components/glass';
+import type { ChipTone } from '@/components/glass/status-chip';
+import { applicationClient, type ApplicationPackage, type PackageHandoff, type PackageStatus } from '@/lib/application-client';
+import { resumeClient } from '@/lib/resume-client';
+import { ApiClientError } from '@/lib/api-client';
+import { cn } from '@/lib/utils';
 
-export default function ApplicationsPage() {
-  const [applications, setApplications] = React.useState<ApplicationItem[]>(mockApplications);
+const STATUS: Record<PackageStatus, { label: string; tone: ChipTone }> = {
+  draft: { label: 'Draft', tone: 'neutral' },
+  approved: { label: 'Approved', tone: 'active' },
+  handoff_initiated: { label: 'Opened on company site', tone: 'active' },
+  submitted: { label: 'Submitted', tone: 'done' },
+};
+const STEPS: PackageStatus[] = ['draft', 'approved', 'handoff_initiated', 'submitted'];
 
-  const columns: { stage: ApplicationStage; title: string; color: string }[] = [
-    { stage: 'saved', title: 'Saved Opportunities', color: 'border-slate-300 bg-slate-50/50 dark:bg-white/[0.04]' },
-    { stage: 'applied', title: 'Submitted Applications', color: 'border-blue-300 bg-blue-50/20 dark:bg-lav/10 dark:border-lav/50' },
-    { stage: 'interviewing', title: 'Active Interviewing', color: 'border-purple-300 bg-purple-50/20 dark:bg-lav/10 dark:border-lav/50' },
-    { stage: 'offered', title: 'Offers Extended', color: 'border-emerald-300 bg-emerald-50/20 dark:bg-lime/10 dark:border-lime/50' },
-  ];
+const errorText = (e: unknown) => (e instanceof ApiClientError ? e.message : 'Something went wrong. Please try again.');
+const field =
+  'w-full rounded-2xl border border-white/10 bg-black/40 px-4 py-3 text-sm leading-relaxed text-ink-fg placeholder:text-ink-dim focus:border-lav/60 focus:outline-none disabled:opacity-60';
 
-  const moveStage = (appId: string, direction: 'next' | 'prev') => {
-    const stageOrder: ApplicationStage[] = ['saved', 'applied', 'interviewing', 'offered'];
-    setApplications((prev) =>
-      prev.map((app) => {
-        if (app.id !== appId) return app;
-        const currentIndex = stageOrder.indexOf(app.stage);
-        const nextIndex = direction === 'next' ? Math.min(currentIndex + 1, stageOrder.length - 1) : Math.max(currentIndex - 1, 0);
-        return { ...app, stage: stageOrder[nextIndex] };
-      })
-    );
+interface TailoredOption {
+  id: string;
+  target_job_id: string;
+  label: string;
+}
+
+function ApplicationsInner() {
+  const params = useSearchParams();
+  const [packages, setPackages] = React.useState<ApplicationPackage[]>([]);
+  const [versions, setVersions] = React.useState<TailoredOption[]>([]);
+  const [selectedId, setSelectedId] = React.useState<string | null>(null);
+  const [versionId, setVersionId] = React.useState('');
+  const [loading, setLoading] = React.useState(true);
+  const [preparing, setPreparing] = React.useState(false);
+  const [error, setError] = React.useState<string | null>(null);
+
+  React.useEffect(() => {
+    Promise.all([
+      applicationClient.listPackages().catch((e) => { setError(errorText(e)); return { packages: [] as ApplicationPackage[] }; }),
+      resumeClient.listTailoredVersions({ page_size: 50 }).catch(() => null),
+    ]).then(([pk, vs]) => {
+      setPackages(pk.packages);
+      setSelectedId(pk.packages[0]?.id ?? null);
+      const items = ((vs as { items?: unknown[] } | null)?.items ?? []) as Array<{
+        id: string; target_job_id: string; job_title?: string | null; company_name?: string | null; status: string; version_number?: number;
+      }>;
+      const opts = items.map((v) => ({
+        id: v.id,
+        target_job_id: v.target_job_id,
+        label: `${v.job_title || 'Untitled job'}${v.company_name ? ` · ${v.company_name}` : ''} · ${v.status === 'approved' ? 'approved resume' : 'draft resume'}`,
+      }));
+      setVersions(opts);
+      const wanted = params.get('job');
+      setVersionId((wanted && opts.find((o) => o.target_job_id === wanted)?.id) || opts[0]?.id || '');
+      setLoading(false);
+    });
+  }, [params]);
+
+  const replace = (p: ApplicationPackage) => setPackages((list) => list.map((x) => (x.id === p.id ? p : x)));
+
+  const prepare = async () => {
+    const v = versions.find((o) => o.id === versionId);
+    if (!v) return;
+    setPreparing(true);
+    setError(null);
+    try {
+      const p = await applicationClient.preparePackage({ job_id: v.target_job_id, tailored_resume_version_id: v.id });
+      setPackages((list) => [p, ...list.filter((x) => x.id !== p.id)]);
+      setSelectedId(p.id);
+    } catch (e) {
+      setError(errorText(e));
+    } finally {
+      setPreparing(false);
+    }
   };
 
+  const selected = packages.find((p) => p.id === selectedId) ?? null;
+
   return (
-    <div className="space-y-6">
-      {/* Demo Preview Banner */}
-      <DemoPreviewBanner
-        plannedPhase="Phase 12"
-        featureName="Live application tracking"
+    <div className="flex flex-col gap-6 pb-10">
+      <PageHeader
+        title="Applications"
+        description="Prepare each application from a tailored resume, review every answer, then submit it yourself on the company's site. CoachPath never submits for you."
       />
 
-      {/* Header */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-        <div>
-          <h1 className="font-display text-3xl font-semibold tracking-[-0.035em] text-slate-900 dark:text-ink-fg [text-wrap:balance] md:text-4xl">
-            Application Pipeline & Status Tracker
-          </h1>
-          <p className="text-xs text-slate-500 dark:text-ink-muted mt-1">
-            Track active opportunities, interview scheduling, and next-action deadlines across target companies.
-          </p>
+      {error && (
+        <div role="alert" className="flex items-start gap-3 rounded-2xl border border-crimson/30 bg-crimson/10 px-4 py-3 text-sm text-crimson-tint">
+          <AlertCircle className="mt-0.5 h-4 w-4 shrink-0" />
+          {error}
         </div>
+      )}
 
-        <div className="flex items-center gap-2">
-          <Button
-            size="sm"
-            variant="primary"
-            disabled
-            aria-disabled="true"
-            title="Application creation is scheduled for Phase 12"
-          >
-            <Plus className="w-3.5 h-3.5 mr-1" /> Add Application (Phase 12)
-          </Button>
+      {/* Prepare */}
+      {!loading && versions.length === 0 ? (
+        <GlassEmptyState
+          icon={<FileText className="h-5 w-5" />}
+          title="Tailor your resume for a job first"
+          description="An application is built from a resume you tailored for that job, so every answer comes from your own verified experience."
+          action={<GlassButton href="/resume">Open resume optimizer</GlassButton>}
+        />
+      ) : (
+        <GlassPanel className="flex flex-col gap-4 p-5 sm:p-6">
+          <div>
+            <h2 className="font-display text-lg font-semibold tracking-[-0.02em]">Prepare a new application</h2>
+            <p className="mt-1 text-sm text-ink-muted">Pick a job you tailored your resume for. The AI drafts a cover note and answers; you review them before anything is used.</p>
+          </div>
+          <div className="flex flex-col gap-3 sm:flex-row">
+            <label className="sr-only" htmlFor="version">Tailored resume</label>
+            <select id="version" value={versionId} onChange={(e) => setVersionId(e.target.value)} disabled={loading || preparing} className={cn(field, 'h-11 py-0 sm:flex-1')}>
+              {versions.map((v) => (
+                <option key={v.id} value={v.id} className="bg-ink-900">{v.label}</option>
+              ))}
+            </select>
+            <GlassButton onClick={prepare} isLoading={preparing} disabled={!versionId || loading}>
+              Prepare application
+            </GlassButton>
+          </div>
+          {preparing && <AIThinking label="Drafting your cover note and answers" hint="Usually 10–20 seconds" />}
+        </GlassPanel>
+      )}
+
+      {/* List + detail */}
+      {!loading && packages.length > 0 && (
+        <div className="grid gap-4 lg:grid-cols-[320px_1fr]">
+          <GlassPanel className="h-fit p-2">
+            <h2 className="px-3 pb-1 pt-3 font-display text-base font-semibold tracking-[-0.02em]">Your applications</h2>
+            <ul>
+              {packages.map((p) => (
+                <li key={p.id}>
+                  <button
+                    type="button"
+                    onClick={() => setSelectedId(p.id)}
+                    aria-current={p.id === selectedId ? 'true' : undefined}
+                    className={cn('w-full rounded-xl px-3 py-3 text-left transition-colors hover:bg-white/[0.04]', p.id === selectedId && 'bg-lav/[0.12]')}
+                  >
+                    <span className="block truncate text-sm text-ink-fg">{p.job_title || 'Untitled job'}</span>
+                    <span className="mt-0.5 flex items-center justify-between gap-2 text-xs text-ink-dim">
+                      <span className="truncate">{p.company_name || '—'}</span>
+                      <span className={p.status === 'submitted' ? 'text-lime' : 'text-ink-muted'}>{STATUS[p.status]?.label ?? p.status}</span>
+                    </span>
+                  </button>
+                </li>
+              ))}
+            </ul>
+          </GlassPanel>
+          {selected && <PackageDetail key={selected.id} pkg={selected} onChange={replace} onError={setError} />}
         </div>
+      )}
+
+      {loading && <AIThinking label="Loading your applications" />}
+    </div>
+  );
+}
+
+function PackageDetail({ pkg, onChange, onError }: { pkg: ApplicationPackage; onChange: (p: ApplicationPackage) => void; onError: (m: string | null) => void }) {
+  const [cover, setCover] = React.useState(pkg.cover_note);
+  const [answers, setAnswers] = React.useState(pkg.application_questions.map((q) => q.answer));
+  const [confirmed, setConfirmed] = React.useState(false);
+  const [busy, setBusy] = React.useState<string | null>(null);
+  const [handoff, setHandoff] = React.useState<PackageHandoff | null>(null);
+
+  const locked = pkg.status === 'submitted';
+  const dirty = cover !== pkg.cover_note || answers.some((a, i) => a !== pkg.application_questions[i]?.answer);
+  const step = STEPS.indexOf(pkg.status);
+
+  const run = async (name: string, fn: () => Promise<void>) => {
+    setBusy(name);
+    onError(null);
+    try {
+      await fn();
+    } catch (e) {
+      onError(errorText(e));
+    } finally {
+      setBusy(null);
+    }
+  };
+
+  const save = () =>
+    run('save', async () => {
+      const p = await applicationClient.updatePackage(pkg.id, {
+        cover_note: cover,
+        application_questions: pkg.application_questions.map((q, i) => ({ ...q, answer: answers[i] })),
+      });
+      onChange(p);
+      setConfirmed(false);
+    });
+
+  return (
+    <GlassPanel className="flex flex-col gap-6 p-5 sm:p-7">
+      <div className="flex flex-wrap items-start justify-between gap-3">
+        <div className="min-w-0">
+          <h2 className="font-display text-xl font-semibold tracking-[-0.02em]">{pkg.job_title || 'Untitled job'}</h2>
+          <p className="text-sm text-ink-muted">{pkg.company_name || 'Company not listed'}</p>
+        </div>
+        <StatusChip tone={STATUS[pkg.status]?.tone ?? 'neutral'}>{STATUS[pkg.status]?.label ?? pkg.status}</StatusChip>
       </div>
 
-      {/* Kanban Board Grid */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 items-start">
-        {columns.map((col) => {
-          const items = applications.filter((a) => a.stage === col.stage);
-          return (
-            <div key={col.stage} className="space-y-3">
-              {/* Column Header */}
-              <div className="flex items-center justify-between px-2 py-1">
-                <div className="flex items-center gap-2">
-                  <h3 className="text-xs font-bold uppercase tracking-wider text-slate-700 dark:text-ink-fg/80">
-                    {col.title}
-                  </h3>
-                  <span className="rounded-full px-2 py-0.5 text-[10px] font-bold bg-slate-200 dark:bg-white/[0.07] text-slate-700 dark:text-ink-fg/80">
-                    {items.length}
-                  </span>
-                </div>
-              </div>
+      {/* Progress */}
+      <ol className="grid grid-cols-4 gap-2 text-xs" aria-label="Application progress">
+        {['Review', 'Approve', 'Open site', 'Submitted'].map((label, i) => (
+          <li key={label} className="flex flex-col gap-1.5">
+            <span className={cn('h-1 rounded-full', i <= step ? (i === 3 ? 'bg-lime' : 'bg-lav') : 'bg-white/10')} />
+            <span className={i <= step ? 'text-ink-fg' : 'text-ink-dim'}>{label}{i <= step ? <span className="sr-only"> (done)</span> : null}</span>
+          </li>
+        ))}
+      </ol>
 
-              {/* Column Body Cards */}
-              <div className={`p-3 rounded-2xl border min-h-[450px] space-y-3 ${col.color}`}>
-                {items.map((app) => (
-                  <Card key={app.id} className="p-4 space-y-3 bg-white dark:bg-white/[0.04] shadow-subtle hover:shadow-card transition-all">
-                    <div className="space-y-1">
-                      <div className="flex items-start justify-between gap-2">
-                        <span className="text-xs font-bold text-slate-900 dark:text-white leading-tight">
-                          {app.roleTitle}
-                        </span>
-                        <Badge variant="verified" size="sm">
-                          {app.matchScore}%
-                        </Badge>
-                      </div>
+      <div className="flex flex-col gap-2">
+        <label htmlFor={`cover-${pkg.id}`} className="text-sm font-medium">Cover note</label>
+        <textarea id={`cover-${pkg.id}`} value={cover} onChange={(e) => setCover(e.target.value)} disabled={locked} rows={7} className={field} />
+      </div>
 
-                      <div className="flex items-center gap-2 text-xs font-semibold text-purple-700 dark:text-lav-light">
-                        <Building2 className="w-3.5 h-3.5" />
-                        <span>{app.company}</span>
-                        <span className="text-slate-400 font-normal">&bull; {app.salary}</span>
-                      </div>
-                    </div>
-
-                    {app.nextStep && (
-                      <div className="p-2.5 rounded-lg bg-purple-50 dark:bg-lav/10 border border-purple-200 dark:border-lav/30 text-[11px] text-purple-900 dark:text-lav-light flex items-start gap-1.5">
-                        <Clock className="w-3.5 h-3.5 shrink-0 mt-0.5 text-purple-600 dark:text-lav" />
-                        <span className="leading-snug">{app.nextStep}</span>
-                      </div>
-                    )}
-
-                    {app.notes && (
-                      <p className="text-[11px] text-slate-500 dark:text-ink-muted line-clamp-2">
-                        {app.notes}
-                      </p>
-                    )}
-
-                    {/* Move controls */}
-                    <div className="pt-2 border-t border-slate-100 dark:border-white/10 flex items-center justify-between text-xs">
-                      {col.stage !== 'saved' ? (
-                        <button
-                          onClick={() => moveStage(app.id, 'prev')}
-                          className="text-[11px] text-slate-400 hover:text-slate-700 font-medium"
-                        >
-                          &larr; Back
-                        </button>
-                      ) : <span />}
-
-                      {col.stage !== 'offered' ? (
-                        <button
-                          onClick={() => moveStage(app.id, 'next')}
-                          className="text-[11px] text-brand-600 font-bold hover:underline dark:text-lav"
-                        >
-                          Advance &rarr;
-                        </button>
-                      ) : (
-                        <span className="text-[11px] font-bold text-emerald-600 dark:text-lime">Offer Active!</span>
-                      )}
-                    </div>
-                  </Card>
-                ))}
-
-                {items.length === 0 && (
-                  <div className="h-32 flex items-center justify-center text-xs text-slate-400 border border-dashed border-slate-300 dark:border-white/15 rounded-xl">
-                    No active applications
-                  </div>
+      {pkg.application_questions.length > 0 && (
+        <div className="flex flex-col gap-4">
+          <h3 className="text-sm font-medium">Application answers</h3>
+          {pkg.application_questions.map((q, i) => {
+            const unclear = q.needs_clarification || q.requires_clarification;
+            return (
+              <div key={q.id || i} className="flex flex-col gap-2 rounded-2xl border border-white/10 bg-white/[0.02] p-4">
+                <label htmlFor={`q-${pkg.id}-${i}`} className="text-sm text-ink-fg">{q.question}</label>
+                <textarea
+                  id={`q-${pkg.id}-${i}`}
+                  value={answers[i]}
+                  onChange={(e) => setAnswers((a) => a.map((x, j) => (j === i ? e.target.value : x)))}
+                  disabled={locked}
+                  rows={4}
+                  className={field}
+                />
+                {unclear && (
+                  <p className="text-sm text-crimson-soft">
+                    Needs your input{q.clarification_prompt ? `: ${q.clarification_prompt}` : '. The AI could not find evidence for this in your profile.'}
+                  </p>
+                )}
+                {!!q.evidence_citations?.length && (
+                  <p className="text-xs text-ink-dim">Based on: {q.evidence_citations.join(' · ')}</p>
                 )}
               </div>
-            </div>
-          );
-        })}
+            );
+          })}
+        </div>
+      )}
+
+      {/* Actions by stage */}
+      <div className="flex flex-col gap-4 border-t border-white/10 pt-5">
+        {dirty && !locked && (
+          <div className="flex flex-wrap items-center gap-3">
+            <GlassButton variant="glass" onClick={save} isLoading={busy === 'save'}>Save changes</GlassButton>
+            <span className="text-sm text-ink-dim">Saving resets approval, so you review the new version.</span>
+          </div>
+        )}
+
+        {!dirty && pkg.status === 'draft' && (
+          <>
+            <label className="flex items-start gap-3 text-sm">
+              <input type="checkbox" checked={confirmed} onChange={(e) => setConfirmed(e.target.checked)} className="mt-0.5 h-4 w-4 accent-[#C4B5FD]" />
+              I read the cover note and every answer, and they are accurate.
+            </label>
+            <GlassButton className="w-fit" disabled={!confirmed} isLoading={busy === 'approve'} onClick={() => run('approve', async () => onChange(await applicationClient.approvePackage(pkg.id)))}>
+              <Check className="h-4 w-4" /> Approve application
+            </GlassButton>
+          </>
+        )}
+
+        {!dirty && pkg.status === 'approved' && (
+          <GlassButton
+            className="w-fit"
+            isLoading={busy === 'handoff'}
+            onClick={() =>
+              run('handoff', async () => {
+                const h = await applicationClient.handoffPackage(pkg.id);
+                setHandoff(h);
+                onChange({ ...pkg, status: h.status, application_url: h.application_url ?? pkg.application_url });
+              })
+            }
+          >
+            <ExternalLink className="h-4 w-4" /> Get ready to submit
+          </GlassButton>
+        )}
+
+        {pkg.status === 'handoff_initiated' && (
+          <>
+            <p className="text-sm text-ink-muted">
+              {handoff?.instructions || 'Paste your cover note and answers into the company application form, submit it there, then confirm below.'}
+            </p>
+            {(handoff?.application_url || pkg.application_url) && (
+              <a href={(handoff?.application_url || pkg.application_url) as string} target="_blank" rel="noopener noreferrer" className="inline-flex w-fit items-center gap-2 text-sm text-lav underline-offset-4 hover:underline">
+                Open the company application <ExternalLink className="h-3.5 w-3.5" />
+              </a>
+            )}
+            <label className="flex items-start gap-3 text-sm">
+              <input type="checkbox" checked={confirmed} onChange={(e) => setConfirmed(e.target.checked)} className="mt-0.5 h-4 w-4 accent-[#C6F432]" />
+              I submitted this application on the company&apos;s site.
+            </label>
+            <GlassButton variant="lime" className="w-fit" disabled={!confirmed} isLoading={busy === 'submit'} onClick={() => run('submit', async () => onChange(await applicationClient.confirmSubmission(pkg.id)))}>
+              <Check className="h-4 w-4" /> Mark as submitted
+            </GlassButton>
+          </>
+        )}
+
+        {pkg.status === 'submitted' && (
+          <p className="flex items-center gap-2 text-sm text-lime">
+            <Check className="h-4 w-4" /> Submitted{pkg.submitted_at ? ` on ${new Date(pkg.submitted_at).toLocaleDateString()}` : ''}.
+          </p>
+        )}
+
+        <Link href={`/recruiters?package=${pkg.id}`} className="inline-flex w-fit items-center gap-2 text-sm text-ink-muted transition-colors hover:text-ink-fg">
+          <Send className="h-4 w-4" /> Write a message to a recruiter for this job
+        </Link>
       </div>
-    </div>
+    </GlassPanel>
+  );
+}
+
+export default function ApplicationsPage() {
+  return (
+    <React.Suspense fallback={<AIThinking label="Loading your applications" />}>
+      <ApplicationsInner />
+    </React.Suspense>
   );
 }

@@ -25,7 +25,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.ai.base import LLMProvider
 from app.ai.factory import get_llm_provider
-from app.api.dependencies import get_session, require_active_user
+from app.api.dependencies import ai_rate_limit, get_session, require_active_user
 from app.models.auth import User
 from app.schemas.resume import (
     ParsedResumeResponse,
@@ -59,6 +59,7 @@ def _get_llm() -> LLMProvider:
 
 @router.post(
     "/upload",
+    dependencies=[Depends(ai_rate_limit)],
     response_model=ResumeUploadResponse,
     status_code=status.HTTP_201_CREATED,
     summary="Upload and Parse Resume Document",
@@ -324,6 +325,7 @@ async def get_parsed_resume(
 
 @router.post(
     "/{resume_id}/retry",
+    dependencies=[Depends(ai_rate_limit)],
     response_model=RetryParsingResponse,
     summary="Retry Resume Parsing",
     description="Re-attempts text extraction and AI parsing for an existing uploaded resume document.",
@@ -425,6 +427,7 @@ async def confirm_resume(
 
 @router.post(
     "/{resume_id}/tailor",
+    dependencies=[Depends(ai_rate_limit)],
     response_model=TailoredResumeResponse,
     status_code=status.HTTP_201_CREATED,
     summary="Create Tailored Resume Draft",

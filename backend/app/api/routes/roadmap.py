@@ -15,7 +15,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.ai.base import LLMProvider
 from app.ai.factory import get_llm_provider
-from app.api.dependencies import get_session, require_active_user
+from app.api.dependencies import ai_rate_limit, get_session, require_active_user
 from app.models.auth import User
 from app.schemas.roadmap import (
     RoadmapAdaptationResponse,
@@ -41,6 +41,7 @@ def _get_llm() -> LLMProvider:
 
 @router.post(
     "/generate",
+    dependencies=[Depends(ai_rate_limit)],
     response_model=RoadmapResponse,
     status_code=status.HTTP_201_CREATED,
     summary="Generate Personalized Learning Roadmap",
@@ -179,6 +180,7 @@ async def update_roadmap_task(
 
 @router.post(
     "/{roadmap_id}/adapt",
+    dependencies=[Depends(ai_rate_limit)],
     response_model=RoadmapAdaptationResponse,
     summary="Adapt Roadmap to Assessment Evidence",
     description=(

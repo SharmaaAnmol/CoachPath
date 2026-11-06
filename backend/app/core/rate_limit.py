@@ -19,9 +19,15 @@ DEFAULT_WINDOW_SECONDS = 900
 class SlidingWindowRateLimiter:
     """In-memory sliding window rate limiter for authentication protection."""
 
-    def __init__(self, max_attempts: int = DEFAULT_MAX_ATTEMPTS, window_seconds: int = DEFAULT_WINDOW_SECONDS):
+    def __init__(
+        self,
+        max_attempts: int = DEFAULT_MAX_ATTEMPTS,
+        window_seconds: int = DEFAULT_WINDOW_SECONDS,
+        message: str = "Too many failed login attempts. Account temporarily locked for 15 minutes.",
+    ):
         self.max_attempts = max_attempts
         self.window_seconds = window_seconds
+        self.message = message
         self._attempts: Dict[str, List[float]] = defaultdict(list)
 
     def _clean_expired(self, key: str, now: float) -> None:
@@ -40,7 +46,7 @@ class SlidingWindowRateLimiter:
             raise AppException(
                 status_code=429,
                 code="RATE_LIMIT_EXCEEDED",
-                message="Too many failed login attempts. Account temporarily locked for 15 minutes.",
+                message=self.message,
             )
 
     def record_failure(self, key: str) -> None:
@@ -61,3 +67,32 @@ class SlidingWindowRateLimiter:
 
 # Global authentication rate limiter instance
 auth_rate_limiter = SlidingWindowRateLimiter()
+
+
+def _ai_limiters() -> List[SlidingWindowRateLimiter]:
+    from app.core.config import get_settings
+
+    settings = get_settings()
+    return [
+        SlidingWindowRateLimiter(
+            settings.AI_RATE_LIMIT_PER_MINUTE, 60,
+            "You're sending AI requests too quickly. Please wait a minute and try again.",
+        ),
+        SlidingWindowRateLimiter(
+            settings.AI_RATE_LIMIT_PER_DAY, 86400,
+            "You've reached today's limit for AI features. It resets within 24 hours.",
+        ),
+    ]
+
+
+# Per-user caps on AI-backed endpoints (cost and abuse guard).
+# shortcut: in-memory, so limits reset on restart and are per instance; move to Redis when we run more than one instance.
+ai_rate_limiters = _ai_limiters()
+
+
+def check_ai_rate_limit(user_id: str) -> None:
+    """Counts one AI request for this user; raises 429 if a minute or day cap is reached."""
+    for limiter in ai_rate_limiters:
+        limiter.check(user_id)
+    for limiter in ai_rate_limiters:
+        limiter.record_failure(user_id)  # record_failure just records an attempt

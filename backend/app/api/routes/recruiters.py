@@ -17,7 +17,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.ai.base import LLMProvider
 from app.ai.factory import get_llm_provider
-from app.api.dependencies import get_session, require_active_user
+from app.api.dependencies import ai_rate_limit, get_session, require_active_user
 from app.models.auth import User
 from app.schemas.applications import (
     RecruiterOutreachApproveRequest,
@@ -59,6 +59,7 @@ async def recruiters_status() -> Dict[str, str]:
 
 @router.post(
     "/outreach",
+    dependencies=[Depends(ai_rate_limit)],
     response_model=RecruiterOutreachResponse,
     status_code=status.HTTP_201_CREATED,
     summary="Create Recruiter Outreach Draft",

@@ -112,6 +112,8 @@ class Settings(BaseSettings):
     GROQ_MODEL: str = "openai/gpt-oss-120b"
     AI_REQUEST_TIMEOUT: int = 30
     AI_MAX_RETRIES: int = 2
+    AI_RATE_LIMIT_PER_MINUTE: int = 10  # per user, AI-backed endpoints only
+    AI_RATE_LIMIT_PER_DAY: int = 150
     ONBOARDING_MAX_TURNS: int = 20
 
     # Resume Storage & Parsing Configuration (Phase 5A & Staging Durable Storage)

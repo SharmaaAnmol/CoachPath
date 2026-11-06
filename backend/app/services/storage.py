@@ -282,6 +282,11 @@ def create_storage_service() -> FileStorageService:
     """Factory creating the appropriate FileStorageService based on configuration."""
     provider = getattr(settings, "STORAGE_PROVIDER", "local").lower()
     if provider in ("s3", "r2"):
+        required = ("S3_ACCESS_KEY_ID", "S3_SECRET_ACCESS_KEY", "S3_BUCKET_NAME") + (("S3_ENDPOINT_URL",) if provider == "r2" else ())
+        missing = [k for k in required if not getattr(settings, k, None)]
+        if missing:
+            # Fail the deploy loudly rather than silently writing resumes to a disk that is wiped.
+            raise RuntimeError(f"STORAGE_PROVIDER={provider} but these settings are empty: {', '.join(missing)}")
         logger.info(
             "Initializing S3/R2 durable object storage driver for bucket '%s'...",
             settings.S3_BUCKET_NAME,

@@ -14,7 +14,7 @@ Early-career job seekers face an opaque and disjointed landscape: generic course
 - **Evidence-Based Skills**: Rather than relying on self-reported claims, candidate skills are calibrated through objective diagnostic technical assessments and verified project artifacts.
 - **Transparent Skill Gap Analysis**: Benchmarks candidate capabilities against empirical market requirements for target roles using deterministic mathematical scoring (0–100% Role Alignment and Evidence Coverage).
 - **Dynamic Personalized Roadmaps**: Generates custom milestone learning plans targeted solely at verified gaps, automatically updating as new competencies are achieved.
-- **Semantic Job Matching**: Multi-dimensional matching (skills, experience, and semantic vector similarity) accompanied by human-readable explanations of match fit.
+- **Explainable Job Matching**: Deterministic multi-factor matching (required and preferred skills, experience, evidence strength) with human-readable explanations of match fit.
 - **Truthful Resume Optimization & Ingestion**: Securely extracts and reviews candidate documents with strict zero-fabrication standards, human-in-the-loop review, and visual conflict inspection.
 - **Application Tracking & Readiness**: Integrated Kanban tracker tied directly to a composite Career Readiness Index (0–100%) providing clear next actions.
 
@@ -32,7 +32,7 @@ flowchart TD
     Resume --> Gap
     Gap --> Roadmap[Dynamic Personalized Roadmap]
     Roadmap --> Market[Market Intelligence & Jobs]
-    Market --> Matching[Semantic Job Matching + Explanations]
+    Market --> Matching[Explainable Job Matching]
     Matching --> Tailoring[Truthful Resume Optimization]
     Tailoring --> Approval{Human-in-the-Loop Review}
     Approval --> Tracker[Application Pipeline Tracker]
@@ -49,10 +49,10 @@ flowchart TD
 | **Frontend** | **Next.js 14 (App Router), React 18, TypeScript, Tailwind CSS** | Server-side rendering, responsive interface, radial SVG gauges, design system |
 | **Backend** | **Python 3.13, FastAPI, SQLAlchemy 2.0 (Async), Alembic** | High-throughput async REST API, RFC 7807 problem details, lifespan seeders |
 | **Relational Data** | **PostgreSQL 15 / 16** | ACID transactions, strict relational schemas, user career graph, snapshot history |
-| **Vector Storage** | **pgvector** | Relational vector similarity search, unified backup/transactions |
-| **Cache & Queue** | **Redis** | Fast token validation, rate-limiting, asynchronous task brokering |
-| **AI Integration** | **Google Gemini (`gemini-3.5-flash-lite`), Instructor/Pydantic** | Zero-fabrication structured parsing, adaptive onboarding, quarantined prompts |
-| **Testing** | **Pytest (Async), HTTPX, TypeScript (`tsc`), ESLint** | 217 automated backend integration tests, 100% type-checked frontend |
+| **File Storage** | **Local disk or Cloudflare R2 (S3 API)** | Uploaded resumes; R2 in production so files survive redeploys |
+| **Rate Limiting** | **In-process sliding window** | Login lockout and per-user caps on AI endpoints (no Redis yet) |
+| **AI Integration** | **Groq (`openai/gpt-oss-120b`) in production; Gemini, OpenAI and Anthropic adapters; Pydantic** | Zero-fabrication structured parsing, adaptive onboarding, quarantined prompts |
+| **Testing** | **Pytest (Async), HTTPX, TypeScript (`tsc`), ESLint** | 300+ automated backend tests, 100% type-checked frontend |
 
 ---
 
@@ -92,7 +92,7 @@ CoachPath provides curated industry benchmark requirements across 7 canonical en
 ├── docs/                                          # Architecture & Audit Documentation
 │   ├── product-requirements.md                    # Complete PRD: vision, personas, epics, NFRs
 │   ├── system-architecture.md                     # Technical component topology & design
-│   ├── database-schema.md                         # PostgreSQL, pgvector & Redis data models
+│   ├── database-schema.md                         # PostgreSQL data models
 │   ├── api-specification.md                       # REST API contracts & schemas
 │   ├── authentication-architecture.md             # Argon2id, JWT rotation, and session security
 │   ├── onboarding-architecture.md                 # AI Career Discovery & conversation engine (Phase 4A)
@@ -142,7 +142,7 @@ CoachPath provides curated industry benchmark requirements across 7 canonical en
 │   ├── src/components/                            # UI Design System, Onboarding, Resume Workbench, Skill Gap, Roadmap, Jobs
 │   ├── src/lib/                                   # Typed API clients (Auth, Profile, Onboarding, Resume, Skill Gap, Roadmap, JobClient)
 │   └── src/types/                                 # Strict TypeScript domain interfaces
-├── docker-compose.yml                             # Container orchestration for FastAPI & PostgreSQL (pgvector)
+├── docker-compose.yml                             # Container orchestration for FastAPI & PostgreSQL
 ├── .env.example                                   # Configuration template for local & production
 └── README.md                                      # Project overview and run guide
 ```
@@ -259,15 +259,17 @@ CoachPath follows a phased engineering methodology:
 - [x] **Phase 9B: Recommendations UI & Match Drawer Integration (Frontend)** *(Completed — Dual-tab recommendations hub, MatchScoreBadge with 4 fit tiers, MatchEvidenceCoverage progress indicators, JobMatchCard recommendations list, JobMatchDrawer with 4 explainability tabs, embedded personalized fit analysis in JobDetailPage & JobDetailModal, on-demand recalculation sync, 217 automated tests passing)*
 - [x] **Phase 9C: Job Matching End-to-End Integration Testing & Audit** *(Completed — Comprehensive 21-step candidate matching journey, 5-factor deterministic formula, evidence provenance weighting, explainability drawer, multi-tenant isolation, 225 automated tests passing, 100% audit pass verdict)*
 - [x] **Phase 10A: Resume Tailoring & Optimization Engine (Backend)** *(Completed — Gemini-powered evidence-grounded tailoring, strict anti-hallucination reconciliation, original resume immutability, multi-version draft lifecycle & approval gate, keyword coverage & gap analysis, structured diff API, 239 automated tests passing)*
-- [ ] **Phase 10B: Resume Tailoring Workbench & Diff Inspector (Frontend)**
-- [ ] **Phase 10C: Resume Tailoring End-to-End Testing & Final Audit**
-- [ ] **Phase 11: Application Pipeline Tracker**
-- [ ] **Phase 12: Recruiter Discovery & High-Context Networking**
-- [ ] **Phase 13: Role-Specific Interview Preparation Engine**
-- [ ] **Phase 14: Composite Career Readiness Engine**
-- [ ] **Phase 15: Settings, Privacy Controls & Data Deletion**
-- [ ] **Phase 16: Production Observability, Security Hardening & Rate Limiting**
-- [ ] **Phase 17: End-to-End System Integration Testing & Launch Readiness**
+- [x] **Phase 10B / 10C: Resume Tailoring Workbench, Diff Inspector and Audit**
+- [x] **Phase 11A: Application Preparation and Recruiter Outreach (Backend)**
+- [x] **Look D redesign**: liquid-glass UI across the app and public site, 3D path hero
+- [ ] **Phase 11B: Application and outreach screens on the real API**
+- [ ] **Phase 12: Application Pipeline Tracker**
+- [ ] **Phase 14: Interview Preparation**
+- [ ] **Phase 15: Composite Career Readiness and Dashboard API**
+- [ ] **Phase 16: Settings, Privacy Controls and Data Deletion**
+- [ ] **Phase 17–18: End-to-End QA and Release**
+
+The order and scope of the remaining work is in [docs/next-phases-plan.md](docs/next-phases-plan.md).
 
 ---
 

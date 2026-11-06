@@ -79,12 +79,21 @@ def test_storage_factory_local_driver():
 def test_storage_factory_s3_driver():
     """Validates STORAGE_PROVIDER='r2' initializes S3FileStorageService."""
     with patch("app.core.config.settings.STORAGE_PROVIDER", "r2"), \
+         patch("app.core.config.settings.S3_ENDPOINT_URL", "https://acct.r2.cloudflarestorage.com"), \
          patch("app.core.config.settings.S3_BUCKET_NAME", "test-bucket"), \
          patch("app.core.config.settings.S3_ACCESS_KEY_ID", "key123"), \
          patch("app.core.config.settings.S3_SECRET_ACCESS_KEY", "secret123"):
         service = create_storage_service()
         assert isinstance(service, S3FileStorageService)
         assert service._bucket == "test-bucket"
+
+
+def test_storage_factory_r2_without_credentials_fails_loudly():
+    """A misconfigured R2 switch must stop startup, not silently fall back to the wiped local disk."""
+    with patch("app.core.config.settings.STORAGE_PROVIDER", "r2"), \
+         patch("app.core.config.settings.S3_ACCESS_KEY_ID", ""):
+        with pytest.raises(RuntimeError, match="S3_ACCESS_KEY_ID"):
+            create_storage_service()
 
 
 @pytest.mark.asyncio

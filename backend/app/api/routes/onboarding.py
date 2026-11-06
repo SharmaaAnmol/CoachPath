@@ -16,7 +16,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.ai.base import LLMProvider
 from app.ai.factory import get_llm_provider
-from app.api.dependencies import get_session, require_active_user
+from app.api.dependencies import ai_rate_limit, get_session, require_active_user
 from app.core.exceptions import ForbiddenException, NotFoundException
 from app.models.auth import User
 from app.schemas.onboarding import (
@@ -50,6 +50,7 @@ async def onboarding_status() -> dict:
 
 @router.post(
     "/start",
+    dependencies=[Depends(ai_rate_limit)],
     response_model=StartOnboardingResponse,
     status_code=200,
     summary="Start or Resume Onboarding Interview",
@@ -107,6 +108,7 @@ async def get_onboarding_progress(
 
 @router.post(
     "/respond",
+    dependencies=[Depends(ai_rate_limit)],
     response_model=SubmitResponseResult,
     summary="Submit Response to Active Question",
     description="Submits the candidate's answer. The AI extracts facts, evaluates progress, "
